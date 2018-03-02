@@ -15,10 +15,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import com.posin.device.SDK;
+import com.posin.global.Appconfig;
+
 public class MainFrame extends JFrame {
 	
-	private int mButtonWidth=100;
-	private int mButtonHeight=50;
+	private int mButtonWidth=Appconfig.TOP_BUTTON_WIDTH;
+	private int mButtonHeight=Appconfig.TOP_BUTTON_HEIGHT;
 	
 	private JPanel pane = null; // 主要的JPanel，该JPanel的布局管理将被设置成CardLayout
 	private JPanel p = null; // 放按钮的JPanel
@@ -28,13 +31,6 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super("CardLayout Test");
-		try {
-			// 将LookAndFeel设置成Windows样式
-			UIManager
-					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 		card = new CardLayout(5, 5); // 创建一个具有指定的水平和垂直间隙的新卡片布局
 		pane = new JPanel(card); // JPanel的布局管理将被设置成CardLayout
 		p = new JPanel(); // 构造放按钮的JPanel
@@ -46,7 +42,7 @@ public class MainFrame extends JFrame {
 		b_5 = new JButton("其他测试");
 		
 		//设置Button字体大小及样式等
-		Font f = new Font("隶书",Font.PLAIN,18);  
+		Font f = new Font("隶书",Font.BOLD,25);  
 		b_1.setFont(f);
 		b_2.setFont(f);
 		b_3.setFont(f);
@@ -74,17 +70,19 @@ public class MainFrame extends JFrame {
 //		p_1 = new JPanel();
 		CashDrawerPanel mCashDrawerPanel=new CashDrawerPanel();
 		p_1=CashDrawerPanel.cashDrawerPanel;
-		p_2 = new JPanel();
+//		p_2 = new JPanel();
+		SerialPortPanel mSerialPortPanel = new SerialPortPanel();
+		p_2=mSerialPortPanel.serialPortPanel;
 		p_3 = new JPanel();
 		p_4 = new JPanel();
 		p_5 = new JPanel();
 //		p_1.setBackground(Color.RED);
-		p_2.setBackground(Color.BLUE);
+//		p_2.setBackground(Color.BLUE);
 		p_3.setBackground(Color.GREEN);
 		p_5.setBackground(Color.GRAY);
 		
 //		p_1.add(new JLabel("JPanel_1"));
-		p_2.add(new JLabel("JPanel_2"));
+//		p_2.add(new JLabel("JPanel_2"));
 		p_3.add(new JLabel("JPanel_3"));
 		p_4.add(new JLabel("JPanel_4"));
 		p_5.add(new JLabel("JPanel_5"));
@@ -131,7 +129,7 @@ public class MainFrame extends JFrame {
 		this.getContentPane().add(pane);
 		this.getContentPane().add(p, BorderLayout.NORTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(1920, 900);
+		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
 		this.setVisible(true);
 	}
 
@@ -139,4 +137,5 @@ public class MainFrame extends JFrame {
 		new MainFrame();
 	}
 
+	
 }
