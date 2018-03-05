@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -46,6 +47,7 @@ public class SerialPortPanel {
 	private final Object mRecvLock = new Object();
 	private final ByteArrayOutputStream mRecvStream = new ByteArrayOutputStream();
 	final SerialPortDataReceiver mDataReceiver = new SerialPortDataReceiver();
+	Font inputTypeFont = new Font("隶书", Font.PLAIN, 20);
 
 	private static final long serialVersionUID = 1L;
 	static JPanel serialPortPanel = null; // 根布局
@@ -53,13 +55,13 @@ public class SerialPortPanel {
 	private JPanel sendTipJpanel = null; // 发送提示及按钮JPanel
 	private JPanel sendDataJpanel = null; // 发送数据JPanel
 	private JPanel receiverTipJpanel = null; // 接收提示及按钮JPanel
-	private JPanel receiverDataJpanel = null; // 接收数据JPanel
+	private JScrollPane receiverDataJpanel = null; // 接收数据JPanel
 	private JPanel linePanel = null; // 切割线
 	private JButton portButton = null, baudrateButton = null,
 			switchButton = null;
 
 	private JTextArea sendDatainput = null; // 文本发送的输入框
-	private JTextArea  receiverDatainput = null; // 文本接收的显示框
+	private JTextArea receiverDatainput = null; // 文本接收的显示框
 
 	private String mSelectPort = null; // 选择的端口
 	private String mSelectBaudrate = null; // 选择的波特率
@@ -103,7 +105,7 @@ public class SerialPortPanel {
 	 */
 	private void initreceiverDataJpanel() {
 		GridBagConstraints c = new GridBagConstraints();
-		receiverDataJpanel = new JPanel();
+		receiverDataJpanel = new JScrollPane();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		c.weighty = 1;
@@ -113,11 +115,13 @@ public class SerialPortPanel {
 		c.ipady = 700;
 		serialPortPanel.add(receiverDataJpanel, c);
 
-		receiverDataJpanel.setLayout(new BorderLayout());
 		receiverDatainput = new JTextArea();
 		receiverDatainput.setLineWrap(true);
 		receiverDatainput.setWrapStyleWord(true);
-		receiverDataJpanel.add(receiverDatainput, BorderLayout.CENTER);
+		receiverDatainput.setFont(inputTypeFont);
+
+		receiverDataJpanel.setViewportView(receiverDatainput);
+		// receiverDataJpanel.add(receiverDatainput, BorderLayout.CENTER);
 	}
 
 	/**
@@ -141,10 +145,17 @@ public class SerialPortPanel {
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.PLAIN, 20);
+		Font fontType = new Font("隶书", Font.PLAIN, 20);
+
 		receiverLableJLabel.setFont(f);
 		receiverLableJLabel.setBackground(Color.RED);
 		receiverLableJLabel.setPreferredSize(new Dimension(100, 15));
 		receiverTipJpanel.add(receiverLableJLabel, BorderLayout.WEST);
+
+		textradioButton.setFont(fontType);
+		textradioButton.setPreferredSize(new Dimension(80, 40));
+		hexradioButton.setFont(fontType);
+		hexradioButton.setPreferredSize(new Dimension(120, 40));
 
 		receiverClearButton.setPreferredSize(new Dimension(100, 50));
 		receiverTipJpanel.add(receiverClearButton, BorderLayout.EAST);
@@ -176,7 +187,7 @@ public class SerialPortPanel {
 			}
 		});
 
-		//清空
+		// 清空
 		receiverClearButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -216,6 +227,7 @@ public class SerialPortPanel {
 
 		sendDataJpanel.setLayout(new BorderLayout());
 		sendDatainput = new JTextArea();
+		sendDatainput.setFont(inputTypeFont);
 		sendDataJpanel.add(sendDatainput, BorderLayout.CENTER);
 
 	}
@@ -241,10 +253,17 @@ public class SerialPortPanel {
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.PLAIN, 20);
+		Font fontType = new Font("隶书", Font.PLAIN, 20);
+
 		sendLableJLabel.setFont(f);
 		sendLableJLabel.setBackground(Color.RED);
 		sendLableJLabel.setPreferredSize(new Dimension(100, 15));
 		sendTipJpanel.add(sendLableJLabel, BorderLayout.WEST);
+
+		textradioButton.setFont(fontType);
+		textradioButton.setPreferredSize(new Dimension(80, 40));
+		hexradioButton.setFont(fontType);
+		hexradioButton.setPreferredSize(new Dimension(120, 40));
 
 		sendButton.setPreferredSize(new Dimension(100, 50));
 		sendTipJpanel.add(sendButton, BorderLayout.EAST);
@@ -400,6 +419,7 @@ public class SerialPortPanel {
 			mSelectPort = (String) JOptionPane.showInputDialog(null, "请选择串口端口",
 					"端口", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(
 							"blue.gif"), allDevices, allDevices[0]);
+
 			for (int i = 0; i < allDevices.length; i++) {
 				System.out.println("devices: " + allDevices[i]);
 			}
@@ -503,7 +523,7 @@ public class SerialPortPanel {
 
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
-			JOptionPane.showMessageDialog(null, "出错了： "+e.getMessage());
+			JOptionPane.showMessageDialog(null, "出错了： " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -639,26 +659,33 @@ public class SerialPortPanel {
 	 */
 	public void updateRecvView() {
 		String txt;
-		if (mRecvText) {
-			synchronized (mRecvLock) {
-				txt = mRecvStream.toString();
-			}
-		} else {
-			synchronized (mRecvLock) {
-				txt = ByteUtils.bytesToHexString(mRecvStream.toByteArray());
-			}
-		}
-
-		if (txt != null) {
-			if (txt.length() > 0) {
-				System.out.println("recerver data is: " + txt);
-				receiverDatainput.setText(txt);
+		try {
+			if (mRecvText) {
+				synchronized (mRecvLock) {
+					txt = new String(mRecvStream.toByteArray(), "utf-8");
+//					txt = mRecvStream.toString();
+				}
 			} else {
-				System.out.println("recerver data length is 0 ");
-				receiverDatainput.append("recerver data length is 0 \n");
+				synchronized (mRecvLock) {
+					txt = ByteUtils.bytesToHexString(mRecvStream.toByteArray());
+				}
 			}
-		} else {
-			System.out.println("receiver data is null ,please check you code ");
+
+			if (txt != null) {
+				if (txt.length() > 0) {
+					System.out.println("recerver data is: " + txt);
+					receiverDatainput.setText(txt);
+				} else {
+					System.out.println("recerver data length is 0 ");
+					receiverDatainput.append("recerver data length is 0 \n");
+				}
+			} else {
+				System.out
+						.println("receiver data is null ,please check you code ");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error: " + e.getMessage());
 		}
 	}
 }
