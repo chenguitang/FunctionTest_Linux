@@ -33,11 +33,10 @@ import com.posin.Jlist.WifiData;
 public class WifiPanel {
 
 	static JPanel wifiPanel = null; // 根布局
-	private JPanel topSwitchPanel = null; // 顶部wifi开关
 	private JPanel listWifiPane = null; // wifi列表
 	private JList<JPanel> wifiJList = null;
 
-	public boolean isPlayer = false;
+	public boolean wifiIsOpen = true;
 
 	public WifiPanel() {
 		wifiPanel = new JPanel();
@@ -60,16 +59,17 @@ public class WifiPanel {
 		parentPanel.add(listWifiPane, BorderLayout.CENTER);
 		listWifiPane.setBackground(Color.RED);
 
-		addWifiPanel();
-
-		
-		ArrayList<WifiData> listWifiDatas=new ArrayList<>();
-		ImageIcon image = new ImageIcon("/mnt/nfs/posin.png");
-//		ImageIcon image = new ImageIcon("E:\\nfs\\posin.png");
-		Image img = image.getImage(); // 得到此图标的 Image（image.getImage()）
-		img = img.getScaledInstance(40, 20, Image.SCALE_DEFAULT);
-		image.setImage(img);
-		for (int i = 0; i < 4; i++) {
+		ArrayList<WifiData> listWifiDatas = new ArrayList<>();
+		// ImageIcon image = new ImageIcon("/mnt/nfs/posin.png");
+		ImageIcon image = new ImageIcon(
+				"/mnt/nfs/ic_wifi_lock_signal_4_teal.png");
+		// ImageIcon image = new ImageIcon("E:\\nfs\\posin.png");
+		// ImageIcon image = new
+		// ImageIcon("E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
+		// Image img = image.getImage(); // 得到此图标的 Image（image.getImage()）
+		// img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
+		// image.setImage(img);
+		for (int i = 0; i < 30; i++) {
 			WifiData wifiData = new WifiData();
 			wifiData.setImageIcon(image);
 			wifiData.setWifiName("posin" + i);
@@ -80,19 +80,15 @@ public class WifiPanel {
 		FriListModel buddy = new FriListModel(listWifiDatas);
 		wifiJList = new JList(buddy);
 		wifiJList.setCellRenderer(new FriListCellRenderer());
-		wifiJList.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
-		wifiJList.setPreferredSize(new Dimension(360, 350));
-		
+		wifiJList.setFont(new Font(Font.SERIF, Font.PLAIN, 35));
+		wifiJList.setPreferredSize(new Dimension(1920, 500));
+
 		// wifiJList.setSelectedIndex(1);
 		/********* 给好友列表添加滚动条 **************/
 		JScrollPane jp = new JScrollPane(wifiJList);
-		jp.setPreferredSize(new Dimension(360, 400));
-		
+		jp.setPreferredSize(new Dimension(1920, 600));
+
 		wifiPanel.add(jp);
-	}
-
-	public void addWifiPanel() {
-
 	}
 
 	/**
@@ -103,20 +99,35 @@ public class WifiPanel {
 	 */
 	private void initTopSwitchPanel(JPanel parentPanel) {
 
-		topSwitchPanel = new JPanel();
-
-		parentPanel.add(topSwitchPanel, BorderLayout.NORTH);
-
-		topSwitchPanel.setBackground(new Color(55, 71, 79));
-		// topSwitchPanel.setBackground(new Color(244, 244, 244));
-		topSwitchPanel.setLayout(new BorderLayout());
-
-		JLabel wifiSwitchStatusJLabel = new JLabel("开启");
+		final JButton wifiSwitchStatusJLabel = new JButton("Wifi已开启，点击关闭wifi");
+		wifiSwitchStatusJLabel.setPreferredSize(new Dimension(1920,70));
+		wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
+		wifiSwitchStatusJLabel.setFont(new Font("楷体", Font.PLAIN, 25));
 		wifiSwitchStatusJLabel.setForeground(Color.WHITE);
-		wifiSwitchStatusJLabel.setFont(new Font("楷体", Font.PLAIN, 20));
-		topSwitchPanel.add(wifiSwitchStatusJLabel, BorderLayout.WEST);
+		parentPanel.add(wifiSwitchStatusJLabel, BorderLayout.NORTH);
 
-		// topSwitchPanel.setBackground(Color.BLACK);
+		// wifiSwitchStatusJLabel.setText("Wifi已关闭，点击开启wifi");
+		// 开启or关闭wifi
+		wifiSwitchStatusJLabel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (wifiIsOpen) {
+					System.out.println("wifiIsOpen: " + wifiIsOpen);
+					wifiSwitchStatusJLabel.setText("Wifi已关闭，点击开启wifi");
+					wifiSwitchStatusJLabel.setBackground(new Color(119, 119, 136));
+					wifiSwitchStatusJLabel.setForeground(Color.WHITE);
+					wifiIsOpen = !wifiIsOpen;
+				} else {
+					System.out.println("wifiIsOpen: " + wifiIsOpen);
+					wifiSwitchStatusJLabel.setText("Wifi已开启，点击关闭wifi");
+					wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
+					wifiSwitchStatusJLabel.setForeground(Color.WHITE);
+					wifiIsOpen = !wifiIsOpen;
+				}
+
+			}
+		});
+
 	}
 
 	/**
