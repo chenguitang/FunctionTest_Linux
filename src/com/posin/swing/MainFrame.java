@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.posin.device.SDK;
 import com.posin.global.Appconfig;
 
 public class MainFrame extends JFrame {
@@ -87,8 +86,9 @@ public class MainFrame extends JFrame {
 		p_4.add(new JLabel("JPanel_4"));
 		p_5.add(new JLabel("JPanel_5"));
 		
-		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
+		pane.add(p_1, "p1");
+		
 		pane.add(p_3, "p3");
 		pane.add(p_4, "p4");
 		pane.add(p_5, "p5");

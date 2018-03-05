@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.posin.device.CashDrawer;
 import com.posin.global.Appconfig;
 import com.posin.utils.Proc;
 

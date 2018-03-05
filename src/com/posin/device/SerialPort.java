@@ -1,4 +1,4 @@
-package com.posin.utils;
+package com.posin.device;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
