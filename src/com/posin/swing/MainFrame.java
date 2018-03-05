@@ -75,24 +75,26 @@ public class MainFrame extends JFrame {
 //		p_3 = new JPanel();
 		HornPanel hornPanel = new HornPanel();
 		p_3=HornPanel.hornPanel;
-		p_4 = new JPanel();
+//		p_4 = new JPanel();
+		WifiPanel wifiPanel = new WifiPanel();
+		p_4=WifiPanel.wifiPanel;
 		p_5 = new JPanel();
 //		p_1.setBackground(Color.RED);
 //		p_2.setBackground(Color.BLUE);
 //		p_3.setBackground(Color.GREEN);
-		p_5.setBackground(Color.GRAY);
+//		p_5.setBackground(Color.GRAY);
 		
 //		p_1.add(new JLabel("JPanel_1"));
 //		p_2.add(new JLabel("JPanel_2"));
 //		p_3.add(new JLabel("JPanel_3"));
-		p_4.add(new JLabel("JPanel_4"));
+//		p_4.add(new JLabel("JPanel_4"));
 		p_5.add(new JLabel("JPanel_5"));
 		
-		pane.add(p_2, "p2");
-		pane.add(p_1, "p1");
-		
-		pane.add(p_3, "p3");
 		pane.add(p_4, "p4");
+		pane.add(p_1, "p1");
+		pane.add(p_2, "p2");
+		pane.add(p_3, "p3");
+		
 		pane.add(p_5, "p5");
 		
 		b_1.addActionListener(new ActionListener() {

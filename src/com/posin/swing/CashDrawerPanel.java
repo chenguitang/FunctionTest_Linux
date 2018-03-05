@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,19 +32,25 @@ public class CashDrawerPanel {
 	private JButton pin2Button = null, pin5Button = null; // 开钱箱按钮
 
 	public CashDrawerPanel() {
+		
 		cashDrawerPanel = new JPanel();
 		cashDrawerPanel.setSize(new Dimension(Appconfig.PANELCARDWIDTH,
 				Appconfig.PANELCARDHEIGHT));
 		cashDrawerPanel.setBackground(Color.WHITE);
-		cashDrawerPanel.setLayout(new BorderLayout());
-		cashDrawerPanel.setLayout(new GridLayout(1, 1)); // 使子JPanel填满父布局
-
+		cashDrawerPanel.setLayout(new GridBagLayout());
+		addLine(cashDrawerPanel, 0, 0, -8, Color.GRAY);
+		
 		mButtonJPanel = new JPanel();
 		mButtonJPanel.setBackground(Color.WHITE);
 		// mButtonJPanel.setLayout(new BorderLayout());
-		cashDrawerPanel.setLayout(new BorderLayout());
-		cashDrawerPanel.add(mButtonJPanel, BorderLayout.CENTER);
-//		mButtonJPanel.setBackground(Color.RED);
+		GridBagConstraints c = new GridBagConstraints();
+		c.weightx = 1;
+		c.weighty = 1;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipadx = 0;
+		c.ipady = 0;
+		cashDrawerPanel.add(mButtonJPanel, c);
 		
 		pin2Button = new JButton("开钱箱(pin2)");
 		pin5Button = new JButton("开钱箱(pin5)");
@@ -56,7 +64,7 @@ public class CashDrawerPanel {
 				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
 
 		// 设置Button字体大小及样式等
-		Font f = new Font("隶书", Font.PLAIN, 15);
+		Font f = new Font("隶书", Font.PLAIN, 25);
 		pin2Button.setFont(f);
 		pin5Button.setFont(f);
 		initListener();
@@ -105,6 +113,31 @@ public class CashDrawerPanel {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 添加横线
+	 * 
+	 * @param fatherJpanel
+	 *            父布局
+	 * @param gridx
+	 *            X轴位置
+	 * @param gridy
+	 *            Y轴位置
+	 * @param ipady
+	 *            Y轴内撑大值（Android上的padding）
+	 * @param color
+	 */
+	public void addLine(JPanel fatherJpanel, int gridx, int gridy, int ipady,
+			Color color) {
+		JPanel linePanel = new JPanel();
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = gridx;
+		c.gridy = gridy;
+		c.ipady = ipady;
+		linePanel.setBackground(color);
+		fatherJpanel.add(linePanel, c);
 	}
 
 }
