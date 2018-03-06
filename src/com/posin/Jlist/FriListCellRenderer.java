@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		String text = "<html>" + wifiData.getWifiName() + "<br/>"
 				+ wifiData.getWifiStatus() + " <html/>";
 		setText(text);// 设置JLable的文字
+		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));//加入宽度为5的空白边框
 		/******* 设置JLable的图片 *****/
 		// 得到此图标的 Image,然后创建此图像的缩放版本。
 		// Image img = wifiData.getImage().getScaledInstance(50, 50,
