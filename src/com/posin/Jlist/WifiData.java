@@ -6,18 +6,11 @@ import javax.swing.ImageIcon;
 
 public class WifiData {
 
-	private Image image; // 图片
-	private ImageIcon imageIcon;
+	private ImageIcon imageIcon; // wifi对应的图标
 	private String wifiName; // wifi名字
+	private String wifiPassword; // wifi密码
+	private int wifiStrength; // wifi强度
 	private String wifiStatus; // wifi状态
-
-	public Image getImage() {
-		return image;
-	}
-
-	public void setImage(Image image) {
-		this.image = image;
-	}
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
@@ -33,6 +26,22 @@ public class WifiData {
 
 	public void setWifiName(String wifiName) {
 		this.wifiName = wifiName;
+	}
+
+	public String getWifiPassword() {
+		return wifiPassword;
+	}
+
+	public void setWifiPassword(String wifiPassword) {
+		this.wifiPassword = wifiPassword;
+	}
+
+	public int getWifiStrength() {
+		return wifiStrength;
+	}
+
+	public void setWifiStrength(int wifiStrength) {
+		this.wifiStrength = wifiStrength;
 	}
 
 	public String getWifiStatus() {
