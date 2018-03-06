@@ -37,6 +37,7 @@ public class HornPanel {
 		
 		playButton = new JButton("²¥·Å");
 		playButton.setPreferredSize(new Dimension(160, 80));
+		playButton.setFocusable(false);
 		playButton.setFont(f);
 		// hornPanel.add(playButton);
 

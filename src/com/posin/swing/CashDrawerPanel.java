@@ -62,7 +62,10 @@ public class CashDrawerPanel {
 				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
 		pin5Button.setPreferredSize(new Dimension(Appconfig.CASHDRAWER_BUTTON_WIDTH,
 				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
-
+		pin2Button.setFocusable(false);
+		pin5Button.setFocusable(false);
+		
+		
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.PLAIN, 25);
 		pin2Button.setFont(f);

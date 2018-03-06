@@ -9,28 +9,31 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import com.posin.constant.WifiMessage;
+
 public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 
-//	private ArrayList<WifiData> listWifiDatas = null;
-//
-//	public FriListCellRenderer(ArrayList<WifiData> listWifiDatas) {
-//		this.listWifiDatas = listWifiDatas;
-//	}
+	private Icon[] mIcons = null;
+
+	public FriListCellRenderer(Icon[] icons) {
+		this.mIcons = icons;
+	}
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
-		 WifiData wifiData = (WifiData) value;
-//		WifiData wifiData = listWifiDatas.get(index);
+		WifiMessage wifiData = (WifiMessage) value;
+		// WifiData wifiData = listWifiDatas.get(index);
 
 		// 设置JLable的文字
-		String text = "<html>" + wifiData.getWifiName() + "<br/>"
-				+ wifiData.getWifiStatus() + " <html/>";
+		String text = "<html>" + wifiData.getSsid() + "<br/>"
+				+ wifiData.getStatus() + " <html/>";
 		setText(text);
 		// 加入宽度为5的空白边框
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -44,8 +47,21 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		}
 
 		// 设置JLable的图片
-		ImageIcon imgicon = wifiData.getImageIcon();
-		setIcon(imgicon);
+		// ImageIcon imgicon = wifiData.getImageIcon();
+		// wifi强度
+		int wifiSignalLevel = Integer.parseInt(wifiData.getSignalLevel());
+		if (wifiSignalLevel >= 80) {
+			setIcon(mIcons[0]);
+		} else if ((wifiSignalLevel < 80) && (wifiSignalLevel >= 60)) {
+			setIcon(mIcons[1]);
+		} else if ((wifiSignalLevel < 60) && (wifiSignalLevel >= 40)) {
+			setIcon(mIcons[2]);
+		} else if ((wifiSignalLevel < 40) && (wifiSignalLevel >= 20)) {
+			setIcon(mIcons[3]);
+		}else{
+			setIcon(mIcons[4]);
+		}
+
 		// 设置JLable的图片与文字之间的距离
 		setIconTextGap(30);
 

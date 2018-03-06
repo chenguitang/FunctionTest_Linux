@@ -361,18 +361,12 @@ public class SerialPortPanel {
 	 */
 	private void initButtonStyle() {
 		// 设置Button大小
-		portButton.setPreferredSize(new Dimension(
-				Appconfig.CASHDRAWER_BUTTON_WIDTH,
-				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
-		baudrateButton.setPreferredSize(new Dimension(
-				Appconfig.CASHDRAWER_BUTTON_WIDTH,
-				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
-		switchButton.setPreferredSize(new Dimension(
-				Appconfig.CASHDRAWER_BUTTON_WIDTH,
-				Appconfig.CASHDRAWER_BUTTON_HEIGHT));
+		portButton.setPreferredSize(new Dimension(140, 60));
+		baudrateButton.setPreferredSize(new Dimension(140, 60));
+		switchButton.setPreferredSize(new Dimension(140, 60));
 
 		// 设置Button字体大小及样式等
-		Font f = new Font("隶书", Font.PLAIN, 15);
+		Font f = new Font("隶书", Font.PLAIN, 20);
 		portButton.setFont(f);
 		baudrateButton.setFont(f);
 		switchButton.setFont(f);
@@ -663,7 +657,7 @@ public class SerialPortPanel {
 			if (mRecvText) {
 				synchronized (mRecvLock) {
 					txt = new String(mRecvStream.toByteArray(), "utf-8");
-//					txt = mRecvStream.toString();
+					// txt = mRecvStream.toString();
 				}
 			} else {
 				synchronized (mRecvLock) {

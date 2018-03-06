@@ -25,7 +25,7 @@ public class Appconfig {
 	/**
 	 * 钱箱开关按钮的宽度
 	 */
-	public static final int CASHDRAWER_BUTTON_WIDTH = 160;
+	public static final int CASHDRAWER_BUTTON_WIDTH = 200;
 
 	/**
 	 * 钱箱开关按钮的高度

@@ -48,6 +48,13 @@ public class MainFrame extends JFrame {
 		b_4.setFont(f);
 		b_5.setFont(f);
 		
+		//是否可聚焦
+		b_1.setFocusable(false);
+		b_2.setFocusable(false);
+		b_3.setFocusable(false);
+		b_4.setFocusable(false);
+		b_5.setFocusable(false);
+		
 		//设置Button间距及Button大小
 		b_1.setMargin(new Insets(2, 2, 2, 2));
 //		b_1.setSize(100, 200);

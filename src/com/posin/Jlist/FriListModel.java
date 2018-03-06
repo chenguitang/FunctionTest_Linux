@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 
+import com.posin.constant.WifiMessage;
+
 public class FriListModel extends AbstractListModel {
 
-	private ArrayList<WifiData> listWifi;// wifi列表；
+	private ArrayList<WifiMessage> listWifi;// wifi列表；
 
-	public FriListModel(ArrayList<WifiData> listWfi) {
+	public FriListModel(ArrayList<WifiMessage> listWfi) {
 		this.listWifi = listWfi;
 	}
 
