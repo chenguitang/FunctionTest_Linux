@@ -93,7 +93,6 @@ public class ProcessUtils {
 			String endTip = "echo " + Appconfig.CMD_FINISH + "\n";
 //			System.out.println("endTip :  " + endTip);
 			os.write(endTip.getBytes());
-			os.write("echo endENDend\n".getBytes());
 			// os.write("echo 111111111111111 \n".getBytes());
 			os.flush();
 			return 0;
@@ -123,7 +122,7 @@ public class ProcessUtils {
 			String line = null;
 			try {
 				while ((line = bf.readLine()) != null) {
-//					System.out.println(line);
+					System.out.println(line);
 					mCallback.readLine(line);
 				}
 			} catch (Exception e) {

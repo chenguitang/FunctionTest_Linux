@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -35,6 +36,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import wifi.WifiUtils;
+import wifi.WifiUtils.AddNetworkListener;
+import wifi.WifiUtils.ConnectListener;
 import wifi.WifiUtils.WifiDataChageListener;
 
 import com.posin.Jlist.FriListCellRenderer;
@@ -75,6 +78,7 @@ public class WifiPanel {
 
 	public WifiPanel() {
 		wifiPanel = new JPanel();
+		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
 		Font f = new Font("隶书", Font.PLAIN, 25);
 		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
@@ -89,89 +93,39 @@ public class WifiPanel {
 	 */
 	private void initWifiList() {
 		try {
-			wifiUtils = new WifiUtils();
 			wifiUtils.findAllWifi();
-//			final ArrayList<WifiMessage> listWifiDatas = new ArrayList<>();
+			// final ArrayList<WifiMessage> listWifiDatas = new ArrayList<>();
 			wifiUtils.setAllWifiDataListener(new WifiDataChageListener() {
 
 				@Override
 				public void wifiDataChange(
 						ArrayList<WifiMessage> listWifiMessages) {
-//					System.out.println("+++++++++++++++++++++++++++");
-//					for (int i = 0; i < listWifiMessages.size(); i++) {
-//						System.out.println("listWifiMessages data : "
-//								+ listWifiMessages.get(i).toString() + "\n");
-//						listWifiDatas.add(listWifiMessages.get(i));
-//					}
-//					System.out.println("++++++++++++++++++++++++++");
+					listWifiDatas.clear();
+					// System.out.println("+++++++++++++++++++++++++++");
+					for (int i = 0; i < listWifiMessages.size(); i++) {
+						System.out.println("listWifiMessages data : "
+								+ listWifiMessages.get(i).toString() + "\n");
+						listWifiDatas.add(listWifiMessages.get(i));
+					}
+					// System.out.println("++++++++++++++++++++++++++");
 
 					if (listWifiMessages.size() > 0) {
 						System.out.println("listWifiMessages size : "
 								+ listWifiMessages.size());
-						 wifiJList.setListData(listWifiMessages.toArray());
+						// wifiJList.setListData(listWifiMessages.toArray());
+						wifiJList.setListData(listWifiDatas.toArray());
 					} else {
 						System.out.println("No search for WiFi ");
 					}
 				}
 			});
-			
+
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	public void test() {
-		ArrayList<WifiMessage> listWifiDatas = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			WifiMessage wifiData = new WifiMessage();
-			if (i % 2 == 0) {
-				wifiData.setSignalLevel("20");
-			} else if (i % 3 == 0) {
-				wifiData.setSignalLevel("40");
-			} else if (i % 3 == 5) {
-				wifiData.setSignalLevel("60");
-			} else {
-				wifiData.setSignalLevel("100");
-			}
-
-			wifiData.setSsid("posin" + i);
-			wifiData.setStatus("已连接");
-			listWifiDatas.add(wifiData);
-		}
-
-		ArrayList<WifiMessage> listWifiDatas1 = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			WifiMessage wifiData = new WifiMessage();
-			if (i % 2 == 0) {
-				wifiData.setSignalLevel("20");
-			} else if (i % 3 == 0) {
-				wifiData.setSignalLevel("40");
-			} else if (i % 3 == 5) {
-				wifiData.setSignalLevel("60");
-			} else {
-				wifiData.setSignalLevel("100");
-			}
-
-			wifiData.setSsid("posin" + i);
-			wifiData.setStatus("未连接");
-			listWifiDatas1.add(wifiData);
-		}
-
-		if (!testBoo) {
-			wifiJList.setListData(listWifiDatas.toArray());
-			System.out.println("data one 1");
-		} else {
-			wifiJList.setListData(listWifiDatas1.toArray());
-			System.out.println("data two 2");
-		}
-
-		System.out.println("testBoo : " + testBoo);
-		testBoo = !testBoo;
-
-	}
-
-	
 	/**
 	 * wifi列表
 	 * 
@@ -189,26 +143,26 @@ public class WifiPanel {
 		// Image img = image.getImage();
 		// img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
 		// image.setImage(img);
-		for (int i = 0; i < 20; i++) {
-			WifiMessage wifiData = new WifiMessage();
-			if (i % 2 == 0) {
-				wifiData.setSignalLevel("20");
-			} else if (i % 3 == 0) {
-				wifiData.setSignalLevel("40");
-			} else if (i % 3 == 5) {
-				wifiData.setSignalLevel("60");
-			} else {
-				wifiData.setSignalLevel("100");
-			}
-
-			wifiData.setSsid("posin" + i);
-			wifiData.setStatus("未连接");
-			listWifiDatas.add(wifiData);
-		}
+		// for (int i = 0; i < 20; i++) {
+		// WifiMessage wifiData = new WifiMessage();
+		// if (i % 2 == 0) {
+		// wifiData.setSignalLevel("20");
+		// } else if (i % 3 == 0) {
+		// wifiData.setSignalLevel("40");
+		// } else if (i % 3 == 5) {
+		// wifiData.setSignalLevel("60");
+		// } else {
+		// wifiData.setSignalLevel("100");
+		// }
+		//
+		// wifiData.setSsid("posin" + i);
+		// wifiData.setStatus("未连接");
+		// listWifiDatas.add(wifiData);
+		// }
 
 		listModel = new MyDefaultListModel(new ArrayList<WifiMessage>());
-		wifiJList = new JList();
-		wifiJList.setListData(listWifiDatas.toArray());
+		wifiJList = new JList(listModel);
+		// wifiJList.setListData(listWifiDatas.toArray());
 		wifiJList.setCellRenderer(new FriListCellRenderer(icons));
 		// 设置单一选择模式（每次只能有一个元素被选中）
 		wifiJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -219,32 +173,122 @@ public class WifiPanel {
 		JScrollPane jp = new JScrollPane(wifiJList);
 		jp.setPreferredSize(new Dimension(1920, 600));
 		wifiPanel.add(jp);
+		initWifiList(); // 刷新数据
+		// wifiJList.removel
 
 		wifiJList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
-				listenerJlistSelect(event);
+
+				// 鼠标点击释放
+				if (!wifiJList.getValueIsAdjusting()) {
+					// System.out.println("you release this");
+					// listenerJlistSelect();
+					System.out.println("#####################");
+					int selectedPosition = wifiJList.getSelectedIndex();
+					// System.out.println("select index： " + selectedPosition);
+					System.out.println("wifi name : "
+							+ listWifiDatas.get(selectedPosition).getSsid());
+
+					getNetWork(selectedPosition);
+				} else {
+					// System.out.println("you click this");
+				}
+
 			}
 		});
 	}
-	
+
+	/**
+	 * 获取network
+	 * 
+	 * @param position
+	 *            选择哪个wifi
+	 */
+	public void getNetWork(final int position) {
+		try {
+			wifiUtils.findAddNetwork();
+			wifiUtils.setAddNetworkListener(new AddNetworkListener() {
+
+				@Override
+				public void AddNetworkCallBack(String network) {
+					System.out.println("network: " + network);
+					if (network != null) {
+						String password = JOptionPane.showInputDialog("输入密码");
+						if (password != null && !password.trim().equals("")) {
+							System.out.println("password: " + password);
+							String ssid = listWifiDatas.get(position).getSsid();
+							connnectWifi(position, network, ssid, password);
+						} else {
+							JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+						}
+					}
+				}
+			});
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error: " + e.getMessage());
+		}
+
+	}
+
+	/**
+	 * 连接wifi
+	 * 
+	 * @param index
+	 *            选中位置
+	 * @param network
+	 *            addNetwork
+	 * @param ssid
+	 *            wifi名字
+	 * @param password
+	 *            密码
+	 */
+	public void connnectWifi(final int index, String network, String ssid,
+			String password) {
+		try {
+			wifiUtils.connect(network, ssid, password);
+			wifiUtils.setConnectListener(new ConnectListener() {
+
+				@Override
+				public void connectCallBack(boolean isSuccess) {
+					if (isSuccess) {
+						System.out.println("wifiJPanel connect success");
+						System.out.println("listWifiDatas size: "
+								+ listWifiDatas.size() + "  index: " + index);
+						 listWifiDatas.get(index).setStatus("已连接");
+						 listWifiDatas.notifyAll();
+//						wifiJList.setListData(listWifiDatas.toArray());
+						// listWifiDatas.notify();
+					} else {
+						System.out.println("wifiJPanel connect failure");
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * 监听Jlist的Item被点击事件
 	 */
-	private void listenerJlistSelect(ListSelectionEvent event) {
+	private void listenerJlistSelect() {
 		int selectedPosition = wifiJList.getSelectedIndex();
-		System.out.println("选中位置： " + selectedPosition);
-		if (listWifiDatas != null) {
-			if (listWifiDatas.size() > selectedPosition) {
-				listWifiDatas.get(selectedPosition).setStatus("已连接");
-				ImageIcon image = new ImageIcon(
-						"E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
-				listWifiDatas.get(selectedPosition).setSignalLevel("60");
-				// wifiJList.notify();
-			}
-		}
-
+		System.out.println("my select index: " + selectedPosition);
+		// if (listWifiDatas != null) {
+		// if (listWifiDatas.size() > selectedPosition) {
+		// listWifiDatas.get(selectedPosition).setStatus("已连接");
+		// ImageIcon image = new ImageIcon(
+		// "E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
+		// listWifiDatas.get(selectedPosition).setSignalLevel("60");
+		// // wifiJList.notify();
+		// }
+		// }
+		System.out.println("#####################");
 	}
 
 	/**
@@ -255,7 +299,7 @@ public class WifiPanel {
 	 */
 	private void initTopSwitchPanel(JPanel parentPanel) {
 
-		final JButton wifiSwitchStatusJLabel = new JButton("Wifi已开启，点击关闭wifi");
+		final JButton wifiSwitchStatusJLabel = new JButton("Wifi已开启，点击刷新wifi");
 		wifiSwitchStatusJLabel.setPreferredSize(new Dimension(1920, 70));
 		wifiSwitchStatusJLabel.setFont(new Font("楷体", Font.PLAIN, 25));
 		wifiSwitchStatusJLabel.setFocusPainted(false); // 取消聚焦
@@ -270,13 +314,6 @@ public class WifiPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				// wifiIsOpen = !wifiIsOpen;
 				// changeWifiSwitchStatus(wifiSwitchStatusJLabel);
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						
-//					}
-//				}).start();
 				initWifiList();
 			}
 		});
@@ -291,12 +328,13 @@ public class WifiPanel {
 	public void changeWifiSwitchStatus(JButton wifiSwitchStatusJLabel) {
 		if (!wifiIsOpen) {
 			System.out.println("wifiIsOpen: " + wifiIsOpen);
-			wifiSwitchStatusJLabel.setText("Wifi已关闭，点击开启wifi");
-			wifiSwitchStatusJLabel.setBackground(new Color(119, 119, 136));
+			wifiSwitchStatusJLabel.setText("Wifi已开启，点击刷新wifi");
+			// wifiSwitchStatusJLabel.setBackground(new Color(119, 119, 136));
+			wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
 			wifiSwitchStatusJLabel.setForeground(Color.WHITE);
 		} else {
 			System.out.println("wifiIsOpen: " + wifiIsOpen);
-			wifiSwitchStatusJLabel.setText("Wifi已开启，点击关闭wifi");
+			wifiSwitchStatusJLabel.setText("Wifi已开启，点击刷新wifi");
 			wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
 			wifiSwitchStatusJLabel.setForeground(Color.WHITE);
 		}
