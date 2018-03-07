@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.text.AbstractDocument.BranchElement;
 
 import com.posin.constant.WifiMessage;
+import com.posin.global.Appconfig;
 import com.posin.utils.Proc;
 import com.posin.utils.ProcessUtils;
 import com.posin.utils.StringUtils;
@@ -68,29 +69,35 @@ public class WifiUtils {
 		ProcessUtils.suExecCallback(cmd_scan_wifi_result, new Callback() {
 
 			int wifiSum = 0;
+			boolean isEnd = false;
 
 			@Override
 			public void readLine(String line) {
-				System.out.println(line);
-				if (wifiSum > 0) {
+//				System.out.println(line);
+				if (Appconfig.CMD_FINISH.equals(line.trim())) {
+					mWifiDataChageListener.wifiDataChange(listWifiMessages);
+					isEnd = true;
+				}
+				if (wifiSum > 0 && !isEnd) {
 					String wifiData = StringUtils.delectEmpty(line);
-//					System.out.println("wifiData: " + wifiData);
+					// System.out.println("wifiData: " + wifiData);
 					String[] messages = wifiData.split(" ");
-//					System.out.println("wifidata length: " + messages.length);
+					// System.out.println("wifidata length: " +
+					// messages.length);
 					WifiMessage wifiMessage = new WifiMessage();
 
 					wifiMessage.setMacAddress(messages[0]);
 					wifiMessage.setFrequency(messages[1]);
-					wifiMessage.setSignalLevel(messages[2]);
+					wifiMessage.setSignalLevel(messages[2].substring(1));
 					wifiMessage.setFlags(messages[3]);
 					wifiMessage.setSsid(messages[4]);
+					wifiMessage.setStatus("Î´Á¬½Ó");
 					listWifiMessages.add(wifiMessage);
 				}
-				mWifiDataChageListener.wifiDataChange(listWifiMessages);
 				wifiSum++;
 			}
 		}, 10);
-		
+
 	}
 
 	/**

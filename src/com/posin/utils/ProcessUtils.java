@@ -10,13 +10,14 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 
+import com.posin.global.Appconfig;
 import com.posin.utils.Proc.InputRunnable;
 import com.posin.utils.Proc.MyStreamWriter;
 import com.posin.utils.Proc.MySuProcess;
 
 public class ProcessUtils {
 
-//	private static MySuProcess mSu;
+	// private static MySuProcess mSu;
 
 	/**
 	 * 不带指令的Process
@@ -64,14 +65,14 @@ public class ProcessUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static synchronized int suExecCallback( String cmd,
+	public static synchronized int suExecCallback(String cmd,
 			Callback callback, int timeout) throws IOException {
 		Process process = createSuProcess();
-//		if (mSu == null) {
-			new Thread(new InputRunnable(process.getInputStream(), callback))
-					.start();
-			MySuProcess mSu = new MySuProcess();
-//		}
+		// if (mSu == null) {
+		new Thread(new InputRunnable(process.getInputStream(), callback))
+				.start();
+		MySuProcess mSu = new MySuProcess();
+		// }
 		return mSu.exec(process, cmd, callback, timeout);
 	}
 
@@ -88,6 +89,12 @@ public class ProcessUtils {
 			System.out.println("exec cmd : " + cmd);
 			OutputStream os = process.getOutputStream();
 			os.write(cmd.getBytes());
+
+			String endTip = "echo " + Appconfig.CMD_FINISH + "\n";
+//			System.out.println("endTip :  " + endTip);
+			os.write(endTip.getBytes());
+			os.write("echo endENDend\n".getBytes());
+			// os.write("echo 111111111111111 \n".getBytes());
 			os.flush();
 			return 0;
 		}

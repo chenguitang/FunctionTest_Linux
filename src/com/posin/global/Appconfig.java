@@ -21,7 +21,7 @@ public class Appconfig {
 	 * 顶部按钮的高度
 	 */
 	public static final int TOP_BUTTON_HEIGHT = 60;
-	
+
 	/**
 	 * 钱箱开关按钮的宽度
 	 */
@@ -31,5 +31,10 @@ public class Appconfig {
 	 * 钱箱开关按钮的高度
 	 */
 	public static final int CASHDRAWER_BUTTON_HEIGHT = 80;
+
+	/**
+	 * cmd操作完成
+	 */
+	public static final String CMD_FINISH = "**CMD-RESULT**";
 
 }

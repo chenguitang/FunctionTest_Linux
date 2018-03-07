@@ -19,7 +19,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
+import javax.sound.sampled.Line;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,6 +39,7 @@ import wifi.WifiUtils.WifiDataChageListener;
 
 import com.posin.Jlist.FriListCellRenderer;
 import com.posin.Jlist.FriListModel;
+import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
 import com.posin.utils.StringUtils;
 
@@ -58,13 +62,16 @@ public class WifiPanel {
 
 	static JPanel wifiPanel = null; // 根布局
 	private JPanel listWifiPane = null; // wifi列表
-	private JList<JPanel> wifiJList = null;
+	// private JList<JPanel> wifiJList = null;
+	private JList wifiJList = null;
 	private ArrayList<WifiMessage> listWifiDatas = null; // wifi数据聚合
 
 	private boolean wifiIsOpen = true;
 	private ImageIcon image3 = null;
 
 	private WifiUtils wifiUtils = null;
+	private MyDefaultListModel listModel = null;
+	private boolean testBoo = false;
 
 	public WifiPanel() {
 		wifiPanel = new JPanel();
@@ -84,30 +91,87 @@ public class WifiPanel {
 		try {
 			wifiUtils = new WifiUtils();
 			wifiUtils.findAllWifi();
+//			final ArrayList<WifiMessage> listWifiDatas = new ArrayList<>();
 			wifiUtils.setAllWifiDataListener(new WifiDataChageListener() {
 
 				@Override
 				public void wifiDataChange(
 						ArrayList<WifiMessage> listWifiMessages) {
-					System.out
-							.println("2++++++++++++++++++++++++++++++++++++++++++++");
-					System.out.println("listWifiMessages size : "
-							+ listWifiMessages.size());
-					System.out
-							.println("++++++++++++++++++++++++++++++++++++++++++++");
-					listWifiDatas.clear();
-					for (WifiMessage wifiMessage : listWifiMessages) {
-						listWifiDatas.add(wifiMessage);
-						listWifiDatas.notify();
+//					System.out.println("+++++++++++++++++++++++++++");
+//					for (int i = 0; i < listWifiMessages.size(); i++) {
+//						System.out.println("listWifiMessages data : "
+//								+ listWifiMessages.get(i).toString() + "\n");
+//						listWifiDatas.add(listWifiMessages.get(i));
+//					}
+//					System.out.println("++++++++++++++++++++++++++");
+
+					if (listWifiMessages.size() > 0) {
+						System.out.println("listWifiMessages size : "
+								+ listWifiMessages.size());
+						 wifiJList.setListData(listWifiMessages.toArray());
+					} else {
+						System.out.println("No search for WiFi ");
 					}
 				}
 			});
+			
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
+	public void test() {
+		ArrayList<WifiMessage> listWifiDatas = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			WifiMessage wifiData = new WifiMessage();
+			if (i % 2 == 0) {
+				wifiData.setSignalLevel("20");
+			} else if (i % 3 == 0) {
+				wifiData.setSignalLevel("40");
+			} else if (i % 3 == 5) {
+				wifiData.setSignalLevel("60");
+			} else {
+				wifiData.setSignalLevel("100");
+			}
+
+			wifiData.setSsid("posin" + i);
+			wifiData.setStatus("已连接");
+			listWifiDatas.add(wifiData);
+		}
+
+		ArrayList<WifiMessage> listWifiDatas1 = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			WifiMessage wifiData = new WifiMessage();
+			if (i % 2 == 0) {
+				wifiData.setSignalLevel("20");
+			} else if (i % 3 == 0) {
+				wifiData.setSignalLevel("40");
+			} else if (i % 3 == 5) {
+				wifiData.setSignalLevel("60");
+			} else {
+				wifiData.setSignalLevel("100");
+			}
+
+			wifiData.setSsid("posin" + i);
+			wifiData.setStatus("未连接");
+			listWifiDatas1.add(wifiData);
+		}
+
+		if (!testBoo) {
+			wifiJList.setListData(listWifiDatas.toArray());
+			System.out.println("data one 1");
+		} else {
+			wifiJList.setListData(listWifiDatas1.toArray());
+			System.out.println("data two 2");
+		}
+
+		System.out.println("testBoo : " + testBoo);
+		testBoo = !testBoo;
+
+	}
+
+	
 	/**
 	 * wifi列表
 	 * 
@@ -142,8 +206,9 @@ public class WifiPanel {
 			listWifiDatas.add(wifiData);
 		}
 
-		FriListModel listModel = new FriListModel(listWifiDatas);
-		wifiJList = new JList(listModel);
+		listModel = new MyDefaultListModel(new ArrayList<WifiMessage>());
+		wifiJList = new JList();
+		wifiJList.setListData(listWifiDatas.toArray());
 		wifiJList.setCellRenderer(new FriListCellRenderer(icons));
 		// 设置单一选择模式（每次只能有一个元素被选中）
 		wifiJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -163,7 +228,7 @@ public class WifiPanel {
 			}
 		});
 	}
-
+	
 	/**
 	 * 监听Jlist的Item被点击事件
 	 */
@@ -205,6 +270,13 @@ public class WifiPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				// wifiIsOpen = !wifiIsOpen;
 				// changeWifiSwitchStatus(wifiSwitchStatusJLabel);
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						
+//					}
+//				}).start();
 				initWifiList();
 			}
 		});

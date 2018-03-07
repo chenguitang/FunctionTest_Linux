@@ -56,6 +56,13 @@ public class WifiMessage {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	@Override
+	public String toString() {
+		return "WifiMessage [macAddress=" + macAddress + ", frequency="
+				+ frequency + ", signalLevel=" + signalLevel + ", flags="
+				+ flags + ", ssid=" + ssid + ", status=" + status + "]";
+	}
 	
 	
 
