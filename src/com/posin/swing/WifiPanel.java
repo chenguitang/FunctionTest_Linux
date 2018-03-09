@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 import wifi.WifiUtils;
 import wifi.WifiUtils.AddNetworkListener;
 import wifi.WifiUtils.ConnectListener;
+import wifi.WifiUtils.ConnnectStatusListener;
 import wifi.WifiUtils.WifiDataChageListener;
 
 import com.posin.Jlist.FriListCellRenderer;
@@ -75,6 +76,7 @@ public class WifiPanel {
 	private WifiUtils wifiUtils = null;
 	private MyDefaultListModel listModel = null;
 	private boolean testBoo = false;
+	private boolean operation = false;
 
 	public WifiPanel() {
 		wifiPanel = new JPanel();
@@ -86,6 +88,36 @@ public class WifiPanel {
 		initTopSwitchPanel(wifiPanel); // 顶部wifi开关
 		// initWifiList(); // 获取wifi信息
 		initListWifiPanel(wifiPanel); // wifi列表
+
+		refreshWifiList();
+	}
+
+	/**
+	 * 刷新wifi列表
+	 */
+	private void refreshWifiList() {
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(5000);
+						if (!operation) {
+//							checkConnectStatus();
+							initWifiList();
+							System.out.println("++++ refresh wifi list +++++++");
+						}else{
+							System.out.println("in operation ,after refresh");
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("Error: " + e.getMessage());
+					}
+				}
+			}
+		}).start();
 	}
 
 	/**
@@ -107,13 +139,12 @@ public class WifiPanel {
 								+ listWifiMessages.get(i).toString() + "\n");
 						listWifiDatas.add(listWifiMessages.get(i));
 					}
-					// System.out.println("++++++++++++++++++++++++++");
-
 					if (listWifiMessages.size() > 0) {
 						System.out.println("listWifiMessages size : "
 								+ listWifiMessages.size());
 						// wifiJList.setListData(listWifiMessages.toArray());
-						wifiJList.setListData(listWifiDatas.toArray());
+						checkConnectStatus();
+						// wifiJList.setListData(listWifiDatas.toArray());
 					} else {
 						System.out.println("No search for WiFi ");
 					}
@@ -124,6 +155,41 @@ public class WifiPanel {
 			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 检查连接状态
+	 */
+	public void checkConnectStatus() {
+		wifiUtils.getStatus();
+		wifiUtils.setConnectStatusListener(new ConnnectStatusListener() {
+
+			@Override
+			public void connectStatus(boolean isConnect, WifiMessage wifiMessage) {
+				if (isConnect && wifiMessage != null) {
+					String ssid = wifiMessage.getSsid();
+					System.out.println("wifi name: ====" + ssid + "===");
+					for (int i = 0; i < listWifiDatas.size(); i++) {
+						if (listWifiDatas.get(i).getSsid().equals(ssid)) {
+							System.out.println("-------------- has connect "
+									+ ssid + "--------------");
+							listWifiDatas.get(i).setStatus("已连接");
+						} else {
+							listWifiDatas.get(i).setStatus("未连接");
+							// System.out.println("++listWifiDatas size: "
+							// + listWifiDatas.size() + " wifi name:=="
+							// + listWifiDatas.get(i).getSsid() + "==");
+						}
+					}
+				} else {
+					System.out.println("no wifi connect this devices");
+					for (int i = 0; i < listWifiDatas.size(); i++) {
+						listWifiDatas.get(i).setStatus("未连接");
+					}
+				}
+				wifiJList.setListData(listWifiDatas.toArray());
+			}
+		});
 	}
 
 	/**
@@ -175,6 +241,7 @@ public class WifiPanel {
 		wifiPanel.add(jp);
 		initWifiList(); // 刷新数据
 		// wifiJList.removel
+		// 首次进入APP，判断连接状态
 
 		wifiJList.addListSelectionListener(new ListSelectionListener() {
 
@@ -184,7 +251,7 @@ public class WifiPanel {
 				// 鼠标点击释放
 				if (!wifiJList.getValueIsAdjusting()) {
 					// System.out.println("you release this");
-					// listenerJlistSelect();
+					operation=true;
 					System.out.println("#####################");
 					int selectedPosition = wifiJList.getSelectedIndex();
 					// System.out.println("select index： " + selectedPosition);
@@ -216,12 +283,16 @@ public class WifiPanel {
 					System.out.println("network: " + network);
 					if (network != null) {
 						String password = JOptionPane.showInputDialog("输入密码");
-						if (password != null && !password.trim().equals("")) {
+						operation=false;
+						if (password == null) {
+							return;
+						} else if (password.trim().equals("")) {
+							JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+							return;
+						} else {
 							System.out.println("password: " + password);
 							String ssid = listWifiDatas.get(position).getSsid();
 							connnectWifi(position, network, ssid, password);
-						} else {
-							JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
 						}
 					}
 				}
@@ -249,46 +320,57 @@ public class WifiPanel {
 	public void connnectWifi(final int index, String network, String ssid,
 			String password) {
 		try {
-			wifiUtils.connect(network, ssid, password);
+			wifiUtils.connect(network, ssid, password, listWifiDatas.get(index)
+					.getFlags());
 			wifiUtils.setConnectListener(new ConnectListener() {
 
 				@Override
 				public void connectCallBack(boolean isSuccess) {
-					if (isSuccess) {
-						System.out.println("wifiJPanel connect success");
-						System.out.println("listWifiDatas size: "
-								+ listWifiDatas.size() + "  index: " + index);
-						 listWifiDatas.get(index).setStatus("已连接");
-						 listWifiDatas.notifyAll();
-//						wifiJList.setListData(listWifiDatas.toArray());
-						// listWifiDatas.notify();
-					} else {
-						System.out.println("wifiJPanel connect failure");
+					// if (isSuccess) {
+					// System.out.println("wifiJPanel connect success");
+					// System.out.println("listWifiDatas size: "
+					// + listWifiDatas.size() + "  index: " + index);
+					// listWifiDatas.get(index).setStatus("已连接");
+					// // listWifiDatas.notifyAll();
+					//
+					// for (int i = 0; i < listWifiDatas.size(); i++) {
+					// if (i == index) {
+					// listWifiDatas.get(i).setStatus("已连接");
+					// System.out
+					// .println("connect again wifi name: "
+					// + listWifiDatas.get(i)
+					// .getSsid());
+					// } else {
+					// listWifiDatas.get(i).setStatus("未连接");
+					// System.out.println("connect again wifi name: "
+					// + listWifiDatas.get(i).getSsid());
+					// }
+					// }
+					// wifiJList.setListData(listWifiDatas.toArray());
+					// // listWifiDatas.notify();
+					// } else {
+					// for (int i = 0; i < listWifiDatas.size(); i++) {
+					// listWifiDatas.get(i).setStatus("未连接");
+					// wifiJList.setListData(listWifiDatas.toArray());
+					// }
+					// System.out.println("wifiJPanel connect failure");
+					// }
+					try {
+						System.out.println("start wait for");
+						Thread.sleep(1500);
+						System.out.println("end wait for");
+						checkConnectStatus();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+
 				}
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * 监听Jlist的Item被点击事件
-	 */
-	private void listenerJlistSelect() {
-		int selectedPosition = wifiJList.getSelectedIndex();
-		System.out.println("my select index: " + selectedPosition);
-		// if (listWifiDatas != null) {
-		// if (listWifiDatas.size() > selectedPosition) {
-		// listWifiDatas.get(selectedPosition).setStatus("已连接");
-		// ImageIcon image = new ImageIcon(
-		// "E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
-		// listWifiDatas.get(selectedPosition).setSignalLevel("60");
-		// // wifiJList.notify();
-		// }
-		// }
-		System.out.println("#####################");
 	}
 
 	/**

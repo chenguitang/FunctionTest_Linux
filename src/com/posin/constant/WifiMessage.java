@@ -8,6 +8,7 @@ public class WifiMessage {
 	private String flags; // 加密方式
 	private String ssid; // wifi名字
 	private String status; // wifi状态
+	private String ipAddresss; // wifi地址
 
 	public String getMacAddress() {
 		return macAddress;
@@ -56,6 +57,15 @@ public class WifiMessage {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
+
+	public String getIpAddresss() {
+		return ipAddresss;
+	}
+
+	public void setIpAddresss(String ipAddresss) {
+		this.ipAddresss = ipAddresss;
+	}
 
 	@Override
 	public String toString() {
@@ -63,7 +73,5 @@ public class WifiMessage {
 				+ frequency + ", signalLevel=" + signalLevel + ", flags="
 				+ flags + ", ssid=" + ssid + ", status=" + status + "]";
 	}
-	
-	
 
 }

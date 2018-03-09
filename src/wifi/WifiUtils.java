@@ -31,11 +31,15 @@ public class WifiUtils {
 	private static String cmd_scan_wifi_result = "wpa_cli -i wlan0 scan_result\n";
 	// add_network
 	private static String cmd_add_network = "wpa_cli -i wlan0 add_network\n";
+	// 获取wifi状态
+	private static String cmd_get_status = "wpa_cli -i wlan0 status\n";
+
 	private static boolean excue1 = true;
 
 	private static WifiDataChageListener mWifiDataChageListener;
 	private AddNetworkListener mAddNetworkListener;
 	private ConnectListener mConnectListener;
+	private ConnnectStatusListener mConnnectStatusListener;
 
 	/**
 	 * 查找所有wifi
@@ -89,22 +93,22 @@ public class WifiUtils {
 	 *            wifi名字
 	 * @param password
 	 *            密码
+	 * @param encry
+	 *            加密方式
+	 * 
 	 * @throws Exception
 	 */
 	public void connect(final String network, final String ssid,
-			final String password) throws Exception {
+			final String password, final String encry) throws Exception {
 
 		String setSsid = "wpa_cli -i wlan0 set_network " + network.trim()
 				+ " ssid \'\"" + ssid.trim() + "\"\'\n";
-
-		final String setpasword = "wpa_cli -i wlan0 set_network " + network
-				+ " psk \'\"" + password.trim() + "\"\'\n";
 
 		final String connectwifi = "wpa_cli -i wlan0 select_network " + network
 				+ "\n";
 
 		System.out.println("==" + setSsid + "==");
-		System.out.println("==" + setpasword + "==");
+		// System.out.println("==" + setpasword + "==");
 		System.out.println("==" + connectwifi + "==");
 		// System.out.println("setSsid: " + setSsid);
 		// System.out.println("setpasword: " + setpasword);
@@ -116,7 +120,7 @@ public class WifiUtils {
 				System.out.println("connect wifi result: " + line);
 				if (line.toUpperCase().equals("OK")) {
 					System.out.println("set ssid success");
-					setPassword(setpasword, connectwifi);
+					setPassword(encry, network, password, connectwifi);
 				} else {
 					if (!line.trim().equals(Appconfig.CMD_FINISH)) {
 						mConnectListener.connectCallBack(false);
@@ -135,8 +139,22 @@ public class WifiUtils {
 	 * @param connectwifi
 	 *            连接wifi语句
 	 */
-	public void setPassword(String setpasword, final String connectwifi) {
+	public void setPassword(String encry, final String network,
+			final String password, final String connectwifi) {
 		try {
+
+			String setpasword = null;
+			if (encry.contains("[WPA2-PSK") || encry.contains("[WPA-PSK")) { // PSK加密方式
+				setpasword = "wpa_cli -i wlan0 set_network " + network
+						+ "psk \'\"" + password.trim() + "\"\'\n";
+			} else if (encry.contains("[WEP")) {
+				setpasword = "wpa_cli -i wlan0 set_network " + network
+						+ "wep_key0 \'\"" + password.trim() + "\"\'\n";
+			} else {
+				setpasword = "wpa_cli -i wlan0 set_network " + network
+						+ " key_mgmt NONE\n";
+			}
+			System.out.println("==" + setpasword + "==");
 			ProcessUtils.suExecCallback(setpasword, new Callback() {
 				@Override
 				public void readLine(String line) {
@@ -217,6 +235,51 @@ public class WifiUtils {
 	}
 
 	/**
+	 * 获取wifi状态
+	 */
+	public void getStatus() {
+		try {
+			final WifiMessage wifiMessage = new WifiMessage();
+			ProcessUtils.suExecCallback(cmd_get_status, new Callback() {
+				boolean isConnect = false;
+
+				@Override
+				public void readLine(String line) {
+					System.out
+							.println("++++++++++++++++++===================++++++++++++++++");
+					System.out.println("check connect status: " + line);
+					if (line.contains("ssid=")) {
+						wifiMessage.setSsid(line.substring("ssid=".length())
+								.trim());
+					} else if (line.contains("key_mgmt=")) {
+						wifiMessage.setFlags(line.substring(
+								"key_mgmt=".length()).trim());
+					} else if (line.contains("ip_address=")) {
+						wifiMessage.setIpAddresss(line.substring(
+								"ip_address=".length()).trim());
+					} else if (line.contains("bssid=")) {
+						wifiMessage.setMacAddress(line.substring(
+								"bssid=".length()).trim());
+					} else if (line.contains("wpa_state=COMPLETED")) {
+						isConnect = true;
+					} else if (line.trim().equals(Appconfig.CMD_FINISH)) {
+						System.out.println("listener isConnect: " + isConnect);
+						if (isConnect) {
+							mConnnectStatusListener.connectStatus(true,
+									wifiMessage);
+						} else {
+							mConnnectStatusListener.connectStatus(false,
+									wifiMessage);
+						}
+					}
+				}
+			}, 10);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * 解析数据
 	 * 
 	 * @throws IOException
@@ -249,12 +312,26 @@ public class WifiUtils {
 					wifiMessage.setSignalLevel(messages[2].substring(1));
 					wifiMessage.setFlags(messages[3]);
 					wifiMessage.setSsid(messages[4]);
-					wifiMessage.setStatus(" ");
+					wifiMessage.setStatus("未连接");
 					listWifiMessages.add(wifiMessage);
 				}
 				wifiSum++;
 			}
 		}, 10);
+	}
+
+	/**
+	 * 监听连接状态
+	 * 
+	 * @param connnectStatusListener
+	 */
+	public void setConnectStatusListener(
+			ConnnectStatusListener connnectStatusListener) {
+		this.mConnnectStatusListener = connnectStatusListener;
+	}
+
+	public interface ConnnectStatusListener {
+		void connectStatus(boolean isConnect, WifiMessage wifiMessage);
 	}
 
 	/**

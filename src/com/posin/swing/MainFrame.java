@@ -76,7 +76,7 @@ public class MainFrame extends JFrame {
 		p.add(b_2);
 		p.add(b_3);
 		p.add(b_4);
-		p.add(b_5);
+//		p.add(b_5);
 		// p_1 = new JPanel();
 		CashDrawerPanel mCashDrawerPanel = new CashDrawerPanel();
 		p_1 = CashDrawerPanel.cashDrawerPanel;

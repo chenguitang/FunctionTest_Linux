@@ -122,7 +122,7 @@ public class ProcessUtils {
 			String line = null;
 			try {
 				while ((line = bf.readLine()) != null) {
-					System.out.println(line);
+//					System.out.println(line);
 					mCallback.readLine(line);
 				}
 			} catch (Exception e) {
