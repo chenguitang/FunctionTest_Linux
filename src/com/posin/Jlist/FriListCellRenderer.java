@@ -50,13 +50,13 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		// ImageIcon imgicon = wifiData.getImageIcon();
 		// wifiÇ¿¶È
 		int wifiSignalLevel = Integer.parseInt(wifiData.getSignalLevel());
-		if (wifiSignalLevel >= 70) {
+		if (wifiSignalLevel >= 85) {
 			setIcon(mIcons[4]);
-		} else if ((wifiSignalLevel < 80) && (wifiSignalLevel >= 50)) {
+		} else if ((wifiSignalLevel < 85) && (wifiSignalLevel >= 65)) {
 			setIcon(mIcons[3]);
-		} else if ((wifiSignalLevel < 60) && (wifiSignalLevel >= 30)) {
+		} else if ((wifiSignalLevel < 65) && (wifiSignalLevel >= 55)) {
 			setIcon(mIcons[2]);
-		} else if ((wifiSignalLevel < 40) && (wifiSignalLevel >= 20)) {
+		} else if ((wifiSignalLevel < 55) && (wifiSignalLevel >= 45)) {
 			setIcon(mIcons[1]);
 		}else{
 			setIcon(mIcons[0]);

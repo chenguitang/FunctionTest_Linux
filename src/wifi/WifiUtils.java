@@ -41,6 +41,12 @@ public class WifiUtils {
 	private ConnectListener mConnectListener;
 	private ConnnectStatusListener mConnnectStatusListener;
 
+	private ProcessUtils mProcessUtils;
+
+	public WifiUtils() {
+		mProcessUtils = new ProcessUtils();
+	}
+
 	/**
 	 * 查找所有wifi
 	 * 
@@ -48,7 +54,7 @@ public class WifiUtils {
 	 */
 	public void findAllWifi() throws Exception {
 		// 开始扫描wifi
-		ProcessUtils.suExecCallback(cmd_scan_wifi, new Callback() {
+		mProcessUtils.suExecCallback(cmd_scan_wifi, new Callback() {
 
 			@Override
 			public void readLine(String line) {
@@ -73,7 +79,7 @@ public class WifiUtils {
 	 */
 	public void findAddNetwork() throws Exception {
 
-		ProcessUtils.suExecCallback(cmd_add_network, new Callback() {
+		mProcessUtils.suExecCallback(cmd_add_network, new Callback() {
 
 			@Override
 			public void readLine(String line) {
@@ -114,7 +120,7 @@ public class WifiUtils {
 		// System.out.println("setpasword: " + setpasword);
 		// System.out.println("connectwifi: " + connectwifi);
 
-		ProcessUtils.suExecCallback(setSsid, new Callback() {
+		mProcessUtils.suExecCallback(setSsid, new Callback() {
 			@Override
 			public void readLine(String line) {
 				System.out.println("connect wifi result: " + line);
@@ -146,16 +152,16 @@ public class WifiUtils {
 			String setpasword = null;
 			if (encry.contains("[WPA2-PSK") || encry.contains("[WPA-PSK")) { // PSK加密方式
 				setpasword = "wpa_cli -i wlan0 set_network " + network
-						+ "psk \'\"" + password.trim() + "\"\'\n";
+						+ " psk \'\"" + password.trim() + "\"\'\n";
 			} else if (encry.contains("[WEP")) {
 				setpasword = "wpa_cli -i wlan0 set_network " + network
-						+ "wep_key0 \'\"" + password.trim() + "\"\'\n";
+						+ " wep_key0 \'\"" + password.trim() + "\"\'\n";
 			} else {
 				setpasword = "wpa_cli -i wlan0 set_network " + network
 						+ " key_mgmt NONE\n";
 			}
 			System.out.println("==" + setpasword + "==");
-			ProcessUtils.suExecCallback(setpasword, new Callback() {
+			mProcessUtils.suExecCallback(setpasword, new Callback() {
 				@Override
 				public void readLine(String line) {
 					if (line.toUpperCase().equals("OK")) {
@@ -183,7 +189,7 @@ public class WifiUtils {
 	 */
 	public void connectWifi(String connectwifi) {
 		try {
-			ProcessUtils.suExecCallback(connectwifi, new Callback() {
+			mProcessUtils.suExecCallback(connectwifi, new Callback() {
 
 				@Override
 				public void readLine(String line) {
@@ -210,7 +216,7 @@ public class WifiUtils {
 	 */
 	public void saveConfig() {
 		try {
-			ProcessUtils.suExecCallback("wpa_cli -i wlan0  save_config",
+			mProcessUtils.suExecCallback("wpa_cli -i wlan0  save_config",
 					new Callback() {
 
 						@Override
@@ -240,14 +246,12 @@ public class WifiUtils {
 	public void getStatus() {
 		try {
 			final WifiMessage wifiMessage = new WifiMessage();
-			ProcessUtils.suExecCallback(cmd_get_status, new Callback() {
+			System.out.println("======================================");
+			mProcessUtils.suExecCallback(cmd_get_status, new Callback() {
 				boolean isConnect = false;
-
 				@Override
 				public void readLine(String line) {
-//					System.out
-//							.println("++++++++++++++++++===================++++++++++++++++");
-//					System.out.println("check connect status: " + line);
+					System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
 						wifiMessage.setSsid(line.substring("ssid=".length())
 								.trim());
@@ -274,6 +278,7 @@ public class WifiUtils {
 					}
 				}
 			}, 10);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -287,7 +292,7 @@ public class WifiUtils {
 	private void parseData() throws IOException {
 
 		final ArrayList<WifiMessage> listWifiMessages = new ArrayList<>();
-		ProcessUtils.suExecCallback(cmd_scan_wifi_result, new Callback() {
+		mProcessUtils.suExecCallback(cmd_scan_wifi_result, new Callback() {
 
 			int wifiSum = 0;
 			boolean isEnd = false;
