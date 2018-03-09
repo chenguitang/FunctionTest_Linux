@@ -110,7 +110,6 @@ public class WifiPanel {
 						}else{
 							System.out.println("in operation ,after refresh");
 						}
-						
 					} catch (Exception e) {
 						e.printStackTrace();
 						System.out.println("Error: " + e.getMessage());
@@ -135,8 +134,8 @@ public class WifiPanel {
 					listWifiDatas.clear();
 					// System.out.println("+++++++++++++++++++++++++++");
 					for (int i = 0; i < listWifiMessages.size(); i++) {
-						System.out.println("listWifiMessages data : "
-								+ listWifiMessages.get(i).toString() + "\n");
+//						System.out.println("listWifiMessages data : "
+//								+ listWifiMessages.get(i).toString() + "\n");
 						listWifiDatas.add(listWifiMessages.get(i));
 					}
 					if (listWifiMessages.size() > 0) {
@@ -205,27 +204,6 @@ public class WifiPanel {
 
 		listWifiDatas = new ArrayList<>();
 
-		// 得到此图标的 Image（image.getImage()）
-		// Image img = image.getImage();
-		// img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
-		// image.setImage(img);
-		// for (int i = 0; i < 20; i++) {
-		// WifiMessage wifiData = new WifiMessage();
-		// if (i % 2 == 0) {
-		// wifiData.setSignalLevel("20");
-		// } else if (i % 3 == 0) {
-		// wifiData.setSignalLevel("40");
-		// } else if (i % 3 == 5) {
-		// wifiData.setSignalLevel("60");
-		// } else {
-		// wifiData.setSignalLevel("100");
-		// }
-		//
-		// wifiData.setSsid("posin" + i);
-		// wifiData.setStatus("未连接");
-		// listWifiDatas.add(wifiData);
-		// }
-
 		listModel = new MyDefaultListModel(new ArrayList<WifiMessage>());
 		wifiJList = new JList(listModel);
 		// wifiJList.setListData(listWifiDatas.toArray());
@@ -247,12 +225,13 @@ public class WifiPanel {
 
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
-
+				
 				// 鼠标点击释放
 				if (!wifiJList.getValueIsAdjusting()) {
 					// System.out.println("you release this");
 					operation=true;
-					System.out.println("#####################");
+					System.out.println("999999999999999999999999999999999999999");
+					System.out.println("############+++++++++++++++++#########");
 					int selectedPosition = wifiJList.getSelectedIndex();
 					// System.out.println("select index： " + selectedPosition);
 					System.out.println("wifi name : "
@@ -287,7 +266,9 @@ public class WifiPanel {
 						if (password == null) {
 							return;
 						} else if (password.trim().equals("")) {
+							operation=true;
 							JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+							operation=false;
 							return;
 						} else {
 							System.out.println("password: " + password);

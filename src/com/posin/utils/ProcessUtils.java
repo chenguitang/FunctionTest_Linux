@@ -69,8 +69,9 @@ public class ProcessUtils {
 			Callback callback, int timeout) throws IOException {
 		Process process = createSuProcess();
 		// if (mSu == null) {
-		new Thread(new InputRunnable(process.getInputStream(), callback))
-				.start();
+		// new Thread(new InputRunnable(process.getInputStream(), callback))
+		// .start();
+		readInputStream(process.getInputStream(), callback);
 		MySuProcess mSu = new MySuProcess();
 		// }
 		return mSu.exec(process, cmd, callback, timeout);
@@ -91,11 +92,35 @@ public class ProcessUtils {
 			os.write(cmd.getBytes());
 
 			String endTip = "echo " + Appconfig.CMD_FINISH + "\n";
-//			System.out.println("endTip :  " + endTip);
+			// System.out.println("endTip :  " + endTip);
 			os.write(endTip.getBytes());
 			// os.write("echo 111111111111111 \n".getBytes());
 			os.flush();
 			return 0;
+		}
+	}
+
+	/**
+	 * 读取文件输入流
+	 * 
+	 * @param mInputStream
+	 *            InputStream
+	 * @param mCallback
+	 *            回调函数
+	 */
+	public static void readInputStream(InputStream mInputStream,
+			Callback mCallback) {
+		Reader reader = new InputStreamReader(mInputStream);
+		BufferedReader bf = new BufferedReader(reader);
+		String line = null;
+		try {
+			while ((line = bf.readLine()) != null) {
+				// System.out.println(line);
+				mCallback.readLine(line);
+			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -122,7 +147,7 @@ public class ProcessUtils {
 			String line = null;
 			try {
 				while ((line = bf.readLine()) != null) {
-//					System.out.println(line);
+					// System.out.println(line);
 					mCallback.readLine(line);
 				}
 			} catch (Exception e) {

@@ -245,9 +245,9 @@ public class WifiUtils {
 
 				@Override
 				public void readLine(String line) {
-					System.out
-							.println("++++++++++++++++++===================++++++++++++++++");
-					System.out.println("check connect status: " + line);
+//					System.out
+//							.println("++++++++++++++++++===================++++++++++++++++");
+//					System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
 						wifiMessage.setSsid(line.substring("ssid=".length())
 								.trim());
