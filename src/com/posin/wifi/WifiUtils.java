@@ -1,4 +1,4 @@
-package wifi;
+package com.posin.wifi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +31,8 @@ public class WifiUtils {
 	private static String cmd_scan_wifi_result = "wpa_cli -i wlan0 scan_result\n";
 	// add_network
 	private static String cmd_add_network = "wpa_cli -i wlan0 add_network\n";
+	// 查找network
+	private static String cmd_find_network = "wpa_cli -i wlan0 list_network\n";
 	// 获取wifi状态
 	private static String cmd_get_status = "wpa_cli -i wlan0 status\n";
 
@@ -79,15 +81,45 @@ public class WifiUtils {
 	 */
 	public void findAddNetwork() throws Exception {
 
-		mProcessUtils.suExecCallback(cmd_add_network, new Callback() {
+		mProcessUtils.suExecCallback(cmd_find_network, new Callback() {
+			boolean haveNetWork = false;
 
 			@Override
 			public void readLine(String line) {
-				if (!Appconfig.CMD_FINISH.equals(line.trim())) {
-					mAddNetworkListener.AddNetworkCallBack(line);
+				System.out.println("my line: " + line);
+				if (line.contains("[CURRENT]")) {
+					System.out.println("line.substring(0, 1): "
+							+ line.substring(0, 1));
+					mAddNetworkListener.AddNetworkCallBack(line.substring(0, 1));
+					haveNetWork = true;
 				}
+				if (Appconfig.CMD_FINISH.equals(line.trim()) && !haveNetWork) {
+					// addNet();
+					System.out.println("need to add network");
+				}
+
 			}
 		}, 10);
+	}
+
+	/**
+	 * 增加一个network
+	 */
+	public void addNet() {
+		try {
+			mProcessUtils.suExecCallback(cmd_add_network, new Callback() {
+
+				@Override
+				public void readLine(String line) {
+					if (!Appconfig.CMD_FINISH.equals(line.trim())) {
+						mAddNetworkListener.AddNetworkCallBack(line);
+					}
+				}
+
+			}, 10);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -249,6 +281,7 @@ public class WifiUtils {
 			System.out.println("======================================");
 			mProcessUtils.suExecCallback(cmd_get_status, new Callback() {
 				boolean isConnect = false;
+
 				@Override
 				public void readLine(String line) {
 					System.out.println("check connect status: " + line);
@@ -278,7 +311,7 @@ public class WifiUtils {
 					}
 				}
 			}, 10);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

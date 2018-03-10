@@ -35,17 +35,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import wifi.WifiUtils;
-import wifi.WifiUtils.AddNetworkListener;
-import wifi.WifiUtils.ConnectListener;
-import wifi.WifiUtils.ConnnectStatusListener;
-import wifi.WifiUtils.WifiDataChageListener;
-
 import com.posin.Jlist.FriListCellRenderer;
 import com.posin.Jlist.FriListModel;
 import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
 import com.posin.utils.StringUtils;
+import com.posin.wifi.WifiUtils;
+import com.posin.wifi.WifiUtils.AddNetworkListener;
+import com.posin.wifi.WifiUtils.ConnectListener;
+import com.posin.wifi.WifiUtils.ConnnectStatusListener;
+import com.posin.wifi.WifiUtils.WifiDataChageListener;
 
 public class WifiPanel {
 
@@ -102,8 +101,10 @@ public class WifiPanel {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(5000);
-						if (!operation) {
+						Thread.sleep(8000);
+						// System.out.println(" wifiPanel.isShowing(): "+
+						// wifiPanel.isShowing());
+						if (!operation && wifiPanel.isShowing()) {
 							initWifiList();
 							System.out
 									.println("++++ refresh wifi list +++++++");
@@ -259,32 +260,29 @@ public class WifiPanel {
 	 */
 	public void getNetWork(final int position) {
 		try {
-			wifiUtils.findAddNetwork();
-			wifiUtils.setAddNetworkListener(new AddNetworkListener() {
+			final String password = JOptionPane.showInputDialog("输入密码");
+			operation = false;
+			wifiJList.setSelectedIndex(-1);
+			if (password == null) {
+				return;
+			} else if (password.trim().equals("")) {
+				operation = true;
+				JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+				operation = false;
+				return;
+			} else {
+				System.out.println("password: " + password);
+				final String ssid = listWifiDatas.get(position).getSsid();
+				wifiUtils.findAddNetwork();
+				wifiUtils.setAddNetworkListener(new AddNetworkListener() {
 
-				@Override
-				public void AddNetworkCallBack(String network) {
-					System.out.println("network: " + network);
-					if (network != null) {
-						String password = JOptionPane.showInputDialog("输入密码");
-						operation = false;
-						wifiJList.setSelectedIndex(-1);
-						if (password == null) {
-							return;
-						} else if (password.trim().equals("")) {
-							operation = true;
-							JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
-							operation = false;
-							return;
-						} else {
-							System.out.println("password: " + password);
-							String ssid = listWifiDatas.get(position).getSsid();
-							connnectWifi(position, network, ssid, password);
-						}
+					@Override
+					public void AddNetworkCallBack(String network) {
+						System.out.println("network: " + network);
+						connnectWifi(position, network, ssid, password);
 					}
-				}
-			});
-
+				});
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error: " + e.getMessage());
@@ -313,35 +311,6 @@ public class WifiPanel {
 
 				@Override
 				public void connectCallBack(boolean isSuccess) {
-					// if (isSuccess) {
-					// System.out.println("wifiJPanel connect success");
-					// System.out.println("listWifiDatas size: "
-					// + listWifiDatas.size() + "  index: " + index);
-					// listWifiDatas.get(index).setStatus("已连接");
-					// // listWifiDatas.notifyAll();
-					//
-					// for (int i = 0; i < listWifiDatas.size(); i++) {
-					// if (i == index) {
-					// listWifiDatas.get(i).setStatus("已连接");
-					// System.out
-					// .println("connect again wifi name: "
-					// + listWifiDatas.get(i)
-					// .getSsid());
-					// } else {
-					// listWifiDatas.get(i).setStatus("未连接");
-					// System.out.println("connect again wifi name: "
-					// + listWifiDatas.get(i).getSsid());
-					// }
-					// }
-					// wifiJList.setListData(listWifiDatas.toArray());
-					// // listWifiDatas.notify();
-					// } else {
-					// for (int i = 0; i < listWifiDatas.size(); i++) {
-					// listWifiDatas.get(i).setStatus("未连接");
-					// wifiJList.setListData(listWifiDatas.toArray());
-					// }
-					// System.out.println("wifiJPanel connect failure");
-					// }
 					try {
 						System.out.println("start wait for");
 						Thread.sleep(1500);
