@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import view.InputDialog;
+
 import com.posin.global.Appconfig;
 import com.posin.utils.ProcessUtils;
 import com.posin.utils.ProcessUtils.Callback;
@@ -32,6 +34,8 @@ public class MainFrame extends JFrame {
 	private CardLayout card = null; // CardLayout布局管理器
 	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null; // 五个可直接翻转到JPanel组件的按钮
 	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null; // 要切换的五个JPanel
+
+	private static MainFrame mainFrame;
 
 	public MainFrame() {
 		super("CardLayout Test");
@@ -88,7 +92,7 @@ public class MainFrame extends JFrame {
 		HornPanel hornPanel = new HornPanel();
 		p_3 = HornPanel.hornPanel;
 		// p_4 = new JPanel();
-		WifiPanel wifiPanel = new WifiPanel();
+		WifiPanel wifiPanel = new WifiPanel(mainFrame);
 		p_4 = WifiPanel.wifiPanel;
 		p_5 = new JPanel();
 
@@ -115,6 +119,7 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_3
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p3");
+				
 			}
 		});
 
@@ -140,7 +145,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new MainFrame();
+		mainFrame = new MainFrame();
 	}
 
 }

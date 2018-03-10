@@ -1,33 +1,20 @@
 package com.posin.swing;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
-import javax.sound.sampled.Line;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,11 +23,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import view.InputDialog;
+import view.InputDialog.OnClickListener;
+
 import com.posin.Jlist.FriListCellRenderer;
-import com.posin.Jlist.FriListModel;
 import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
-import com.posin.utils.StringUtils;
 import com.posin.wifi.WifiUtils;
 import com.posin.wifi.WifiUtils.AddNetworkListener;
 import com.posin.wifi.WifiUtils.ConnectListener;
@@ -77,14 +65,16 @@ public class WifiPanel {
 	private MyDefaultListModel listModel = null;
 	private boolean testBoo = false;
 	private boolean operation = false;
+	private JFrame mFrame;
 
-	public WifiPanel() {
+	public WifiPanel(JFrame frame) {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
 		Font f = new Font("隶书", Font.PLAIN, 25);
 		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
 
+		this.mFrame = frame;
 		initTopSwitchPanel(wifiPanel); // 顶部wifi开关
 		// initWifiList(); // 获取wifi信息
 		initListWifiPanel(wifiPanel); // wifi列表
@@ -187,12 +177,7 @@ public class WifiPanel {
 						listWifiDatas.get(i).setStatus("未连接");
 					}
 				}
-//				Collections.sort(listWifiDatas);
-//				ArrayList<WifiMessage> sortListData = new ArrayList<>();
-//				for (int i = 0; i < listWifiDatas.size(); i++) {
-//					
-//				}
-				  Collections.sort(listWifiDatas);
+				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
 			}
 		});
@@ -266,35 +251,52 @@ public class WifiPanel {
 	 *            选择哪个wifi
 	 */
 	public void getNetWork(final int position) {
-		try {
-			final String password = JOptionPane.showInputDialog("输入密码");
-			operation = false;
-			wifiJList.setSelectedIndex(-1);
-			if (password == null) {
-				return;
-			} else if (password.trim().equals("")) {
-				operation = true;
-				JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
-				operation = false;
-				return;
-			} else {
-				System.out.println("password: " + password);
-				final String ssid = listWifiDatas.get(position).getSsid();
-				wifiUtils.findAddNetwork();
-				wifiUtils.setAddNetworkListener(new AddNetworkListener() {
+		final InputDialog dialog = new InputDialog("请输入密码");
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
 
-					@Override
-					public void AddNetworkCallBack(String network) {
-						System.out.println("network: " + network);
-						connnectWifi(position, network, ssid, password);
-					}
-				});
+		dialog.setOnComfirmclikListener(new OnClickListener() {
+
+			@Override
+			public void onClick(ActionEvent event, final String password) {
+				dialog.dispose();
+				operation = false;
+				wifiJList.setSelectedIndex(-1);
+				if (password == null || password.trim().equals("")) {
+					operation = true;
+					JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+					operation = false;
+					return;
+				} else {
+					findOrAddnetWork(password, position);
+				}
 			}
+		});
+
+	}
+
+	/**
+	 * find network
+	 * 
+	 * @param password
+	 * @param position
+	 */
+	public void findOrAddnetWork(final String password, final int position) {
+		try {
+			System.out.println("password: " + password);
+			final String ssid = listWifiDatas.get(position).getSsid();
+			wifiUtils.findAddNetwork();
+			wifiUtils.setAddNetworkListener(new AddNetworkListener() {
+
+				@Override
+				public void AddNetworkCallBack(String network) {
+					System.out.println("network: " + network);
+					connnectWifi(position, network, ssid, password);
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Error: " + e.getMessage());
 		}
-
 	}
 
 	/**
