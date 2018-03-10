@@ -347,7 +347,7 @@ public class WifiUtils {
 
 					wifiMessage.setMacAddress(messages[0]);
 					wifiMessage.setFrequency(messages[1]);
-					wifiMessage.setSignalLevel(messages[2].substring(1));
+					wifiMessage.setSignalLevel(Integer.parseInt(messages[2].substring(1)));
 					wifiMessage.setFlags(messages[3]);
 					wifiMessage.setSsid(messages[4]);
 					wifiMessage.setStatus("Î´Á¬½Ó");

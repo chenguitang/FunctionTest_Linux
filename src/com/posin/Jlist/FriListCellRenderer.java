@@ -49,7 +49,7 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		// 设置JLable的图片
 		// ImageIcon imgicon = wifiData.getImageIcon();
 		// wifi强度
-		int wifiSignalLevel = Integer.parseInt(wifiData.getSignalLevel());
+		int wifiSignalLevel = wifiData.getSignalLevel();
 		if (wifiSignalLevel >= 85) {
 			setIcon(mIcons[4]);
 		} else if ((wifiSignalLevel < 85) && (wifiSignalLevel >= 65)) {

@@ -1,10 +1,12 @@
 package com.posin.constant;
 
-public class WifiMessage {
+import java.io.Serializable;
+
+public class WifiMessage implements Comparable<WifiMessage>, Serializable {
 
 	private String macAddress; // MAC地址
 	private String frequency; // wifi频率
-	private String signalLevel; // wifi强度
+	private int signalLevel; // wifi强度
 	private String flags; // 加密方式
 	private String ssid; // wifi名字
 	private String status; // wifi状态
@@ -26,11 +28,11 @@ public class WifiMessage {
 		this.frequency = frequency;
 	}
 
-	public String getSignalLevel() {
+	public int getSignalLevel() {
 		return signalLevel;
 	}
 
-	public void setSignalLevel(String signalLevel) {
+	public void setSignalLevel(int signalLevel) {
 		this.signalLevel = signalLevel;
 	}
 
@@ -57,7 +59,6 @@ public class WifiMessage {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
 
 	public String getIpAddresss() {
 		return ipAddresss;
@@ -72,6 +73,12 @@ public class WifiMessage {
 		return "WifiMessage [macAddress=" + macAddress + ", frequency="
 				+ frequency + ", signalLevel=" + signalLevel + ", flags="
 				+ flags + ", ssid=" + ssid + ", status=" + status + "]";
+	}
+
+	@Override
+	public int compareTo(WifiMessage wifiMessage) {
+		return (this.signalLevel < wifiMessage.signalLevel ? -1
+				: (this.signalLevel == wifiMessage.signalLevel ? 0 : 1));
 	}
 
 }

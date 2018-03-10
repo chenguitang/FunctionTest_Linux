@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -186,6 +187,12 @@ public class WifiPanel {
 						listWifiDatas.get(i).setStatus("Î´Á¬½Ó");
 					}
 				}
+//				Collections.sort(listWifiDatas);
+//				ArrayList<WifiMessage> sortListData = new ArrayList<>();
+//				for (int i = 0; i < listWifiDatas.size(); i++) {
+//					
+//				}
+				  Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
 			}
 		});

@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.posin.global.Appconfig;
 import com.posin.utils.ProcessUtils;
@@ -76,7 +77,7 @@ public class MainFrame extends JFrame {
 		p.add(b_2);
 		p.add(b_3);
 		p.add(b_4);
-//		p.add(b_5);
+		// p.add(b_5);
 		// p_1 = new JPanel();
 		CashDrawerPanel mCashDrawerPanel = new CashDrawerPanel();
 		p_1 = CashDrawerPanel.cashDrawerPanel;
@@ -90,14 +91,13 @@ public class MainFrame extends JFrame {
 		WifiPanel wifiPanel = new WifiPanel();
 		p_4 = WifiPanel.wifiPanel;
 		p_5 = new JPanel();
-		
-		
+
 		pane.add(p_4, "p4");
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
 
-//		pane.add(p_5, "p5");
+		// pane.add(p_5, "p5");
 
 		b_1.addActionListener(new ActionListener() {
 			// 直接翻转到p_1
