@@ -7,6 +7,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -43,14 +48,15 @@ public class WifiPanel {
 	// Icon icon4 = new ImageIcon("E:\\nfs\\ic_wifi_signal_1_teal.png");
 	// Icon icon5 = new ImageIcon("E:\\nfs\\ic_wifi_signal_1_light.png");
 
-	Icon icon1 = new ImageIcon("/mnt/nfs/ic_wifi_lock_signal_4_teal.png");
-	Icon icon2 = new ImageIcon("/mnt/nfs/ic_wifi_lock_signal_3_teal.png");
-	Icon icon3 = new ImageIcon("/mnt/nfs/ic_wifi_signal_2_teal.png");
-	Icon icon4 = new ImageIcon("/mnt/nfs/ic_wifi_signal_1_teal.png");
-	Icon icon5 = new ImageIcon("/mnt/nfs/ic_wifi_signal_1_light.png");
+	// Icon icon1 = new ImageIcon("/mnt/nfs/ic_wifi_lock_signal_4_teal.png");
+	Icon icon1 = null;
+	Icon icon2 = null;
+	Icon icon3 = null;
+	Icon icon4 = null;
+	Icon icon5 = null;
 
 	// 图片数组
-	Icon[] icons = { icon1, icon2, icon3, icon4, icon5 };
+	Icon[] icons = null;
 
 	static JPanel wifiPanel = null; // 根布局
 	private JPanel listWifiPane = null; // wifi列表
@@ -65,21 +71,44 @@ public class WifiPanel {
 	private MyDefaultListModel listModel = null;
 	private boolean testBoo = false;
 	private boolean operation = false;
-	private JFrame mFrame;
+	private boolean is_show_dialog = false;
+	private String rootPath;
 
-	public WifiPanel(JFrame frame) {
+	public WifiPanel() {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
 		Font f = new Font("隶书", Font.PLAIN, 25);
 		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
+		rootPath = Class.class.getClass().getResource("/").getPath();
 
-		this.mFrame = frame;
+		initIcon(rootPath);
+
 		initTopSwitchPanel(wifiPanel); // 顶部wifi开关
 		// initWifiList(); // 获取wifi信息
 		initListWifiPanel(wifiPanel); // wifi列表
 		//
 		refreshWifiList();
+	}
+
+	private void initIcon(String rootPath) {
+		if (rootPath != null) {
+			System.out.println("rootpath: " + rootPath);
+			 icon1 = new ImageIcon(rootPath + "image/wifi_5.png");
+			 icon2 = new ImageIcon(rootPath + "image/wifi_4.png");
+			 icon3 = new ImageIcon(rootPath + "image/wifi_3.png");
+			 icon4 = new ImageIcon(rootPath + "image/wifi_2.png");
+			 icon5 = new ImageIcon(rootPath + "image/wifi_1.png");
+
+			 System.out.println("icon npath: "+WifiPanel.class.getResource("/image/wifi_5.png"));
+			icon1 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_5.png"));
+			icon2 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_4.png"));
+			icon3 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_3.png"));
+			icon4 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_2.png"));
+			icon5 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_1.png"));
+
+			icons = new Icon[] { icon1, icon2, icon3, icon4, icon5 };
+		}
 	}
 
 	/**
@@ -231,6 +260,7 @@ public class WifiPanel {
 								.println("wifi name : "
 										+ listWifiDatas.get(selectedPosition)
 												.getSsid());
+						is_show_dialog = true;
 						operation = true;
 						getNetWork(selectedPosition);
 					} else {
@@ -258,17 +288,23 @@ public class WifiPanel {
 		dialog.setOnComfirmclikListener(new OnClickListener() {
 
 			@Override
-			public void onClick(ActionEvent event, final String password) {
+			public void onClick(boolean isOk, ActionEvent event,
+					final String password) {
 				dialog.dispose();
+				is_show_dialog = false;
 				operation = false;
 				wifiJList.setSelectedIndex(-1);
-				if (password == null || password.trim().equals("")) {
-					operation = true;
-					JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
-					operation = false;
+				if (!isOk) {
 					return;
 				} else {
-					findOrAddnetWork(password, position);
+					if (password == null || password.trim().equals("")) {
+						operation = true;
+						JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+						operation = false;
+						return;
+					} else {
+						findOrAddnetWork(password, position);
+					}
 				}
 			}
 		});
@@ -289,9 +325,11 @@ public class WifiPanel {
 			wifiUtils.setAddNetworkListener(new AddNetworkListener() {
 
 				@Override
-				public void AddNetworkCallBack(String network) {
+				public void AddNetworkCallBack(boolean disableNetwork,
+						String network) {
 					System.out.println("network: " + network);
-					connnectWifi(position, network, ssid, password);
+					connnectWifi(disableNetwork, position, network, ssid,
+							password);
 				}
 			});
 		} catch (Exception e) {
@@ -311,9 +349,17 @@ public class WifiPanel {
 	 * @param password
 	 *            密码
 	 */
-	public void connnectWifi(final int index, String network, String ssid,
-			String password) {
+	public void connnectWifi(boolean disableNetwork, final int index,
+			String network, String ssid, String password) {
 		try {
+			if (disableNetwork) {
+				System.out
+						.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+				wifiUtils.setNetworkAble(network, false);
+				System.out
+						.println("+++++++++++++++++++++++++++++++++++++++++++++++");
+				Thread.sleep(20);
+			}
 			wifiUtils.connect(network, ssid, password, listWifiDatas.get(index)
 					.getFlags());
 			wifiUtils.setConnectListener(new ConnectListener() {

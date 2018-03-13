@@ -12,6 +12,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -24,7 +25,7 @@ public class HornPanel {
 	static JPanel hornPanel = null; // 根布局
 	JButton playButton = null;
 	AudioClip currentSong = null;
-	String path = "/mnt/nfs/test.wav";
+	String path = null;
 	public boolean isPlayer = false;
 	private AudioClip au;
 
@@ -34,7 +35,10 @@ public class HornPanel {
 		Font f = new Font("隶书", Font.PLAIN, 25);
 
 		addLine(hornPanel, 0, 0, -8, Color.GRAY);
-		
+
+		path = Class.class.getClass().getResource("/").getPath()
+				+ "music/test.wav";
+
 		playButton = new JButton("播放");
 		playButton.setPreferredSize(new Dimension(160, 80));
 		playButton.setFocusable(false);
@@ -54,12 +58,22 @@ public class HornPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (!isPlayer) {
-					playButton.setText("停止");
-				} else {
-					playButton.setText("播放");
+				try {
+					if (!isPlayer) {
+						playButton.setText("停止");
+					} else {
+						playButton.setText("播放");
+					}
+
+					URL url = HornPanel.class.getResource("/music/test.wav");
+					playerMusic(url);
+
+					System.out.println("music path: " + url.getPath());
+
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				playerMusic(path);
+
 			}
 		});
 	}
@@ -67,18 +81,17 @@ public class HornPanel {
 	/**
 	 * 播放音乐
 	 * 
-	 * @param path
-	 *            文件路径
+	 * @param musicUrl
+	 *            文件URL
 	 */
-	private void playerMusic(String path) {
+	private void playerMusic(URL musicUrl) {
 
 		try {
 
 			if (!isPlayer) {
-
-				File f = new File(path);
-				URL url = f.toURI().toURL();
-				au = Applet.newAudioClip(url);
+				// File f = new File(path);
+				// URL url = f.toURI().toURL();
+				au = Applet.newAudioClip(musicUrl);
 				au.play();
 				isPlayer = true;
 				System.out.println("start play music");
@@ -92,15 +105,14 @@ public class HornPanel {
 					System.out.println("start failure because au==null");
 				}
 			}
-
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 			au = null;
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	/**
 	 * 添加横线
 	 * 

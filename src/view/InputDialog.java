@@ -11,6 +11,8 @@ import java.awt.GridLayout;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -18,17 +20,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.posin.keystore.SoftKeyBoardPopup;
+
 public class InputDialog extends JDialog {
 
 	private String title;
+	private TextField inputPassword;
 
 	private final JPanel contentPanel = new JPanel();
+	private SoftKeyBoardPopup keyPopup = null;
 
 	/**
 	 * Create the dialog.
 	 */
 	public InputDialog(String title) {
 		this.title = title;
+
 		setBounds(700, 300, 450, 300);
 		Font f = new Font("隶书", Font.BOLD, 25);
 		getContentPane().setLayout(new BorderLayout());
@@ -40,22 +47,23 @@ public class InputDialog extends JDialog {
 			JPanel tipPanel = new JPanel();
 			JPanel inputPanel = new JPanel();
 
-			final TextField inputPassword = new TextField();
+			inputPassword = new TextField();
+			keyPopup = new SoftKeyBoardPopup(inputPassword);
 
-			buttonPane.setLayout(new BorderLayout());
+			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("确认");
 				okButton.setPreferredSize(new Dimension(100, 40));
 				okButton.setActionCommand("OK");
-				buttonPane.add(okButton,BorderLayout.WEST);
+				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 				okButton.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						mOnClickListener.onClick(e, inputPassword.getText()
-								.toString().trim());
+						mOnClickListener.onClick(true, e, inputPassword
+								.getText().toString().trim());
 					}
 				});
 			}
@@ -63,13 +71,13 @@ public class InputDialog extends JDialog {
 				JButton cancelButton = new JButton("取消");
 				cancelButton.setPreferredSize(new Dimension(100, 40));
 				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton,BorderLayout.EAST);
+				buttonPane.add(cancelButton);
 				cancelButton.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						mOnClickListener.onClick(e, inputPassword.getText()
-								.toString().trim());
+						mOnClickListener.onClick(false, e, inputPassword
+								.getText().toString().trim());
 					}
 				});
 			}
@@ -94,7 +102,32 @@ public class InputDialog extends JDialog {
 
 			inputPanel.add(inputPassword, c);
 			getContentPane().add(inputPanel, BorderLayout.CENTER);
+
+			initListenerKeyBoard();
 		}
+	}
+
+	private void initListenerKeyBoard() {
+		inputPassword.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (!keyPopup.isVisible()) {
+					keyPopup.show(inputPassword, -300,
+							inputPassword.getPreferredSize().height + 150);
+					keyPopup.getSoftKeyBoardPanel().reset();
+					keyPopup.repaint();
+				}
+				System.out.println("onclick my passwork");
+
+			}
+		});
 	}
 
 	private OnClickListener mOnClickListener;
@@ -104,7 +137,7 @@ public class InputDialog extends JDialog {
 	}
 
 	public interface OnClickListener {
-		void onClick(ActionEvent event, String password);
+		void onClick(boolean isOk, ActionEvent event, String password);
 	}
 
 }

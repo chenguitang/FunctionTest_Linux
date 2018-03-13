@@ -90,11 +90,12 @@ public class WifiUtils {
 				if (line.contains("[CURRENT]")) {
 					System.out.println("line.substring(0, 1): "
 							+ line.substring(0, 1));
-					mAddNetworkListener.AddNetworkCallBack(line.substring(0, 1));
+					mAddNetworkListener.AddNetworkCallBack(true,
+							line.substring(0, 1));
 					haveNetWork = true;
 				}
 				if (Appconfig.CMD_FINISH.equals(line.trim()) && !haveNetWork) {
-					// addNet();
+					addNet();
 					System.out.println("need to add network");
 				}
 
@@ -112,7 +113,7 @@ public class WifiUtils {
 				@Override
 				public void readLine(String line) {
 					if (!Appconfig.CMD_FINISH.equals(line.trim())) {
-						mAddNetworkListener.AddNetworkCallBack(line);
+						mAddNetworkListener.AddNetworkCallBack(false, line);
 					}
 				}
 
@@ -185,7 +186,7 @@ public class WifiUtils {
 			if (encry.contains("[WPA2-PSK") || encry.contains("[WPA-PSK")) { // PSK加密方式
 				setpasword = "wpa_cli -i wlan0 set_network " + network
 						+ " psk \'\"" + password.trim() + "\"\'\n";
-			} else if (encry.contains("[WEP")) {
+			} else if (encry.contains("[WEP") && !encry.contains("WPA")) {
 				setpasword = "wpa_cli -i wlan0 set_network " + network
 						+ " wep_key0 \'\"" + password.trim() + "\"\'\n";
 			} else {
@@ -198,7 +199,7 @@ public class WifiUtils {
 				public void readLine(String line) {
 					if (line.toUpperCase().equals("OK")) {
 						System.out.println("set password success");
-						connectWifi(connectwifi);
+						connectWifi(connectwifi, network);
 					} else {
 						if (!line.trim().equals(Appconfig.CMD_FINISH)) {
 							mConnectListener.connectCallBack(false);
@@ -219,8 +220,12 @@ public class WifiUtils {
 	 * @param connectwifi
 	 *            连接wifi语句
 	 */
-	public void connectWifi(String connectwifi) {
+	public void connectWifi(String connectwifi, String network) {
 		try {
+
+			setNetworkAble(network, true);
+			Thread.sleep(20);
+
 			mProcessUtils.suExecCallback(connectwifi, new Callback() {
 
 				@Override
@@ -301,7 +306,7 @@ public class WifiUtils {
 						isConnect = true;
 					} else if (line.trim().equals(Appconfig.CMD_FINISH)) {
 						System.out.println("listener isConnect: " + isConnect);
-						if (isConnect) {
+						if (isConnect && mConnnectStatusListener != null) {
 							mConnnectStatusListener.connectStatus(true,
 									wifiMessage);
 						} else {
@@ -347,7 +352,8 @@ public class WifiUtils {
 
 					wifiMessage.setMacAddress(messages[0]);
 					wifiMessage.setFrequency(messages[1]);
-					wifiMessage.setSignalLevel(Integer.parseInt(messages[2].substring(1)));
+					wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
+							.substring(1)));
 					wifiMessage.setFlags(messages[3]);
 					wifiMessage.setSsid(messages[4]);
 					wifiMessage.setStatus("未连接");
@@ -356,6 +362,38 @@ public class WifiUtils {
 				wifiSum++;
 			}
 		}, 10);
+	}
+
+	/**
+	 * 设置enable network or disable network
+	 */
+	public void setNetworkAble(final String network, final boolean isEnable) {
+		String cmd = "";
+		System.out.println("----------------------------------------");
+		System.out.println("----------------------------------------");
+		System.out.println("isEnable: " + isEnable);
+		System.out.println("----------------------------------------");
+		System.out.println("----------------------------------------");
+		if (isEnable) {
+			cmd = "wpa_cli -i wlan0 enable " + network;
+		} else {
+			cmd = "wpa_cli -i wlan0 disable " + network;
+		}
+
+		try {
+			mProcessUtils.suExecCallback(cmd, new Callback() {
+				@Override
+				public void readLine(String line) {
+					if (line.toUpperCase().equals("OK")) {
+						System.out.println(isEnable ? "pa_cli -i wlan0 enable "
+								: "wpa_cli -i wlan0 disable " + network);
+					}
+				}
+			}, 10);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -396,7 +434,7 @@ public class WifiUtils {
 	}
 
 	public interface AddNetworkListener {
-		void AddNetworkCallBack(String network);
+		void AddNetworkCallBack(boolean disableNetwork, String network);
 	}
 
 	/**

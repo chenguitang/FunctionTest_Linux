@@ -65,13 +65,13 @@ public class ProcessUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public synchronized int suExecCallback(String cmd,
-			Callback callback, int timeout) throws IOException {
+	public synchronized int suExecCallback(String cmd, Callback callback,
+			int timeout) throws IOException {
 		Process process = createSuProcess();
 		// if (mSu == null) {
-		 new Thread(new InputRunnable(process.getInputStream(), callback))
-		 .start();
-//		readInputStream(process.getInputStream(), callback);
+		new Thread(new InputRunnable(process.getInputStream(), callback))
+				.start();
+		// readInputStream(process.getInputStream(), callback);
 		MySuProcess mSu = new MySuProcess();
 		// }
 		return mSu.exec(process, cmd, callback, timeout);
@@ -108,15 +108,17 @@ public class ProcessUtils {
 	 * @param mCallback
 	 *            回调函数
 	 */
-	public void readInputStream(InputStream mInputStream,
-			Callback mCallback) {
+	public void readInputStream(InputStream mInputStream, Callback mCallback) {
 		Reader reader = new InputStreamReader(mInputStream);
 		BufferedReader bf = new BufferedReader(reader);
 		String line = null;
 		try {
 			while ((line = bf.readLine()) != null) {
 				// System.out.println(line);
-				mCallback.readLine(line);
+				if (mCallback != null) {
+					mCallback.readLine(line);
+				}
+
 			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
@@ -148,7 +150,9 @@ public class ProcessUtils {
 			try {
 				while ((line = bf.readLine()) != null) {
 					// System.out.println(line);
-					mCallback.readLine(line);
+					if (mCallback != null) {
+						mCallback.readLine(line);
+					}
 				}
 			} catch (Exception e) {
 				System.out.println("Error: " + e.getMessage());
@@ -157,7 +161,7 @@ public class ProcessUtils {
 		}
 
 	}
-	
+
 	/**
 	 * 读取数据，回调接口
 	 * 

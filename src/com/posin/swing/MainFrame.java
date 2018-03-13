@@ -35,8 +35,6 @@ public class MainFrame extends JFrame {
 	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null; // 五个可直接翻转到JPanel组件的按钮
 	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null; // 要切换的五个JPanel
 
-	private static MainFrame mainFrame;
-
 	public MainFrame() {
 		super("CardLayout Test");
 		card = new CardLayout(5, 5); // 创建一个具有指定的水平和垂直间隙的新卡片布局
@@ -47,7 +45,7 @@ public class MainFrame extends JFrame {
 		b_2 = new JButton("串口测试");
 		b_3 = new JButton("喇叭测试");
 		b_4 = new JButton("wifi管理");
-		b_5 = new JButton("其他测试");
+		b_5 = new JButton("退出");
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.BOLD, 25);
@@ -81,7 +79,7 @@ public class MainFrame extends JFrame {
 		p.add(b_2);
 		p.add(b_3);
 		p.add(b_4);
-		// p.add(b_5);
+		p.add(b_5);
 		// p_1 = new JPanel();
 		CashDrawerPanel mCashDrawerPanel = new CashDrawerPanel();
 		p_1 = CashDrawerPanel.cashDrawerPanel;
@@ -92,16 +90,15 @@ public class MainFrame extends JFrame {
 		HornPanel hornPanel = new HornPanel();
 		p_3 = HornPanel.hornPanel;
 		// p_4 = new JPanel();
-		WifiPanel wifiPanel = new WifiPanel(mainFrame);
+		WifiPanel wifiPanel = new WifiPanel();
 		p_4 = WifiPanel.wifiPanel;
 		p_5 = new JPanel();
 
-		pane.add(p_4, "p4");
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
-
-		// pane.add(p_5, "p5");
+		pane.add(p_4, "p4");
+		pane.add(p_5, "p5");
 
 		b_1.addActionListener(new ActionListener() {
 			// 直接翻转到p_1
@@ -119,7 +116,7 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_3
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p3");
-				
+
 			}
 		});
 
@@ -133,7 +130,9 @@ public class MainFrame extends JFrame {
 		b_5.addActionListener(new ActionListener() {
 			// 直接翻转到p_5
 			public void actionPerformed(ActionEvent e) {
-				card.show(pane, "p5");
+				// card.show(pane, "p5");
+				System.out.println("================== exit =================");
+				System.exit(0);
 			}
 		});
 
@@ -145,7 +144,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		mainFrame = new MainFrame();
+		new MainFrame();
 	}
 
 }

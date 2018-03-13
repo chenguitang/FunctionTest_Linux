@@ -9,8 +9,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +36,7 @@ import javax.swing.event.ChangeListener;
 
 import com.posin.device.SerialPort;
 import com.posin.global.Appconfig;
+import com.posin.keystore.SoftKeyBoardPopup;
 import com.posin.utils.ByteUtils;
 import com.posin.utils.Proc;
 import com.posin.utils.SerialUtil;
@@ -60,7 +64,7 @@ public class SerialPortPanel {
 	private JButton portButton = null, baudrateButton = null,
 			switchButton = null;
 
-	private JTextArea sendDatainput = null; // 文本发送的输入框
+	private TextField sendDatainput = null; // 文本发送的输入框
 	private JTextArea receiverDatainput = null; // 文本接收的显示框
 
 	private String mSelectPort = null; // 选择的端口
@@ -98,6 +102,38 @@ public class SerialPortPanel {
 
 		initButtonStyle();
 		initListener();
+		initListenerInput();
+	}
+
+	/**
+	 * 监听输入框，软键盘
+	 */
+	private void initListenerInput() {
+
+		final SoftKeyBoardPopup keyPopup = new SoftKeyBoardPopup(sendDatainput);
+		
+		sendDatainput.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				System.out
+						.println("=====================focusLost====================");
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				System.out
+						.println("=====================focusGained====================");
+				if (!keyPopup.isVisible()) {
+					keyPopup.show(sendDatainput, 50,
+							sendDatainput.getPreferredSize().height + 50);
+					keyPopup.getSoftKeyBoardPanel().reset();
+					keyPopup.repaint();
+				}
+			}
+		});
 	}
 
 	/**
@@ -226,7 +262,7 @@ public class SerialPortPanel {
 		serialPortPanel.add(sendDataJpanel, c);
 
 		sendDataJpanel.setLayout(new BorderLayout());
-		sendDatainput = new JTextArea();
+		sendDatainput = new TextField();
 		sendDatainput.setFont(inputTypeFont);
 		sendDataJpanel.add(sendDatainput, BorderLayout.CENTER);
 
