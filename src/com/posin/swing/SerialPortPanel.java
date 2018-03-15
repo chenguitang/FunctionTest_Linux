@@ -54,7 +54,7 @@ public class SerialPortPanel {
 	Font inputTypeFont = new Font("隶书", Font.PLAIN, 20);
 
 	private static final long serialVersionUID = 1L;
-	static JPanel serialPortPanel = null; // 根布局
+	public JPanel serialPortPanel = null; // 根布局
 	private JPanel mButtonJPanel = null; // 顶部操作JPanel
 	private JPanel sendTipJpanel = null; // 发送提示及按钮JPanel
 	private JPanel sendDataJpanel = null; // 发送数据JPanel
@@ -73,7 +73,13 @@ public class SerialPortPanel {
 	private boolean mRecvText = true;
 	private boolean mSendText = true;
 
-	public SerialPortPanel() {
+	private static final SerialPortPanel SERIALPORT_PANEL_INSTANCE=new SerialPortPanel();
+	
+	public static SerialPortPanel getInstance() {
+		return SERIALPORT_PANEL_INSTANCE;
+	}
+	
+	private SerialPortPanel() {
 		serialPortPanel = new JPanel();
 		serialPortPanel.setSize(new Dimension(Appconfig.PANELCARDWIDTH,
 				Appconfig.PANELCARDHEIGHT));

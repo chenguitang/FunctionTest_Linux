@@ -16,6 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import sun.org.mozilla.javascript.internal.ast.NewExpression;
+
 import com.posin.global.Appconfig;
 import com.posin.utils.Proc;
 
@@ -27,11 +29,17 @@ import com.posin.utils.Proc;
 public class CashDrawerPanel {
 
 	private static final long serialVersionUID = 1L;
-	static JPanel cashDrawerPanel = null; // 根布局
+	public JPanel cashDrawerPanel = null; // 根布局
 	private JPanel mButtonJPanel = null; // 承载测试钱箱两个button的按钮
 	private JButton pin2Button = null, pin5Button = null; // 开钱箱按钮
 
-	public CashDrawerPanel() {
+	private static final CashDrawerPanel CASH_DRAWER_PANEL_INSTANCE=new CashDrawerPanel();
+	
+	public static CashDrawerPanel getInstance() {
+		return CASH_DRAWER_PANEL_INSTANCE;
+	}
+	
+	private CashDrawerPanel() {
 		
 		cashDrawerPanel = new JPanel();
 		cashDrawerPanel.setSize(new Dimension(Appconfig.PANELCARDWIDTH,

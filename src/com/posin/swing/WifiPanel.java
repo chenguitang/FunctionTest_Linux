@@ -58,7 +58,7 @@ public class WifiPanel {
 	// 图片数组
 	Icon[] icons = null;
 
-	static JPanel wifiPanel = null; // 根布局
+	public JPanel wifiPanel = null; // 根布局
 	private JPanel listWifiPane = null; // wifi列表
 	// private JList<JPanel> wifiJList = null;
 	private JList wifiJList = null;
@@ -72,17 +72,22 @@ public class WifiPanel {
 	private boolean testBoo = false;
 	private boolean operation = false;
 	private boolean is_show_dialog = false;
-	private String rootPath;
 
-	public WifiPanel() {
+	private static final WifiPanel WIFI_PANEL_INSTANCE=new WifiPanel();
+	
+	public static WifiPanel getInstance() {
+		return WIFI_PANEL_INSTANCE;
+	}
+	
+	private WifiPanel() {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
 		Font f = new Font("隶书", Font.PLAIN, 25);
 		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
-		rootPath = Class.class.getClass().getResource("/").getPath();
+//		rootPath = Class.class.getClass().getResource("/").getPath();
 
-		initIcon(rootPath);
+		initIcon();
 
 		initTopSwitchPanel(wifiPanel); // 顶部wifi开关
 		// initWifiList(); // 获取wifi信息
@@ -91,24 +96,17 @@ public class WifiPanel {
 		refreshWifiList();
 	}
 
-	private void initIcon(String rootPath) {
-		if (rootPath != null) {
-			System.out.println("rootpath: " + rootPath);
-			 icon1 = new ImageIcon(rootPath + "image/wifi_5.png");
-			 icon2 = new ImageIcon(rootPath + "image/wifi_4.png");
-			 icon3 = new ImageIcon(rootPath + "image/wifi_3.png");
-			 icon4 = new ImageIcon(rootPath + "image/wifi_2.png");
-			 icon5 = new ImageIcon(rootPath + "image/wifi_1.png");
+	private void initIcon() {
 
-			 System.out.println("icon npath: "+WifiPanel.class.getResource("/image/wifi_5.png"));
-			icon1 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_5.png"));
-			icon2 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_4.png"));
-			icon3 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_3.png"));
-			icon4 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_2.png"));
-			icon5 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_1.png"));
+		System.out.println("icon npath: "
+				+ WifiPanel.class.getResource("/image/wifi_5.png"));
+		icon1 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_5.png"));
+		icon2 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_4.png"));
+		icon3 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_3.png"));
+		icon4 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_2.png"));
+		icon5 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_1.png"));
 
-			icons = new Icon[] { icon1, icon2, icon3, icon4, icon5 };
-		}
+		icons = new Icon[] { icon1, icon2, icon3, icon4, icon5 };
 	}
 
 	/**

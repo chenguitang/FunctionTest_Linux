@@ -6,23 +6,22 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import view.InputDialog;
 
 import com.posin.global.Appconfig;
-import com.posin.utils.ProcessUtils;
-import com.posin.utils.ProcessUtils.Callback;
 
 public class MainFrame extends JFrame {
 
@@ -32,8 +31,9 @@ public class MainFrame extends JFrame {
 	private JPanel pane = null; // 主要的JPanel，该JPanel的布局管理将被设置成CardLayout
 	private JPanel p = null; // 放按钮的JPanel
 	private CardLayout card = null; // CardLayout布局管理器
-	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null; // 五个可直接翻转到JPanel组件的按钮
-	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null; // 要切换的五个JPanel
+	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null,
+			b_6 = null; // 可直接翻转到JPanel组件的按钮
+	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null; // 要切换的JPanel
 
 	public MainFrame() {
 		super("CardLayout Test");
@@ -45,7 +45,8 @@ public class MainFrame extends JFrame {
 		b_2 = new JButton("串口测试");
 		b_3 = new JButton("喇叭测试");
 		b_4 = new JButton("wifi管理");
-		b_5 = new JButton("退出");
+		b_5 = new JButton("副屏测试");
+		b_6 = new JButton("退出");
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.BOLD, 25);
@@ -54,6 +55,7 @@ public class MainFrame extends JFrame {
 		b_3.setFont(f);
 		b_4.setFont(f);
 		b_5.setFont(f);
+		b_6.setFont(f);
 
 		// 是否可聚焦
 		b_1.setFocusable(false);
@@ -61,6 +63,7 @@ public class MainFrame extends JFrame {
 		b_3.setFocusable(false);
 		b_4.setFocusable(false);
 		b_5.setFocusable(false);
+		b_6.setFocusable(false);
 
 		// 设置Button间距及Button大小
 		b_1.setMargin(new Insets(2, 2, 2, 2));
@@ -74,25 +77,21 @@ public class MainFrame extends JFrame {
 		b_4.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 		b_5.setMargin(new Insets(2, 2, 2, 2));
 		b_5.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
+		b_6.setMargin(new Insets(2, 2, 2, 2));
+		b_6.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 
 		p.add(b_1);
 		p.add(b_2);
 		p.add(b_3);
 		p.add(b_4);
 		p.add(b_5);
-		// p_1 = new JPanel();
-		CashDrawerPanel mCashDrawerPanel = new CashDrawerPanel();
-		p_1 = CashDrawerPanel.cashDrawerPanel;
-		// p_2 = new JPanel();
-		SerialPortPanel mSerialPortPanel = new SerialPortPanel();
-		p_2 = SerialPortPanel.serialPortPanel;
-		// p_3 = new JPanel();
-		HornPanel hornPanel = new HornPanel();
-		p_3 = HornPanel.hornPanel;
-		// p_4 = new JPanel();
-		WifiPanel wifiPanel = new WifiPanel();
-		p_4 = WifiPanel.wifiPanel;
-		p_5 = new JPanel();
+		p.add(b_6);
+		
+		p_1 = CashDrawerPanel.getInstance().cashDrawerPanel;
+		p_2 = SerialPortPanel.getInstance().serialPortPanel;
+		p_3 = HornPanel.getInstance().hornPanel;
+		p_4 = WifiPanel.getInstance().wifiPanel;
+		p_5 = SecondaryTestPanel.getInstance().secTestPanel;
 
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
@@ -100,6 +99,20 @@ public class MainFrame extends JFrame {
 		pane.add(p_4, "p4");
 		pane.add(p_5, "p5");
 
+		initListenerOnclick();
+
+		this.getContentPane().add(pane);
+		this.getContentPane().add(p, BorderLayout.NORTH);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
+		this.setVisible(true);
+	}
+
+	
+	/**
+	 * 初始化点击事件
+	 */
+	private void initListenerOnclick() {
 		b_1.addActionListener(new ActionListener() {
 			// 直接翻转到p_1
 			public void actionPerformed(ActionEvent e) {
@@ -130,17 +143,19 @@ public class MainFrame extends JFrame {
 		b_5.addActionListener(new ActionListener() {
 			// 直接翻转到p_5
 			public void actionPerformed(ActionEvent e) {
+				card.show(pane, "p5");
+
+			}
+		});
+
+		b_6.addActionListener(new ActionListener() {
+			// 直接翻转到p_5
+			public void actionPerformed(ActionEvent e) {
 				// card.show(pane, "p5");
 				System.out.println("================== exit =================");
 				System.exit(0);
 			}
 		});
-
-		this.getContentPane().add(pane);
-		this.getContentPane().add(p, BorderLayout.NORTH);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
-		this.setVisible(true);
 	}
 
 	public static void main(String[] args) {

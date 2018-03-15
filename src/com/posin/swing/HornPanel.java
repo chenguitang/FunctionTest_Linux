@@ -22,14 +22,20 @@ import javax.swing.JScrollPane;
 
 public class HornPanel {
 
-	static JPanel hornPanel = null; // 根布局
+	public JPanel hornPanel = null; // 根布局
 	JButton playButton = null;
 	AudioClip currentSong = null;
 	String path = null;
 	public boolean isPlayer = false;
 	private AudioClip au;
 
-	public HornPanel() {
+	private static final HornPanel HORN_PANEL_INSTANCE=new HornPanel();
+	
+	public static HornPanel getInstance() {
+		return HORN_PANEL_INSTANCE;
+	}
+	
+	private HornPanel() {
 		hornPanel = new JPanel();
 		hornPanel.setLayout(new GridBagLayout());
 		Font f = new Font("隶书", Font.PLAIN, 25);
