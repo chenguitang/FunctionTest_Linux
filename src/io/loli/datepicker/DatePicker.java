@@ -260,7 +260,7 @@ public class DatePicker extends AbstractPicker {
 			new ProcessUtils().createSuProcess(dateCmd);
 			new ProcessUtils().createSuProcess("busybox hwclock -w");
 			
-			Thread.sleep(200);
+			Thread.sleep(400);
 			// 更新系统显示时间
 			this.field.setText("    "
 					+ simpleDateFormat.format(new Date(System
