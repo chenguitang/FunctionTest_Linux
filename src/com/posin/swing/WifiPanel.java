@@ -40,6 +40,12 @@ import com.posin.wifi.WifiUtils.ConnectListener;
 import com.posin.wifi.WifiUtils.ConnnectStatusListener;
 import com.posin.wifi.WifiUtils.WifiDataChageListener;
 
+/**
+ * wifi…Ë÷√
+ * 
+ * @author Greetty
+ * 
+ */
 public class WifiPanel {
 
 	// Icon icon1 = new ImageIcon("E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
@@ -73,19 +79,19 @@ public class WifiPanel {
 	private boolean operation = false;
 	private boolean is_show_dialog = false;
 
-	private static final WifiPanel WIFI_PANEL_INSTANCE=new WifiPanel();
-	
+	private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
+
 	public static WifiPanel getInstance() {
 		return WIFI_PANEL_INSTANCE;
 	}
-	
+
 	private WifiPanel() {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
 		Font f = new Font("¡• È", Font.PLAIN, 25);
 		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
-//		rootPath = Class.class.getClass().getResource("/").getPath();
+		// rootPath = Class.class.getClass().getResource("/").getPath();
 
 		initIcon();
 

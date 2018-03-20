@@ -27,6 +27,11 @@ import javax.swing.JScrollPane;
 
 import sun.org.mozilla.javascript.internal.ast.NewExpression;
 
+/**
+ * 副屏测试
+ * @author Greetty
+ *
+ */
 public class SecondaryTestPanel {
 
 	public JPanel secTestPanel = null; // 根布局
@@ -81,13 +86,14 @@ public class SecondaryTestPanel {
 	 */
 	private void listenerClick() {
 
+		//显示文本
 		showText.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame jf = new JFrame();
 				jf.setSize(1920, 1080);
-				jf.setDefaultCloseOperation(3);
+//				jf.setDefaultCloseOperation(3);
 				jf.setVisible(true);
 
 				final Font secTxtfont = new Font("隶书", Font.PLAIN, 42);
@@ -112,6 +118,7 @@ public class SecondaryTestPanel {
 			}
 		});
 
+		//显示图片
 		showImage.addActionListener(new ActionListener() {
 
 			@Override

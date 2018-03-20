@@ -20,6 +20,11 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * À®°È²âÊÔ
+ * @author Greetty
+ *
+ */
 public class HornPanel {
 
 	public JPanel hornPanel = null; // ¸ù²¼¾Ö
