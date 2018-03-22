@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -244,6 +245,7 @@ public class DatePicker extends AbstractPicker {
 		Date mDate = new Date(currentTimeMillis);
 		// 转换提日期输出格式
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 		String mTime = dateFormat.format(mDate);
 		// String dateCmd = "date -s \"" +
 		// simpleDateFormat.format(cal.getTime())
@@ -254,11 +256,10 @@ public class DatePicker extends AbstractPicker {
 		System.out.println("dateCmd: ====" + dateCmd + "====");
 
 		try {
-			String cmd = "date -s \"2020-05-18 04:53:00\"";
 			System.out.println("dateCmd: " + dateCmd);
 			// 修改系统时间
 			new ProcessUtils().createSuProcess(dateCmd);
-			new ProcessUtils().createSuProcess("busybox hwclock -w");
+			new ProcessUtils().createSuProcess("busybox hwclock -w -u");
 			
 			Thread.sleep(400);
 			// 更新系统显示时间

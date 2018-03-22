@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -96,7 +97,7 @@ public class TimePanel extends JPanel {
 				System.out.println("---------date: " + getDate().toString());
 				try {
 					Runtime.getRuntime().exec(timeCmd);
-					new ProcessUtils().createSuProcess("busybox hwclock -w");
+					new ProcessUtils().createSuProcess("busybox hwclock -w -u");
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -111,7 +112,8 @@ public class TimePanel extends JPanel {
 	private void startToRefreshNowLabel() {
 		final SimpleDateFormat format = new SimpleDateFormat(
 				getTopLabelFormat());
-		nowLabel.setText("选择时间为: " + format.format(new Date()));
+		format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+		nowLabel.setText("选择时间为11: " + format.format(System.currentTimeMillis()));
 		// Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new
 		// Runnable() {
 		//

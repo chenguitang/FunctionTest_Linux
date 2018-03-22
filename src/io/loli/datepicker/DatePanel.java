@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Popup;
@@ -63,19 +65,19 @@ public class DatePanel extends JPanel {
 		Font fontButton = new Font("隶书", Font.BOLD, 25);
 		Font fontExit = new Font("隶书", Font.BOLD, 30);
 		lastYearBtn.setFont(fontButton);
-		lastYearBtn.setPreferredSize(new Dimension(60,35));
+		lastYearBtn.setPreferredSize(new Dimension(60, 35));
 		lastYearBtn.setHorizontalAlignment(JButton.CENTER);
 		nextYearBtn.setFont(fontButton);
-		nextYearBtn.setPreferredSize(new Dimension(60,35));
+		nextYearBtn.setPreferredSize(new Dimension(60, 35));
 		nextYearBtn.setHorizontalAlignment(JButton.CENTER);
 		lastMonthBtn.setFont(fontButton);
-		lastMonthBtn.setPreferredSize(new Dimension(60,35));
+		lastMonthBtn.setPreferredSize(new Dimension(60, 35));
 		lastMonthBtn.setHorizontalAlignment(JButton.CENTER);
 		nextMonthBtn.setFont(fontButton);
-		nextMonthBtn.setPreferredSize(new Dimension(60,35));
+		nextMonthBtn.setPreferredSize(new Dimension(60, 35));
 		nextMonthBtn.setHorizontalAlignment(JButton.CENTER);
 		closeBtn.setFont(fontExit);
-		closeBtn.setPreferredSize(new Dimension(70,35));
+		closeBtn.setPreferredSize(new Dimension(70, 35));
 		closeBtn.setHorizontalAlignment(JButton.CENTER);
 		yearTextField.setFont(f);
 		monthTextField.setFont(f);
@@ -90,19 +92,21 @@ public class DatePanel extends JPanel {
 
 		selectDayLabel = new JLabel();
 		selectDayLabel.setFont(f);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+				getTopLabelFormat());
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 		selectDayLabel.setText("选中时间为： "
-				+ new SimpleDateFormat(getTopLabelFormat()).format(new Date()));
+				+ simpleDateFormat.format(System.currentTimeMillis()));
 
 		todayPanel.add(selectDayLabel);
 		topPanel.add(lastYearBtn);
 		topPanel.add(yearTextField);
 		topPanel.add(nextYearBtn);
-		
+
 		topPanel.add(lastMonthBtn);
 		topPanel.add(monthTextField);
 		topPanel.add(nextMonthBtn);
-		
-		
+
 		topPanel.add(closeBtn);
 
 		lastYearBtn.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -244,12 +248,21 @@ public class DatePanel extends JPanel {
 	 *            year nums to add
 	 */
 	private void addYear(int i) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getTopLabelFormat());
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 		Calendar cal = Calendar.getInstance();
 		cal.set(getDisplayYear(), 1, 1);
+		int year = cal.get(Calendar.YEAR);
+		if (i < 0) {
+			if (year <= 2018) {
+				JOptionPane.showMessageDialog(null, "时间不能设置小于2018年");
+				return;
+			}
+		}
 		cal.add(Calendar.YEAR, i);
 		yearTextField.setText(String.valueOf(cal.get(Calendar.YEAR)));
 		selectDayLabel.setText("选中时间为： "
-				+ new SimpleDateFormat(getTopLabelFormat()).format(cal
+				+ simpleDateFormat.format(cal
 						.getTime()));
 	}
 
@@ -397,9 +410,8 @@ public class DatePanel extends JPanel {
 
 		daysPanel.removeAll();
 		daysPanel.setLayout(new GridLayout(0, 7));
-		daysPanel.setPreferredSize(new Dimension(600,300));
-		
-		
+		daysPanel.setPreferredSize(new Dimension(600, 300));
+
 		int displayYear = getDisplayYear();
 		int displayMonth = getDisplayMonth();
 		String[] days = getDays(displayYear, displayMonth - 1);
@@ -426,7 +438,7 @@ public class DatePanel extends JPanel {
 		}
 
 		for (String it : days) {
-			System.out.println("days: "+it);
+			System.out.println("days: " + it);
 			DayBtn btn = new DayBtn(it);
 			if (displayYear == currentYear && displayMonth == currentMonth + 1
 					&& currentDay == Integer.parseInt(it)) {
@@ -447,7 +459,8 @@ public class DatePanel extends JPanel {
 			label.setHorizontalAlignment(JLabel.CENTER);
 			daysPanel.add(label);
 			label.setEnabled(false);
-			System.out.println("Add days label after last day: "+it.toString());
+			System.out.println("Add days label after last day: "
+					+ it.toString());
 		}
 
 		add(daysPanel);
@@ -488,7 +501,7 @@ public class DatePanel extends JPanel {
 			setHorizontalAlignment(JLabel.CENTER);
 			originColor = this.getBackground();
 			setOpaque(true);
-//			this.setEnabled(!picker.getDateFilter().filter(date));  //周六日是否可选择
+			// this.setEnabled(!picker.getDateFilter().filter(date)); //周六日是否可选择
 			this.setBorder(BorderFactory.createEtchedBorder());
 
 			if (this.isEnabled())
