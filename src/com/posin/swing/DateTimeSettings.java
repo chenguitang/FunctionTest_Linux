@@ -44,7 +44,7 @@ public class DateTimeSettings {
 	private JPanel timePanel; // 设置时间
 	private JPanel autoSyncDatePanel; // 自动同步时间
 	private TimePicker timePicker = null;
-	private JLabel syncDataButton = null;
+	private JButton syncDataButton = null;
 	private JPanel syncShowTimePanel = null;
 	// private boolean isAutoSyns;
 	private static final DateTimeSettings DATE_TIME_SETTINGS_INSTANCE = new DateTimeSettings();
@@ -59,21 +59,18 @@ public class DateTimeSettings {
 		dateSettingPanel.setLayout(new GridBagLayout());
 		addLine(dateSettingPanel, 0, 0, -8, Color.GRAY);
 
-		// String buildMessage = StringUtils.getBuildMessage("/etc/date.prop",
-		// "ro.autorefresh.date");
 		boolean isAutoSyns = StringUtils.isAutoRefreshData();
 		if (isAutoSyns) {
 			System.out.println("******************* yes *********************");
 			initAutoSyncDateUI(true);
 		} else {
+			System.out.println("******************* no *********************");
 			initAutoSyncDateUI(false);
 		}
-		// else {
 		initDatePanelUI();
 		addLine(dateSettingPanel, 0, 3, -9, Color.GRAY);
 		initTimePanelUI();
 		addLine(dateSettingPanel, 0, 5, -9, Color.GRAY);
-		// }
 		initSyncShowTimePanelUI();
 		initEmptyPanelUI();
 		initAutoSyncDate(isAutoSyns, syncDataButton);
@@ -128,7 +125,7 @@ public class DateTimeSettings {
 		Font fontSyncButton = new Font("隶书", Font.PLAIN, 30);
 		autoSyncDatePanel = new JPanel();
 		autoSyncDatePanel.setLayout(new BorderLayout());
-		syncDataButton = new JLabel();
+		syncDataButton = new JButton();
 		syncDataButton.setFont(fontSyncButton);
 		syncDataButton.setFocusable(false);
 
@@ -154,16 +151,14 @@ public class DateTimeSettings {
 					initAutoSyncDate(!autoRefreshData, syncDataButton);
 					if (autoRefreshData) {
 						new ProcessUtils()
-						.createSuProcess("systemctl disable systemd-timesyncd");
-						new ProcessUtils()
 								.createSuProcess(" echo ro.autorefresh.date=no > /etc/date.prop");
-						System.out.println("systemctl disable systemd-timesyncd ");
+						System.out
+								.println("systemctl disable systemd-timesyncd ");
 					} else {
 						new ProcessUtils()
-								.createSuProcess("systemctl enable systemd-timesyncd");
-						new ProcessUtils()
-						.createSuProcess(" echo ro.autorefresh.date=yes > /etc/date.prop");
-						System.out.println("systemctl enable systemd-timesyncd ");
+								.createSuProcess(" echo ro.autorefresh.date=yes > /etc/date.prop");
+						System.out
+								.println("systemctl enable systemd-timesyncd ");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -180,17 +175,29 @@ public class DateTimeSettings {
 	 * @param isAutoSyns
 	 * @param syncDataButton
 	 */
-	private void initAutoSyncDate(boolean isAutoSyns, JLabel syncDataButton) {
+	private void initAutoSyncDate(boolean isAutoSyns, JButton syncDataButton) {
 
 		System.out.println("isAutoSyns: " + isAutoSyns);
 		try {
 			if (isAutoSyns) {
+
+				new ProcessUtils()
+						.createSuProcess("systemctl enable systemd-timesyncd");
+				new ProcessUtils()
+						.createSuProcess("systemctl start systemd-timesyncd");
+
 				syncDataButton.setText("已开启自动同步时间，点击关闭自动同步");
 				syncDataButton.setBackground(new Color(125, 198, 191));
 				datePanel.setVisible(false);
 				timePanel.setVisible(false);
 				syncShowTimePanel.setVisible(true);
 			} else {
+
+				new ProcessUtils()
+						.createSuProcess("systemctl disable systemd-timesyncd");
+				new ProcessUtils()
+						.createSuProcess("systemctl stop systemd-timesyncd");
+
 				syncDataButton.setText("已关闭自动同步时间，点击开启自动同步");
 				syncDataButton.setBackground(new Color(192, 192, 192));
 				datePanel.setVisible(true);
@@ -240,20 +247,21 @@ public class DateTimeSettings {
 	 */
 	private void modifyDate(final JLabel dateLabel) {
 
-		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+				"yyyy-MM-dd");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-		
+
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
 				new Runnable() {
 
 					public void run() {
 						dateLabel.setText("    "
-								+ simpleDateFormat.format(System.currentTimeMillis()));
+								+ simpleDateFormat.format(System
+										.currentTimeMillis()));
 					}
 
 				}, 1, 1, TimeUnit.SECONDS);
-		
-		
+
 		DatePicker.datePicker(datePanel, dateLabel, "yyyy-MM-dd",
 				new DateFilter() {
 					public boolean filter(Date date) {
