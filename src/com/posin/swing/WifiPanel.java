@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,13 +50,6 @@ import com.posin.wifi.WifiUtils.WifiDataChageListener;
  */
 public class WifiPanel {
 
-	// Icon icon1 = new ImageIcon("E:\\nfs\\ic_wifi_lock_signal_4_teal.png");
-	// Icon icon2 = new ImageIcon("E:\\nfs\\ic_wifi_lock_signal_3_teal.png");
-	// Icon icon3 = new ImageIcon("E:\\nfs\\ic_wifi_signal_2_teal.png");
-	// Icon icon4 = new ImageIcon("E:\\nfs\\ic_wifi_signal_1_teal.png");
-	// Icon icon5 = new ImageIcon("E:\\nfs\\ic_wifi_signal_1_light.png");
-
-	// Icon icon1 = new ImageIcon("/mnt/nfs/ic_wifi_lock_signal_4_teal.png");
 	Icon icon1 = null;
 	Icon icon2 = null;
 	Icon icon3 = null;
@@ -245,35 +240,25 @@ public class WifiPanel {
 		initWifiList(); // 刷新数据
 		// wifiJList.removel
 		// 首次进入APP，判断连接状态
-
-		wifiJList.addListSelectionListener(new ListSelectionListener() {
-
+		
+		wifiJList.addMouseListener(new MouseAdapter() {
 			@Override
-			public void valueChanged(ListSelectionEvent event) {
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("##########+++++++++++++++#######");
+				int selectedPosition = wifiJList.getSelectedIndex();
+				System.out.println("select index： " + selectedPosition);
 
-				// 鼠标点击释放
-				if (!wifiJList.getValueIsAdjusting()) {
-					// System.out.println("you release this");
-
-					System.out.println("##########+++++++++++++++#######");
-					int selectedPosition = wifiJList.getSelectedIndex();
-					System.out.println("select index： " + selectedPosition);
-
-					if (selectedPosition >= 0) {
-						System.out
-								.println("wifi name : "
-										+ listWifiDatas.get(selectedPosition)
-												.getSsid());
-						is_show_dialog = true;
-						operation = true;
-						getNetWork(selectedPosition);
-					} else {
-						System.out.println("select index < 0");
-					}
+				if (selectedPosition >= 0) {
+					System.out
+							.println("wifi name : "
+									+ listWifiDatas.get(selectedPosition)
+											.getSsid());
+					is_show_dialog = true;
+					operation = true;
+					getNetWork(selectedPosition);
 				} else {
-					// System.out.println("you click this");
+					System.out.println("select index < 0");
 				}
-
 			}
 		});
 	}
