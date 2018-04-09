@@ -18,6 +18,33 @@ public class StringUtils {
 	}
 
 	/**
+	 * 解析wifi名字
+	 * 
+	 * @param name
+	 *            wifi ssid
+	 * @return
+	 */
+	public static String parseWifiName(String name) {
+		try {
+			if (name != null) {
+				if (name.length() > 2) {
+					if ((name.subSequence(0, 2)).equals("\\x")) {
+						String hexString = name.substring(2).replace("\\x", " ");
+						System.out.println("hexString: "+hexString);
+						byte[] bytes = ByteUtils.hexStringToBytes(" ",hexString);
+						String mTxt = new String(bytes, "utf-8");
+						System.out.println("mtxt: "+mTxt);
+						return mTxt;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return name;
+	}
+
+	/**
 	 * 获取系统配置信息
 	 * 
 	 * @param path

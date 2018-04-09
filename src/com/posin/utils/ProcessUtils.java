@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.posin.global.Appconfig;
@@ -90,7 +91,7 @@ public class ProcessUtils {
 			OutputStream os = process.getOutputStream();
 			os.write(cmd.getBytes());
 
-			String endTip = "echo " + Appconfig.CMD_FINISH + "\n";
+			String endTip = "echo **CMD-RESULT**" + "\n";
 			// System.out.println("endTip :  " + endTip);
 			os.write(endTip.getBytes());
 			// os.write("echo 111111111111111 \n".getBytes());
@@ -108,10 +109,12 @@ public class ProcessUtils {
 	 *            »Øµ÷º¯Êý
 	 */
 	public void readInputStream(InputStream mInputStream, Callback mCallback) {
-		Reader reader = new InputStreamReader(mInputStream);
-		BufferedReader bf = new BufferedReader(reader);
-		String line = null;
 		try {
+			InputStreamReader reader = new InputStreamReader(mInputStream,
+					"utf-8");
+			BufferedReader bf = new BufferedReader(reader);
+			String line = null;
+
 			while ((line = bf.readLine()) != null) {
 				// System.out.println(line);
 				if (mCallback != null) {
@@ -143,12 +146,12 @@ public class ProcessUtils {
 
 		@Override
 		public void run() {
-			Reader reader = new InputStreamReader(mInputStream);
-			BufferedReader bf = new BufferedReader(reader);
-			String line = null;
 			try {
+				Reader reader = new InputStreamReader(mInputStream);
+				BufferedReader bf = new BufferedReader(reader);
+				String line = null;
 				while ((line = bf.readLine()) != null) {
-					// System.out.println(line);
+					System.out.println("InputRunnable read gbk: " + line);
 					if (mCallback != null) {
 						mCallback.readLine(line);
 					}

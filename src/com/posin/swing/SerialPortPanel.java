@@ -367,7 +367,7 @@ public class SerialPortPanel {
 		try {
 			if (mSendText)
 				sendDatainput.setText(new String(ByteUtils
-						.hexStringToBytes(txt)));
+						.hexStringToBytes(" ",txt)));
 			else
 				sendDatainput
 						.setText(ByteUtils.bytesToHexString(txt.getBytes()));
@@ -550,7 +550,7 @@ public class SerialPortPanel {
 			if (mSendText) {
 				data = sendData.getBytes();
 			} else {
-				data = ByteUtils.hexStringToBytes(sendData);
+				data = ByteUtils.hexStringToBytes(" ",sendData);
 			}
 
 			if (data != null) {

@@ -355,7 +355,7 @@ public class WifiUtils {
 					wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
 							.substring(1)));
 					wifiMessage.setFlags(messages[3]);
-					wifiMessage.setSsid(messages[4]);
+					wifiMessage.setSsid(StringUtils.parseWifiName(messages[4]));
 					wifiMessage.setStatus("Î´Á¬½Ó");
 					listWifiMessages.add(wifiMessage);
 				}
