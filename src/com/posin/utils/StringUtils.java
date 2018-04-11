@@ -29,11 +29,13 @@ public class StringUtils {
 			if (name != null) {
 				if (name.length() > 2) {
 					if ((name.subSequence(0, 2)).equals("\\x")) {
-						String hexString = name.substring(2).replace("\\x", " ");
-						System.out.println("hexString: "+hexString);
-						byte[] bytes = ByteUtils.hexStringToBytes(" ",hexString);
+						String hexString = name.substring(2)
+								.replace("\\x", " ");
+						System.out.println("hexString: " + hexString);
+						byte[] bytes = ByteUtils.hexStringToBytes(" ",
+								hexString);
 						String mTxt = new String(bytes, "utf-8");
-						System.out.println("mtxt: "+mTxt);
+						System.out.println("mtxt: " + mTxt);
 						return mTxt;
 					}
 				}
@@ -87,4 +89,19 @@ public class StringUtils {
 				"ro.autorefresh.date");
 		return buildMessage.equals("yes") ? true : false;
 	}
+
+	/**
+	 * Æ´½Ó×Ö·û´®
+	 * 
+	 * @param message
+	 * @return
+	 */
+	public static String SpliceString(String... message) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < message.length; i++) {
+			sb.append(message[i]);
+		}
+		return sb.toString();
+	}
+
 }

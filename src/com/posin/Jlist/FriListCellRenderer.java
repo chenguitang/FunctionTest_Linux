@@ -16,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import com.posin.constant.WifiMessage;
+import com.posin.utils.StringUtils;
 
 public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 
@@ -32,7 +33,7 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		// WifiData wifiData = listWifiDatas.get(index);
 
 		// 设置JLable的文字
-		String text = "<html>" + wifiData.getSsid() + "<br/>"
+		String text = "<html>" + StringUtils.parseWifiName(wifiData.getSsid()) + "<br/>"
 				+ wifiData.getStatus() + " <html/>";
 		setText(text);
 		// 加入宽度为5的空白边框

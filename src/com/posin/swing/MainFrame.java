@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -22,6 +23,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.posin.global.Appconfig;
+import com.posin.global.SocketConstant;
+import com.posin.socket.ServerSocketManager;
+import com.posin.socket.SockectCallback;
 
 /**
  * 主页面，控制页面切换
@@ -120,7 +124,7 @@ public class MainFrame extends JFrame {
 		this.getContentPane().add(p, BorderLayout.NORTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
-		this.setVisible(true);
+//		this.setVisible(true);
 	}
 
 	/**
@@ -178,7 +182,35 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new MainFrame();
+		
+		
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {		
+					 
+					ServerSocketManager.getInstance().startSocketServer(
+							new SockectCallback() {
+								MainFrame mainFrame=null; 
+								@Override
+								public void receiveCommad(String command) {
+									System.out.println("command: " + command);
+									if (command.equals(SocketConstant.OPEN_FUNCTIONTEST)) {
+										if (mainFrame==null) {
+											mainFrame=new MainFrame();
+										}
+										mainFrame.setVisible(true);
+										System.out.println("open to functiontest now ...");
+									}
+									
+								}
+							});
+					 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 }
