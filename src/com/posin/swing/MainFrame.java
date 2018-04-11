@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
+import com.posin.power.PowerManager;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
 
@@ -124,7 +125,7 @@ public class MainFrame extends JFrame {
 		this.getContentPane().add(p, BorderLayout.NORTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
-//		this.setVisible(true);
+		// this.setVisible(true);
 	}
 
 	/**
@@ -182,30 +183,35 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		
-		
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {		
-					 
+				try {
+
+					// 监听关机按钮
+					PowerManager.getInstance().startPowerListener();
+
+					// 创建Socket服务器，监听socket指令
 					ServerSocketManager.getInstance().startSocketServer(
 							new SockectCallback() {
-								MainFrame mainFrame=null; 
+								MainFrame mainFrame = null;
+
 								@Override
 								public void receiveCommad(String command) {
 									System.out.println("command: " + command);
-									if (command.equals(SocketConstant.OPEN_FUNCTIONTEST)) {
-										if (mainFrame==null) {
-											mainFrame=new MainFrame();
+									if (command
+											.equals(SocketConstant.OPEN_FUNCTIONTEST)) {
+										if (mainFrame == null) {
+											mainFrame = new MainFrame();
 										}
 										mainFrame.setVisible(true);
-										System.out.println("open to functiontest now ...");
+										System.out
+												.println("open to functiontest now ...");
 									}
-									
+
 								}
 							});
-					 
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
