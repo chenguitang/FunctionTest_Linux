@@ -167,7 +167,6 @@ public class InputDialog extends JDialog {
 				}
 			}
 		});
-		System.out.println("shutdown ui hava mesure over");
 	}
 
 	/**

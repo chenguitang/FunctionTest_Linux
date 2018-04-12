@@ -4,10 +4,8 @@ import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-
 public class PowerManager {
-	
-	
+
 	private static final int KEY_TYPE_ABS = 1;
 
 	private static final int KEY_BACK = 158;
@@ -23,46 +21,43 @@ public class PowerManager {
 	public static PowerManager getInstance() {
 		return POWER_MANAGER_INSTANCE;
 	}
-	
+
 	public void startPowerListener() {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				
+
 				InputReader ir = null;
-				listenerDialog(InputDialog.getInstance());
-				InputDialog.getInstance().setVisible(true);
-				InputDialog.getInstance().setVisible(false);
+				final InputDialog inputDialog = InputDialog.getInstance();
+				inputDialog.setEnabled(true); // 加载页面
+				inputDialog.doLayout();
+				listenerDialog(inputDialog);
 				try {
 					ir = new InputReader("rk29-keypad") {
 						@Override
 						protected void onEvent(int type, int code, int value) {
-							System.out.println("onEvent " + type + ", " + code + ", "
-									+ value);
+							System.out.println("onEvent " + type + ", " + code
+									+ ", " + value);
 							if (type == KEY_TYPE_ABS) {
 								switch (code) {
 								case KEY_BACK:
 									mKeyStatus[0] = (value != 0);
 									System.out.println("key back "
-											+ (mKeyStatus[0] ? "pressed" : "released"));
-									if (InputDialog.getInstance().isShowing()) {
-										InputDialog.getInstance().setVisible(false);
+											+ (mKeyStatus[0] ? "pressed"
+													: "released"));
+									if (inputDialog.isShowing()) {
+										inputDialog.setVisible(false);
 									}
 
 									break;
 								case KEY_HOME:
 									mKeyStatus[1] = (value != 0);
 									System.out.println("key home "
-											+ (mKeyStatus[1] ? "pressed" : "released"));
-									System.out.println("value: " + value);
-									System.out.println("code: " + code);
+											+ (mKeyStatus[1] ? "pressed"
+													: "released"));
 									if (!mKeyStatus[1]) {
-										// JOptionPane.showMessageDialog(null, "关机");
-//										if (!InputDialog.getInstance().isShowing()) {
-											InputDialog.getInstance().setVisible(true);
-//										}
+										inputDialog.setVisible(true);
 									}
-
 									break;
 								}
 							}
@@ -75,20 +70,20 @@ public class PowerManager {
 					};
 				} catch (Exception e) {
 					e.printStackTrace();
-				}finally{
-//					if (ir != null) {
-//						ir.stop();
-//					}
+				} finally {
+					// if (ir != null) {
+					// ir.stop();
+					// }
 				}
 			}
 		});
 	}
-	
+
 	/**
 	 * 监听关机窗口
 	 */
 	private static void listenerDialog(final InputDialog dialog) {
-		
+
 		dialog.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -98,7 +93,7 @@ public class PowerManager {
 					dialog.setVisible(false);
 				}
 			}
-			
+
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
