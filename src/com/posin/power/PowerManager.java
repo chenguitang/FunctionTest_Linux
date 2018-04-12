@@ -22,16 +22,14 @@ public class PowerManager {
 		return POWER_MANAGER_INSTANCE;
 	}
 
+	/**
+	 * 开始监听实体按键
+	 */
 	public void startPowerListener() {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-
-				InputReader ir = null;
-				final InputDialog inputDialog = InputDialog.getInstance();
-				inputDialog.setEnabled(true); // 加载页面
-				inputDialog.doLayout();
-				listenerDialog(inputDialog);
+				InputReader ir = null;				
 				try {
 					ir = new InputReader("rk29-keypad") {
 						@Override
@@ -45,8 +43,8 @@ public class PowerManager {
 									System.out.println("key back "
 											+ (mKeyStatus[0] ? "pressed"
 													: "released"));
-									if (inputDialog.isShowing()) {
-										inputDialog.setVisible(false);
+									if (InputDialog.getInstance().isShowing()) {
+										InputDialog.getInstance().setVisible(false);
 									}
 
 									break;
@@ -56,7 +54,8 @@ public class PowerManager {
 											+ (mKeyStatus[1] ? "pressed"
 													: "released"));
 									if (!mKeyStatus[1]) {
-										inputDialog.setVisible(true);
+										InputDialog.getInstance().setBounds(600, 300, 800, 400);
+										InputDialog.getInstance().setVisible(true);
 									}
 									break;
 								}
@@ -70,13 +69,15 @@ public class PowerManager {
 					};
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
-					// if (ir != null) {
-					// ir.stop();
-					// }
-				}
+				} 
 			}
 		});
+		InputDialog.getInstance().setEnabled(true); // 加载页面
+	
+		listenerDialog(InputDialog.getInstance());
+		InputDialog.getInstance().setBounds(2000, 1100, 800, 400);
+		InputDialog.getInstance().setVisible(true);
+		
 	}
 
 	/**
