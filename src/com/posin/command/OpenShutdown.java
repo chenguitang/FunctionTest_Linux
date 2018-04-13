@@ -9,7 +9,7 @@ import java.net.Socket;
 import com.posin.global.SocketConstant;
 import com.posin.utils.StringUtils;
 
-public class OpenFunctionTest {
+public class OpenShutdown {
 
 	public static void main(String[] args) {
 		BufferedReader br = null;
@@ -25,7 +25,7 @@ public class OpenFunctionTest {
 
 			String command = StringUtils.SpliceString(
 					SocketConstant.SOCKET_MESSAGE_HEAD,
-					SocketConstant.OPEN_FUNCTIONTEST,
+					SocketConstant.OPEN_SHUTDOWN_VIEW,
 					SocketConstant.SOCKET_MESSAGE_TAIL, "\n");
 			System.out.println("starting send to command");
 			os.write(command.getBytes("utf-8"));
@@ -40,6 +40,7 @@ public class OpenFunctionTest {
 				if (info.equals(SocketConstant.RECEIVE_MESSAGE_SUCCESS)) {
 					break;
 				}
+
 			}
 			System.out.println("I have jumped out of the loop ");
 

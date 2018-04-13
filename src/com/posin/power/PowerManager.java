@@ -29,7 +29,7 @@ public class PowerManager {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				InputReader ir = null;				
+				InputReader ir = null;
 				try {
 					ir = new InputReader("rk29-keypad") {
 						@Override
@@ -44,7 +44,8 @@ public class PowerManager {
 											+ (mKeyStatus[0] ? "pressed"
 													: "released"));
 									if (InputDialog.getInstance().isShowing()) {
-										InputDialog.getInstance().setVisible(false);
+										InputDialog.getInstance().setVisible(
+												false);
 									}
 
 									break;
@@ -54,8 +55,10 @@ public class PowerManager {
 											+ (mKeyStatus[1] ? "pressed"
 													: "released"));
 									if (!mKeyStatus[1]) {
-										InputDialog.getInstance().setBounds(600, 300, 800, 400);
-										InputDialog.getInstance().setVisible(true);
+										InputDialog.getInstance().setBounds(
+												600, 300, 800, 400);
+										InputDialog.getInstance().setVisible(
+												true);
 									}
 									break;
 								}
@@ -69,15 +72,23 @@ public class PowerManager {
 					};
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
+				}
 			}
 		});
 		InputDialog.getInstance().setEnabled(true); // 加载页面
-	
+
 		listenerDialog(InputDialog.getInstance());
 		InputDialog.getInstance().setBounds(2000, 1100, 800, 400);
 		InputDialog.getInstance().setVisible(true);
-		
+
+	}
+
+	/**
+	 * 打开关机弹框页面
+	 */
+	public void showShutdownView() {
+		InputDialog.getInstance().setBounds(600, 300, 800, 400);
+		InputDialog.getInstance().setVisible(true);
 	}
 
 	/**

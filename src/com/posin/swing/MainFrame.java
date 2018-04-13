@@ -177,7 +177,8 @@ public class MainFrame extends JFrame {
 		b_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("================== exit =================");
-				System.exit(0);
+//				System.exit(0);
+				setVisible(false);
 			}
 		});
 	}
@@ -195,6 +196,7 @@ public class MainFrame extends JFrame {
 					ServerSocketManager.getInstance().startSocketServer(
 							new SockectCallback() {
 								MainFrame mainFrame = null;
+								
 
 								@Override
 								public void receiveCommad(String command) {
@@ -207,6 +209,8 @@ public class MainFrame extends JFrame {
 										mainFrame.setVisible(true);
 										System.out
 												.println("open to functiontest now ...");
+									}else if(command.equals(SocketConstant.OPEN_SHUTDOWN_VIEW)){
+										PowerManager.getInstance().showShutdownView();
 									}
 
 								}

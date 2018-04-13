@@ -28,4 +28,10 @@ public class SocketConstant {
 	public static final String OPEN_MINIPOS_SETTINGS="open_minipos_settings";
 	
 	
+	/**
+	 * 打开关机页面
+	 */
+	public static final String OPEN_SHUTDOWN_VIEW="open_shutdown";
+	
+	
 }
