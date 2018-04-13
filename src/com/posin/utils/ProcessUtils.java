@@ -44,8 +44,8 @@ public class ProcessUtils {
 
 		try {
 			os = new DataOutputStream(process.getOutputStream());
-			os.writeBytes(cmd + "\n");
-			os.writeBytes("exit $?\n");
+			os.write((cmd + "\n").getBytes("utf-8"));
+			os.write(("exit $?\n").getBytes("utf-8"));
 			os.flush();
 		} catch (Throwable e) {
 			if (os != null) {
@@ -89,11 +89,11 @@ public class ProcessUtils {
 				int timeout) throws IOException {
 			System.out.println("exec cmd : " + cmd);
 			OutputStream os = process.getOutputStream();
-			os.write(cmd.getBytes());
+			os.write(cmd.getBytes("utf-8"));
 
 			String endTip = "echo **CMD-RESULT**" + "\n";
 			// System.out.println("endTip :  " + endTip);
-			os.write(endTip.getBytes());
+			os.write(endTip.getBytes("utf-8"));
 			// os.write("echo 111111111111111 \n".getBytes());
 			os.flush();
 			return 0;

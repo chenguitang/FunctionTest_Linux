@@ -36,6 +36,7 @@ import view.InputDialog.OnClickListener;
 import com.posin.Jlist.FriListCellRenderer;
 import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
+import com.posin.utils.StringUtils;
 import com.posin.wifi.WifiUtils;
 import com.posin.wifi.WifiUtils.AddNetworkListener;
 import com.posin.wifi.WifiUtils.ConnectListener;
@@ -188,7 +189,7 @@ public class WifiPanel {
 					String ssid = wifiMessage.getSsid();
 					System.out.println("wifi name: ====" + ssid + "===");
 					for (int i = 0; i < listWifiDatas.size(); i++) {
-						if (listWifiDatas.get(i).getSsid().equals(ssid)) {
+						if (listWifiDatas.get(i).getSsid().equals(StringUtils.parseWifiName(ssid))) {
 							System.out.println("-------------- has connect "
 									+ ssid + "--------------");
 							listWifiDatas.get(i).setStatus("ÒÑÁ¬½Ó");

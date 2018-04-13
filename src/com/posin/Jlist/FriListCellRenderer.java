@@ -33,7 +33,7 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 		// WifiData wifiData = listWifiDatas.get(index);
 
 		// 设置JLable的文字
-		String text = "<html>" + StringUtils.parseWifiName(wifiData.getSsid()) + "<br/>"
+		String text = "<html>" + wifiData.getSsid() + "<br/>"
 				+ wifiData.getStatus() + " <html/>";
 		setText(text);
 		// 加入宽度为5的空白边框
@@ -59,7 +59,7 @@ public class FriListCellRenderer extends JLabel implements ListCellRenderer {
 			setIcon(mIcons[2]);
 		} else if ((wifiSignalLevel < 55) && (wifiSignalLevel >= 45)) {
 			setIcon(mIcons[1]);
-		}else{
+		} else {
 			setIcon(mIcons[0]);
 		}
 

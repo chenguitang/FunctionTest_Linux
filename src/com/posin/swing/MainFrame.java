@@ -197,7 +197,6 @@ public class MainFrame extends JFrame {
 							new SockectCallback() {
 								MainFrame mainFrame = null;
 								
-
 								@Override
 								public void receiveCommad(String command) {
 									System.out.println("command: " + command);
