@@ -206,9 +206,15 @@ public class MainFrame extends JFrame {
 										if (mainFrame == null) {
 											mainFrame = new MainFrame();
 										}
-										mainFrame.setVisible(true);
-										System.out
-												.println("open to functiontest now ...");
+										
+										if (!mainFrame.isShowing()) {
+											mainFrame.setVisible(true);
+											System.out
+													.println("open to functiontest now ...");
+										}else {
+											System.out.println("funtiontest isShowing ... ");
+										}
+										
 									}else if(command.equals(SocketConstant.OPEN_SHUTDOWN_VIEW)){
 										PowerManager.getInstance().showShutdownView();
 									}
