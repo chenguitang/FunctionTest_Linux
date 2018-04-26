@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
 import com.posin.power.PowerManager;
+import com.posin.power.RegistedMachine;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
 
@@ -216,6 +217,8 @@ public class MainFrame extends JFrame {
 										
 									}else if(command.equals(SocketConstant.OPEN_SHUTDOWN_VIEW)){
 										PowerManager.getInstance().showShutdownView();
+									}else if(command.equals(SocketConstant.OPEN_MINIPOS_SETTINGS)){
+										RegistedMachine.getInstance().setVisible(true);
 									}
 
 								}

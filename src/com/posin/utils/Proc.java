@@ -34,11 +34,11 @@ public class Proc {
 
 		@Override
 		public void write(String line) {
-			// Log.d(TAG, line);
+			//Log.d(TAG, line);
 
-			synchronized (mOut) {
+			synchronized(mOut) {
 				mOut.add(line);
-				if (line != null && line.startsWith(CMD_FINISH)) {
+				if(line != null && line.startsWith(CMD_FINISH)) {
 					mCmdFinish = true;
 					try {
 						line = line.substring(CMD_FINISH.length());
@@ -49,39 +49,38 @@ public class Proc {
 					return;
 				}
 
-				if (mOut.size() > 1024)
+				if(mOut.size() > 1024)
 					mOut.remove(0);
 			}
 		}
 
-		public int exec(String cmd, Callback callback, int timeout)
-				throws IOException {
+		public int exec(String cmd, Callback callback, int timeout) throws IOException {
 
-			if (mProc == null) {
+			if(mProc == null) {
 				mProc = createSuProcess();
-				(new Thread(new InputRunnable(mProc.getInputStream(), this)))
-						.start();
+				(new Thread(new InputRunnable(mProc.getInputStream(), this))).start();
 			}
 
 			System.out.println("exec : " + cmd);
 
-//			cmd += "\necho " + CMD_FINISH + "$?\n";
-//			System.out.println("exec : " + cmd);
+			cmd += "\necho " + CMD_FINISH + "$?\n";
+
+			//Log.d(TAG, "exec : " + cmd);
 
 			int pos = 0;
-			synchronized (mOut) {
+			synchronized(mOut) {
 				mOut.clear();
 			}
 			mCmdFinish = false;
-			// mProc.getOutputStream().write(cmd.getBytes());
+
+//			mProc.getOutputStream().write(cmd.getBytes());
 			OutputStream os = mProc.getOutputStream();
 			os.write(cmd.getBytes());
-			os.write(("\necho " + CMD_FINISH + "$?\n").getBytes());
 			os.flush();
+
 			long start = System.currentTimeMillis();
-			while (!mCmdFinish) {
-				if (timeout > 0
-						&& (System.currentTimeMillis() - start) > timeout)
+			while(!mCmdFinish) {
+				if(timeout>0 && (System.currentTimeMillis() - start) > timeout)
 					break;
 
 				try {
@@ -89,10 +88,10 @@ public class Proc {
 				} catch (InterruptedException e) {
 				}
 
-				if (callback != null) {
-					synchronized (mOut) {
-						if (mOut.size() > pos) {
-							for (; pos < mOut.size(); pos++) {
+				if(callback != null) {
+					synchronized(mOut) {
+						if(mOut.size() > pos) {
+							for(; pos < mOut.size(); pos++) {
 								callback.readLine(mOut.get(pos));
 							}
 						}
@@ -100,29 +99,81 @@ public class Proc {
 				}
 			}
 
-			if (callback != null) {
-				synchronized (mOut) {
-					if (mOut.size() > pos) {
-						for (; pos < mOut.size(); pos++) {
+			if(callback != null) {
+				synchronized(mOut) {
+					if(mOut.size() > pos) {
+						for(; pos < mOut.size(); pos++) {
 							callback.readLine(mOut.get(pos));
 						}
 					}
 				}
 			}
 
-			if (mCmdFinish)
+			if(mCmdFinish)
 				return mCmdResult;
 			else {
-//				if (timeout > 0) { // »∑±£su≤ª±ª◊Ë»˚
-//					mProc.destroy();
-//					System.out.println("su destroy because timeout ....");
-//					mProc = null;
-//				}
+				if(timeout > 0) { // Á°Æ‰øùsu‰∏çË¢´ÈòªÂ°û
+					mProc.destroy();
+					mProc = null;
+				}
 			}
 			return -1;
 		}
+
+		public int exec(String cmd, ArrayList<String> output, int timeout) throws IOException {
+
+			if(mProc == null) {
+				mProc = createSuProcess();
+				(new Thread(new InputRunnable(mProc.getInputStream(), this))).start();
+			}
+
+			System.out.println("exec : " + cmd);
+
+			cmd += "\necho " + CMD_FINISH + "$?\n";
+
+			//Log.d(TAG, "exec : " + cmd);
+
+			synchronized(mOut) {
+				mOut.clear();
+			}
+			mCmdFinish = false;
+//			mProc.getOutputStream().write(cmd.getBytes());
+			OutputStream os = mProc.getOutputStream();
+			os.write(cmd.getBytes());
+			os.flush();
+
+			long start = System.currentTimeMillis();
+			while(!mCmdFinish) {
+				if(timeout>0 && (System.currentTimeMillis() - start) > timeout)
+					break;
+
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
+			}
+
+			if(output != null) {
+				synchronized(mOut) {
+					for(String s : mOut)
+						output.add(s);
+					mOut.clear();
+				}
+			}
+
+			if(mCmdFinish)
+				return mCmdResult;
+			else {
+				if(timeout > 0) { // Á°Æ‰øùsu‰∏çË¢´ÈòªÂ°û
+					mProc.destroy();
+					mProc = null;
+				}
+			}
+			return -1;
+		}
+
 		public void exit() {
-			if (mProc != null) {
+			if(mProc != null) {
 				try {
 					mProc.getOutputStream().write("exit\n".getBytes());
 					Thread.sleep(50);
@@ -135,23 +186,32 @@ public class Proc {
 		}
 	}
 
-	public static synchronized int suExecCallback(String cmd,
-			Callback callback, int timeout) throws IOException {
-		if (mSu == null)
+	public static synchronized int suExecCallback(String cmd, Callback callback, int timeout) throws IOException {
+		if(mSu == null)
 			mSu = new MySuProcess();
 		return mSu.exec(cmd, callback, timeout);
 	}
 
+	public static synchronized int suExec(String cmd, ArrayList<String> output, int timeout) throws IOException {
+		if(mSu == null)
+			mSu = new MySuProcess();
+		return mSu.exec(cmd, output, timeout);
+	}
+
 	public static synchronized void suExit() {
-		if (mSu != null) {
+		if(mSu != null) {
 			mSu.exit();
 			mSu = null;
 		}
 	}
 
-	public static Process createSuProcess() throws IOException {
+	public static void test() {
+
+	}
+
+	public static Process createSuProcess() throws IOException  {
 		File rootUser = new File("/system/xbin/ru");
-		if (rootUser.exists()) {
+		if(rootUser.exists()) {
 			return Runtime.getRuntime().exec(rootUser.getAbsolutePath());
 		} else {
 			return Runtime.getRuntime().exec("su");
@@ -159,7 +219,7 @@ public class Proc {
 	}
 
 	public static Process createSuProcess(String cmd) throws IOException {
-		
+
 		Process process = createSuProcess();
 		DataOutputStream os = null;
 
@@ -169,7 +229,7 @@ public class Proc {
 			os.writeBytes("exit $?\n");
 			os.flush();
 		} catch (Throwable e) {
-			if (os != null) {
+			if(os != null) {
 				os.close();
 			}
 		}
@@ -177,8 +237,7 @@ public class Proc {
 		return process;
 	}
 
-	public static Process createSuProcess(String cmd, ArrayList<String> out)
-			throws IOException {
+	public static Process createSuProcess(String cmd, ArrayList<String> out) throws IOException {
 		return createSuProcess(cmd, new MyStringArrayStreamWriter(out));
 	}
 
@@ -200,8 +259,7 @@ public class Proc {
 
 	}
 
-	public static Process createSuProcess(String cmd, MyStreamWriter out)
-			throws IOException {
+	public static Process createSuProcess(String cmd, MyStreamWriter out) throws IOException {
 
 		Process process = createSuProcess();
 		DataOutputStream os = null;
@@ -210,15 +268,14 @@ public class Proc {
 			os = new DataOutputStream(process.getOutputStream());
 			os.writeBytes(cmd + "\n");
 
-			(new Thread(new InputRunnable(process.getInputStream(), out)))
-					.start();
+			(new Thread(new InputRunnable(process.getInputStream(), out))).start();
 
 			Thread.sleep(100);
 
 			os.writeBytes("exit $?\n");
 			os.flush();
 		} catch (Throwable e) {
-			if (os != null) {
+			if(os != null) {
 				os.close();
 			}
 		}
@@ -228,12 +285,11 @@ public class Proc {
 
 	static class InputRunnable implements Runnable {
 
-		// final DataInputStream mIn;
+		//final DataInputStream mIn;
 		final BufferedReader mIn;
 		final MyStreamWriter mOut;
 
-		InputRunnable(InputStream in, MyStreamWriter out)
-				throws UnsupportedEncodingException {
+		InputRunnable(InputStream in, MyStreamWriter out) throws UnsupportedEncodingException {
 			mIn = new BufferedReader(new InputStreamReader(in, "UTF8"));
 			mOut = out;
 		}
@@ -242,7 +298,7 @@ public class Proc {
 		public void run() {
 			String line;
 			try {
-				while ((line = mIn.readLine()) != null) {
+				while((line=mIn.readLine()) != null) {
 					mOut.write(line);
 				}
 			} catch (IOException e) {

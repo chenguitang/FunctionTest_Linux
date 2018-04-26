@@ -11,6 +11,9 @@ public class PowerManager {
 	private static final int KEY_BACK = 158;
 	private static final int KEY_HOME = 102;
 
+	private static long startTime = 0; // 开始按键时间
+	private static int clickPowerNumber = 0; // 按电源键次数
+
 	private static boolean[] mKeyStatus = new boolean[2];
 
 	private static final PowerManager POWER_MANAGER_INSTANCE = new PowerManager();
@@ -48,6 +51,32 @@ public class PowerManager {
 												false);
 									}
 
+									System.out.println("mKeyStatus[0]: "
+											+ mKeyStatus[0]);
+									if (mKeyStatus[0]) {
+										System.out.println("clickPowerNumber: "
+												+ clickPowerNumber);
+										if (clickPowerNumber == 5) {
+											if (System.currentTimeMillis()
+													- startTime < 800) {
+												System.out
+														.println("open setting sn page ... ");
+												RegistedMachine.getInstance()
+														.setVisible(true);
+											} else {
+												System.out
+														.println("click back timeout");
+											}
+										} else {
+									
+											if (RegistedMachine.getInstance()
+													.isShowing()) {
+												RegistedMachine.getInstance()
+														.setVisible(false);
+											}
+										}
+									}
+
 									break;
 								case KEY_HOME:
 									mKeyStatus[1] = (value != 0);
@@ -59,6 +88,33 @@ public class PowerManager {
 												600, 300, 800, 400);
 										InputDialog.getInstance().setVisible(
 												true);
+										// 工厂设置
+										if (clickPowerNumber == 0) {
+											startTime = System
+													.currentTimeMillis();
+											clickPowerNumber++;
+											System.out
+													.println("clickPowerNumber ==0, clickPowerNumber++: "
+															+ clickPowerNumber);
+										} else {
+											System.out.println("System.currentTimeMillis(): "
+													+ System.currentTimeMillis());
+											System.out.println("startTime: "
+													+ startTime);
+											if (System.currentTimeMillis()
+													- startTime < 600) {
+												startTime = System
+														.currentTimeMillis();
+												clickPowerNumber++;
+												System.out
+														.println("clickPowerNumber !=0, clickPowerNumber++: "
+																+ clickPowerNumber);
+											} else {
+												System.out
+														.println("click timeout ... , this monitoring is invalid ....");
+												clickPowerNumber = 6;
+											}
+										}
 									}
 									break;
 								}
@@ -80,7 +136,6 @@ public class PowerManager {
 		listenerDialog(InputDialog.getInstance());
 		InputDialog.getInstance().setBounds(2000, 1100, 800, 400);
 		InputDialog.getInstance().setVisible(true);
-
 	}
 
 	/**
@@ -101,6 +156,8 @@ public class PowerManager {
 			@Override
 			public void windowDeactivated(WindowEvent e) {
 				System.out.println("windowDeactivated");
+				clickPowerNumber = 0;
+				startTime = 0;
 				if (dialog.isShowing()) {
 					dialog.setVisible(false);
 				}
