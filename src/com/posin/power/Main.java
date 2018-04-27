@@ -47,8 +47,8 @@ public class Main {
 									mKeyStatus[0] = (value != 0);
 									System.out.println("key back "
 											+ (mKeyStatus[0] ? "pressed" : "released"));
-									if (InputDialog.getInstance().isShowing()) {
-										InputDialog.getInstance().setVisible(false);
+									if (PowerPage.getInstance().isShowing()) {
+										PowerPage.getInstance().setVisible(false);
 									}
 
 									break;
@@ -60,8 +60,8 @@ public class Main {
 									System.out.println("code: " + code);
 									if (!mKeyStatus[1]) {
 										// JOptionPane.showMessageDialog(null, "关机");
-										if (!InputDialog.getInstance().isShowing()) {
-											InputDialog.getInstance().setVisible(true);
+										if (!PowerPage.getInstance().isShowing()) {
+											PowerPage.getInstance().setVisible(true);
 										}
 									}
 
@@ -89,7 +89,7 @@ public class Main {
 	/**
 	 * 监听关机窗口
 	 */
-	private static void listenerDialog(final InputDialog dialog) {
+	private static void listenerDialog(final PowerPage dialog) {
 		
 		dialog.addWindowListener(new WindowAdapter() {
 

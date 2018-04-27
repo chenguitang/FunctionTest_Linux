@@ -360,6 +360,8 @@ public class WifiPanel {
 						System.out.println("start wait for");
 						Thread.sleep(1500);
 						System.out.println("end wait for");
+						wifiUtils.saveConfig();
+						System.out.println("save wifi config ... ");
 						checkConnectStatus();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block

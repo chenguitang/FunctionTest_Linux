@@ -253,7 +253,7 @@ public class WifiUtils {
 	 */
 	public void saveConfig() {
 		try {
-			mProcessUtils.suExecCallback("wpa_cli -i wlan0  save_config",
+			mProcessUtils.suExecCallback("wpa_cli -i wlan0  save_config \n",
 					new Callback() {
 
 						@Override
@@ -265,13 +265,19 @@ public class WifiUtils {
 								if (!line.trim().equals(Appconfig.CMD_FINISH)) {
 									// mConnectListener.connectCallBack(false);
 									System.out
-											.println("csave config success failure: "
+											.println("save config success failure: "
 													+ line);
 								}
 							}
 						}
 
 					}, 10);
+
+			// 复制文件到覆盖的文件中
+//			mProcessUtils
+//					.createSuProcess(" busybox  cp /etc/wpa_supplicant/wpa_supplicant-wlan0.conf "
+//							+ "/etc/wpa_supplicant.conf");
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -289,7 +295,7 @@ public class WifiUtils {
 
 				@Override
 				public void readLine(String line) {
-					System.out.println("check connect status: " + line);
+//					System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
 						wifiMessage.setSsid(line.substring("ssid=".length())
 								.trim());

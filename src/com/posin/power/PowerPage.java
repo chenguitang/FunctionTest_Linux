@@ -19,30 +19,32 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class InputDialog extends JDialog {
+import com.posin.command.OpenFunctionTest;
+
+public class PowerPage extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	Font f = new Font("隶书", Font.BOLD, 30);
 	Color frameColor = null;
 	Color backgroundColor = null;
 
-	private static final InputDialog INPUTDIALOG_INSTANCE = new InputDialog();
-	
-	public static InputDialog getInstance(){
+	private static final PowerPage INPUTDIALOG_INSTANCE = new PowerPage();
+
+	public static PowerPage getInstance() {
 		return INPUTDIALOG_INSTANCE;
 	}
-	
+
 	/**
 	 * Create the dialog.
 	 */
-	private InputDialog() {
+	private PowerPage() {
 
 		// 边框颜色
-//		frameColor = new Color(0x3AF9F9);
+		// frameColor = new Color(0x3AF9F9);
 		frameColor = Color.BLACK;
-		//背景颜色
-//		backgroundColor = new Color(0xE3F7F7);
-//		backgroundColor = new Color(0xF7F7F6);
+		// 背景颜色
+		// backgroundColor = new Color(0xE3F7F7);
+		// backgroundColor = new Color(0xF7F7F6);
 		backgroundColor = new Color(0xE6E7E4);
 		// 添加到主Panel中
 		getContentPane().setLayout(new BorderLayout());
@@ -69,13 +71,21 @@ public class InputDialog extends JDialog {
 		getContentPane().add(eastLabel, BorderLayout.EAST);
 		getContentPane().add(westhLabel, BorderLayout.WEST);
 
-		setBounds(600, 300, 800, 400);
-
 		contentPanel.setLayout(new GridBagLayout());
 		getContentPane().setBackground(backgroundColor);
 
 		contentPanel.setOpaque(false);
-		// 关机
+		
+		initShutdown();
+		initReboot();
+		initFunctionTest();
+	}
+
+	/**
+	 * 关机
+	 */
+	private void initShutdown() {
+
 		JPanel shutdownPanel = new JPanel();
 		JLabel shutdownButton = new JLabel("关机");
 		shutdownButton.setBackground(Color.white);
@@ -85,18 +95,22 @@ public class InputDialog extends JDialog {
 		shutdownPanel.setLayout(new GridBagLayout());
 
 		ImageIcon shutdownIcon = new ImageIcon(
-				InputDialog.class.getResource("/image/shutdown.png"));
+				PowerPage.class.getResource("/image/shutdown.png"));
 		JLabel shutdownLabel = new JLabel();
 		shutdownLabel.setPreferredSize(new Dimension(shutdownIcon
 				.getIconWidth(), shutdownIcon.getIconHeight()));
 		shutdownLabel.setOpaque(true);
 		shutdownLabel.setBackground(Color.white);
 		shutdownLabel.setIcon(shutdownIcon);
-		shutdownPanel.add(shutdownLabel,createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1,
-				0, 0, 1, 1));
-		shutdownPanel.add(shutdownButton, createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1,
-				0, 0, 6, 1));
-		
+		shutdownPanel.add(
+				shutdownLabel,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
+						0, 1, 1));
+		shutdownPanel.add(
+				shutdownButton,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
+						0, 6, 1));
+
 		contentPanel.add(
 				shutdownPanel,
 				createGridBagConstraints(GridBagConstraints.HORIZONTAL, 1, 0,
@@ -114,6 +128,12 @@ public class InputDialog extends JDialog {
 			}
 		});
 
+	}
+
+	/**
+	 * 重启
+	 */
+	private void initReboot() {
 		// 间隙
 		Label label = new Label();
 		label.setBackground(backgroundColor);
@@ -131,7 +151,7 @@ public class InputDialog extends JDialog {
 		rebootPanel.setLayout(new GridBagLayout());
 
 		ImageIcon rebootIcon = new ImageIcon(
-				InputDialog.class.getResource("/image/reboot.png"));
+				PowerPage.class.getResource("/image/reboot.png"));
 		JLabel rebootLabel = new JLabel();
 		// rebootLabel.setPreferredSize(new Dimension(rebootIcon.getIconWidth(),
 		// rebootIcon.getIconHeight()));
@@ -144,12 +164,12 @@ public class InputDialog extends JDialog {
 		// rebootPanel.add(new Label());
 		rebootPanel.add(
 				rebootLabel,
-				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1,
-						0, 0, 1, 1));
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
+						0, 1, 1));
 		rebootPanel.add(
 				rebootButton,
-				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1,
-						0, 0, 6, 1));
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
+						0, 6, 1));
 
 		contentPanel.add(
 				rebootPanel,
@@ -169,6 +189,65 @@ public class InputDialog extends JDialog {
 		});
 	}
 
+	/**
+	 * 打开功能测试
+	 */
+	private void initFunctionTest() {
+		// 间隙
+		Label label = new Label();
+		label.setBackground(backgroundColor);
+		contentPanel.add(
+				label,
+				createGridBagConstraints(GridBagConstraints.HORIZONTAL, 1, 3,
+						0, 650));
+		JPanel openFcPanel = new JPanel();
+		JLabel openFcButton = new JLabel("打开功能测试");
+		openFcButton.setBackground(Color.white);
+		openFcPanel.setBackground(Color.white);
+		openFcButton.setFont(f);
+		openFcButton.setFocusable(false);
+		openFcPanel.setLayout(new GridBagLayout());
+
+		ImageIcon rebootIcon = new ImageIcon(
+				PowerPage.class.getResource("/image/function.png"));
+		JLabel openFcabel = new JLabel();
+		openFcabel.setBounds(500, 500, rebootIcon.getIconWidth(),
+				rebootIcon.getIconHeight());
+		openFcabel.setOpaque(true);
+		openFcabel.setBackground(Color.white);
+		openFcabel.setIcon(rebootIcon);
+
+		// rebootPanel.add(new Label());
+		openFcPanel.add(
+				openFcabel,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
+						0, 1, 1));
+		openFcPanel.add(
+				openFcButton,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
+						0, 6, 1));
+
+		contentPanel.add(
+				openFcPanel,
+				createGridBagConstraints(GridBagConstraints.HORIZONTAL, 1, 4,
+						50, 600));
+		openFcPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				try {
+					ProcessUtils.getInstance().createSuProcess(
+							"/usr/bin/functiontest.sh");
+					
+					setVisible(false);
+					System.out.println("open fucntion test ... ");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	
 	/**
 	 * 生成GridBagConstraints
 	 * 

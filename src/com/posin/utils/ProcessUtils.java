@@ -151,7 +151,7 @@ public class ProcessUtils {
 				BufferedReader bf = new BufferedReader(reader);
 				String line = null;
 				while ((line = bf.readLine()) != null) {
-					System.out.println("InputRunnable read gbk: " + line);
+//					System.out.println("InputRunnable read gbk: " + line);
 					if (mCallback != null) {
 						mCallback.readLine(line);
 					}
