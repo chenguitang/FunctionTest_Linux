@@ -178,8 +178,12 @@ public class MainFrame extends JFrame {
 		b_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("================== exit =================");
-//				System.exit(0);
+//				 System.exit(0);
 				setVisible(false);
+				setEnabled(false);
+				setFocusable(false);
+//				setFocusableWindowState(false);
+//				dispose();
 			}
 		});
 	}
@@ -197,7 +201,7 @@ public class MainFrame extends JFrame {
 					ServerSocketManager.getInstance().startSocketServer(
 							new SockectCallback() {
 								MainFrame mainFrame = null;
-								
+
 								@Override
 								public void receiveCommad(String command) {
 									System.out.println("command: " + command);
@@ -206,19 +210,27 @@ public class MainFrame extends JFrame {
 										if (mainFrame == null) {
 											mainFrame = new MainFrame();
 										}
-										
+
 										if (!mainFrame.isShowing()) {
 											mainFrame.setVisible(true);
+											mainFrame.setEnabled(true);
+											mainFrame.setFocusable(true);
+//											mainFrame.setFocusableWindowState(true);
 											System.out
 													.println("open to functiontest now ...");
-										}else {
-											System.out.println("funtiontest isShowing ... ");
+										} else {
+											System.out
+													.println("funtiontest isShowing ... ");
 										}
-										
-									}else if(command.equals(SocketConstant.OPEN_SHUTDOWN_VIEW)){
-										PowerManager.getInstance().showShutdownView();
-									}else if(command.equals(SocketConstant.OPEN_MINIPOS_SETTINGS)){
-										RegistedMachine.getInstance().setVisible(true);
+
+									} else if (command
+											.equals(SocketConstant.OPEN_SHUTDOWN_VIEW)) {
+										PowerManager.getInstance()
+												.showShutdownView();
+									} else if (command
+											.equals(SocketConstant.OPEN_MINIPOS_SETTINGS)) {
+										RegistedMachine.getInstance()
+												.setVisible(true);
 									}
 
 								}
