@@ -37,4 +37,11 @@ public class Appconfig {
 	 */
 	public static final String CMD_FINISH = "**CMD-RESULT**";
 
+	/**
+	 * wifi刷新时间周期
+	 * 
+	 * 单位：毫秒
+	 */
+	public static final int REFRESH_WIFI_TIME = 5000;
+
 }

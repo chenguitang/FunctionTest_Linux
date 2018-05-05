@@ -39,6 +39,7 @@ import view.InputDialog.OnClickListener;
 import com.posin.Jlist.FriListCellRenderer;
 import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
+import com.posin.global.Appconfig;
 import com.posin.utils.StringUtils;
 import com.posin.wifi.WifiUtils;
 import com.posin.wifi.WifiUtils.AddNetworkListener;
@@ -88,9 +89,12 @@ public class WifiPanel {
 		initIcon();  //初始化图标
 		initTopSwitchPanel(wifiPanel); // 顶部WiFi开关
 		initListWifiPanel(wifiPanel); // WiFi列表
-		refreshWifiList();  //刷新WiFi列表
+//		refreshWifiList();  //刷新WiFi列表
 	}
 
+	/**
+	 * 初始化图标
+	 */
 	private void initIcon() {
 
 		System.out.println("icon npath: "
@@ -114,9 +118,9 @@ public class WifiPanel {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(8000);
-						// System.out.println(" wifiPanel.isShowing(): "+
-						// wifiPanel.isShowing());
+						
+						Thread.sleep(Appconfig.REFRESH_WIFI_TIME);  //休眠时间
+						
 						if (!operation && wifiPanel.isShowing()) {
 							initWifiList();
 							System.out
@@ -217,20 +221,29 @@ public class WifiPanel {
 
 		listModel = new MyDefaultListModel(new ArrayList<WifiMessage>());
 		wifiJList = new JList(listModel);
-		// wifiJList.setListData(listWifiDatas.toArray());
+		wifiJList.setListData(listWifiDatas.toArray());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		wifiJList.setCellRenderer(new FriListCellRenderer(icons));
 		// 设置单一选择模式（每次只能有一个元素被选中）
 		wifiJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		wifiJList.setFont(new Font(Font.SERIF, Font.PLAIN, 25));
 
-		// wifiJList.setSelectedIndex(1);
 		// 添加滚动条
 		JScrollPane jp = new JScrollPane(wifiJList);
 		jp.setPreferredSize(new Dimension(1920, 600));
 		wifiPanel.add(jp);
-		initWifiList(); // 刷新数据
-		// wifiJList.removel
-		// 首次进入APP，判断连接状态
+		
+//		initWifiList(); // 刷新数据
 		
 		wifiJList.addMouseListener(new MouseAdapter() {
 			@Override
