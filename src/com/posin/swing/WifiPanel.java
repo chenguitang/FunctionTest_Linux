@@ -1,10 +1,12 @@
 package com.posin.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -22,6 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -61,19 +64,15 @@ public class WifiPanel {
 	Icon[] icons = null;
 
 	public JPanel wifiPanel = null; // 根布局
-	private JPanel listWifiPane = null; // wifi列表
+	private JPanel listWifiPane = null; // WIFI列表
 	// private JList<JPanel> wifiJList = null;
 	private JList wifiJList = null;
-	private ArrayList<WifiMessage> listWifiDatas = null; // wifi数据聚合
+	private ArrayList<WifiMessage> listWifiDatas = null; // WIFI数据聚合
 
-	private boolean wifiIsOpen = true;
-	private ImageIcon image3 = null;
 
 	private WifiUtils wifiUtils = null;
 	private MyDefaultListModel listModel = null;
-	private boolean testBoo = false;
 	private boolean operation = false;
-	private boolean is_show_dialog = false;
 
 	private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
 
@@ -85,17 +84,11 @@ public class WifiPanel {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
-		Font f = new Font("隶书", Font.PLAIN, 25);
-		// addLine(wifiPanel, 0, 0, -8, Color.GRAY);
-		// rootPath = Class.class.getClass().getResource("/").getPath();
 
-		initIcon();
-
-		initTopSwitchPanel(wifiPanel); // 顶部wifi开关
-		// initWifiList(); // 获取wifi信息
-		initListWifiPanel(wifiPanel); // wifi列表
-		//
-		refreshWifiList();
+		initIcon();  //初始化图标
+		initTopSwitchPanel(wifiPanel); // 顶部WiFi开关
+		initListWifiPanel(wifiPanel); // WiFi列表
+		refreshWifiList();  //刷新WiFi列表
 	}
 
 	private void initIcon() {
@@ -112,7 +105,7 @@ public class WifiPanel {
 	}
 
 	/**
-	 * 刷新wifi列表
+	 * 刷新WIFI列表
 	 */
 	private void refreshWifiList() {
 
@@ -195,9 +188,6 @@ public class WifiPanel {
 							listWifiDatas.get(i).setStatus("已连接");
 						} else {
 							listWifiDatas.get(i).setStatus("未连接");
-							// System.out.println("++listWifiDatas size: "
-							// + listWifiDatas.size() + " wifi name:=="
-							// + listWifiDatas.get(i).getSsid() + "==");
 						}
 					}
 				} else {
@@ -213,7 +203,7 @@ public class WifiPanel {
 	}
 
 	/**
-	 * wifi列表
+	 * WIFI列表
 	 * 
 	 * @param parentPanel
 	 *            父容器
@@ -254,7 +244,6 @@ public class WifiPanel {
 							.println("wifi name : "
 									+ listWifiDatas.get(selectedPosition)
 											.getSsid());
-					is_show_dialog = true;
 					operation = true;
 					getNetWork(selectedPosition);
 				} else {
@@ -281,7 +270,6 @@ public class WifiPanel {
 			public void onClick(boolean isOk, ActionEvent event,
 					final String password) {
 				dialog.dispose();
-				is_show_dialog = false;
 				operation = false;
 				wifiJList.setSelectedIndex(-1);
 				if (!isOk) {
@@ -377,52 +365,20 @@ public class WifiPanel {
 	}
 
 	/**
-	 * 顶部wifi开发
+	 * 顶部WIFI开发
 	 * 
 	 * @param parentPanel
 	 *            父容器
 	 */
 	private void initTopSwitchPanel(JPanel parentPanel) {
 
-		final JButton wifiSwitchStatusJLabel = new JButton("Wifi已开启，点击刷新wifi");
-		wifiSwitchStatusJLabel.setPreferredSize(new Dimension(1920, 70));
-		wifiSwitchStatusJLabel.setFont(new Font("楷体", Font.PLAIN, 25));
-		wifiSwitchStatusJLabel.setFocusPainted(false); // 取消聚焦
-		parentPanel.add(wifiSwitchStatusJLabel, BorderLayout.NORTH);
-
-		changeWifiSwitchStatus(wifiSwitchStatusJLabel);
-
-		// wifiSwitchStatusJLabel.setText("Wifi已关闭，点击开启wifi");
-		// 开启or关闭wifi
-		wifiSwitchStatusJLabel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// wifiIsOpen = !wifiIsOpen;
-				// changeWifiSwitchStatus(wifiSwitchStatusJLabel);
-				initWifiList();
-			}
-		});
-
-	}
-
-	/**
-	 * 改变WIFI开关状态
-	 * 
-	 * @param wifiSwitchStatusJLabel
-	 */
-	public void changeWifiSwitchStatus(JButton wifiSwitchStatusJLabel) {
-		if (!wifiIsOpen) {
-			System.out.println("wifiIsOpen: " + wifiIsOpen);
-			wifiSwitchStatusJLabel.setText("Wifi已开启，点击刷新wifi");
-			// wifiSwitchStatusJLabel.setBackground(new Color(119, 119, 136));
-			wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
-			wifiSwitchStatusJLabel.setForeground(Color.WHITE);
-		} else {
-			System.out.println("wifiIsOpen: " + wifiIsOpen);
-			wifiSwitchStatusJLabel.setText("Wifi已开启，点击刷新wifi");
-			wifiSwitchStatusJLabel.setBackground(new Color(77, 111, 113));
-			wifiSwitchStatusJLabel.setForeground(Color.WHITE);
-		}
+		final JLabel wifiSwitchStatus = new JLabel("Wifi已开启",JLabel.CENTER);
+		wifiSwitchStatus.setPreferredSize(new Dimension(1920, 70));
+		wifiSwitchStatus.setFont(new Font("楷体", Font.PLAIN, 25));
+		wifiSwitchStatus.setOpaque(true);
+		wifiSwitchStatus.setBackground(new Color(77, 111, 113));
+		wifiSwitchStatus.setForeground(Color.WHITE);
+		parentPanel.add(wifiSwitchStatus, BorderLayout.NORTH);
 	}
 
 	/**
