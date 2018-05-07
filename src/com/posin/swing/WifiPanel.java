@@ -215,24 +215,10 @@ public class WifiPanel {
 	private void initListWifiPanel(JPanel parentPanel) {
 		listWifiPane = new JPanel();
 		parentPanel.add(listWifiPane, BorderLayout.CENTER);
-		listWifiPane.setBackground(Color.RED);
-
 		listWifiDatas = new ArrayList<>();
 
 		listModel = new MyDefaultListModel(new ArrayList<WifiMessage>());
 		wifiJList = new JList(listModel);
-		wifiJList.setListData(listWifiDatas.toArray());
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		wifiJList.setCellRenderer(new FriListCellRenderer(icons));
 		// 设置单一选择模式（每次只能有一个元素被选中）
 		wifiJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -240,8 +226,26 @@ public class WifiPanel {
 
 		// 添加滚动条
 		JScrollPane jp = new JScrollPane(wifiJList);
-		jp.setPreferredSize(new Dimension(1920, 600));
-		wifiPanel.add(jp);
+		jp.setPreferredSize(new Dimension(1920, 850));
+		System.out.println("850");
+		listWifiPane.add(jp,BorderLayout.NORTH);
+		
+		for (int i = 1; i <= 20; i++) {
+			WifiMessage wifiMessage = new WifiMessage();
+
+			wifiMessage.setFlags("123");
+			wifiMessage.setFrequency("1354");
+			wifiMessage.setIpAddresss("1325454");
+			wifiMessage.setMacAddress("154787");
+			wifiMessage.setSignalLevel(10);
+			wifiMessage.setSsid("posin" + i);
+			wifiMessage.setStatus("未连接");
+			listWifiDatas.add(wifiMessage);
+		}
+		wifiJList.setListData(listWifiDatas.toArray());
+		
+		
+		
 		
 //		initWifiList(); // 刷新数据
 		

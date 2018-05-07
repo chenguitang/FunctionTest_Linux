@@ -178,17 +178,19 @@ public class MainFrame extends JFrame {
 		b_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("================== exit =================");
-//				 System.exit(0);
+				// System.exit(0);
 				setVisible(false);
 				setEnabled(false);
 				setFocusable(false);
-//				setFocusableWindowState(false);
-//				dispose();
+				// setFocusableWindowState(false);
+				// dispose();
 			}
 		});
 	}
 
 	public static void main(String[] args) {
+		MainFrame mainFrame = new MainFrame();
+		mainFrame.setVisible(true);
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -215,7 +217,7 @@ public class MainFrame extends JFrame {
 											mainFrame.setVisible(true);
 											mainFrame.setEnabled(true);
 											mainFrame.setFocusable(true);
-//											mainFrame.setFocusableWindowState(true);
+											// mainFrame.setFocusableWindowState(true);
 											System.out
 													.println("open to functiontest now ...");
 										} else {
