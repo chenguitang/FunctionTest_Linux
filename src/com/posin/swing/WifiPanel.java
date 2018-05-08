@@ -6,11 +6,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Label;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -66,14 +70,18 @@ public class WifiPanel {
 
 	public JPanel wifiPanel = null; // 根布局
 	private JPanel listWifiPane = null; // WIFI列表
+	private JPanel bottomPanel; // 底部控制WIFI列表滑动按钮
+	private JScrollPane jp;
 	// private JList<JPanel> wifiJList = null;
 	private JList wifiJList = null;
 	private ArrayList<WifiMessage> listWifiDatas = null; // WIFI数据聚合
 
-
 	private WifiUtils wifiUtils = null;
 	private MyDefaultListModel listModel = null;
 	private boolean operation = false;
+
+	private boolean isDownReleased = false; // 下滑按钮是否被释放
+	private boolean isUpReleased = false; // 上滑按钮是否被释放
 
 	private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
 
@@ -85,26 +93,23 @@ public class WifiPanel {
 		wifiPanel = new JPanel();
 		wifiUtils = new WifiUtils();
 		wifiPanel.setLayout(new BorderLayout());
-
-		initIcon();  //初始化图标
+		initIcon(); // 初始化图标
 		initTopSwitchPanel(wifiPanel); // 顶部WiFi开关
+		initBottomPanel(wifiPanel);
 		initListWifiPanel(wifiPanel); // WiFi列表
-//		refreshWifiList();  //刷新WiFi列表
+		initWifiList();
+		refreshWifiList(); // 刷新WiFi列表
 	}
 
 	/**
 	 * 初始化图标
 	 */
 	private void initIcon() {
-
-		System.out.println("icon npath: "
-				+ WifiPanel.class.getResource("/image/wifi_5.png"));
 		icon1 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_5.png"));
 		icon2 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_4.png"));
 		icon3 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_3.png"));
 		icon4 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_2.png"));
 		icon5 = new ImageIcon(WifiPanel.class.getResource("/image/wifi_1.png"));
-
 		icons = new Icon[] { icon1, icon2, icon3, icon4, icon5 };
 	}
 
@@ -118,11 +123,12 @@ public class WifiPanel {
 			public void run() {
 				while (true) {
 					try {
-						
-						Thread.sleep(Appconfig.REFRESH_WIFI_TIME);  //休眠时间
-						
+
+						Thread.sleep(Appconfig.REFRESH_WIFI_TIME); // 休眠时间
+
 						if (!operation && wifiPanel.isShowing()) {
 							initWifiList();
+
 							System.out
 									.println("++++ refresh wifi list +++++++");
 						} else {
@@ -186,7 +192,8 @@ public class WifiPanel {
 					String ssid = wifiMessage.getSsid();
 					System.out.println("wifi name: ====" + ssid + "===");
 					for (int i = 0; i < listWifiDatas.size(); i++) {
-						if (listWifiDatas.get(i).getSsid().equals(StringUtils.parseWifiName(ssid))) {
+						if (listWifiDatas.get(i).getSsid()
+								.equals(StringUtils.parseWifiName(ssid))) {
 							System.out.println("-------------- has connect "
 									+ ssid + "--------------");
 							listWifiDatas.get(i).setStatus("已连接");
@@ -202,6 +209,7 @@ public class WifiPanel {
 				}
 				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
+				refreshMoveButon();
 			}
 		});
 	}
@@ -225,49 +233,57 @@ public class WifiPanel {
 		wifiJList.setFont(new Font(Font.SERIF, Font.PLAIN, 25));
 
 		// 添加滚动条
-		JScrollPane jp = new JScrollPane(wifiJList);
-		jp.setPreferredSize(new Dimension(1920, 850));
+		jp = new JScrollPane(wifiJList);
+		jp.setPreferredSize(new Dimension(1920, 900));
 		System.out.println("850");
-		listWifiPane.add(jp,BorderLayout.NORTH);
-		
-		for (int i = 1; i <= 20; i++) {
-			WifiMessage wifiMessage = new WifiMessage();
+		listWifiPane.add(jp, BorderLayout.NORTH);
 
-			wifiMessage.setFlags("123");
-			wifiMessage.setFrequency("1354");
-			wifiMessage.setIpAddresss("1325454");
-			wifiMessage.setMacAddress("154787");
-			wifiMessage.setSignalLevel(10);
-			wifiMessage.setSsid("posin" + i);
-			wifiMessage.setStatus("未连接");
-			listWifiDatas.add(wifiMessage);
-		}
-		wifiJList.setListData(listWifiDatas.toArray());
-		
-		
-		
-		
-//		initWifiList(); // 刷新数据
-		
+		// for (int i = 1; i <= 40; i++) {
+		// WifiMessage wifiMessage = new WifiMessage();
+		//
+		// wifiMessage.setFlags("123");
+		// wifiMessage.setFrequency("1354");
+		// wifiMessage.setIpAddresss("1325454");
+		// wifiMessage.setMacAddress("154787");
+		// wifiMessage.setSignalLevel(10);
+		// wifiMessage.setSsid("posin" + i);
+		// wifiMessage.setStatus("未连接");
+		// listWifiDatas.add(wifiMessage);
+		// }
+		// wifiJList.setListData(listWifiDatas.toArray());
+
 		wifiJList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("##########+++++++++++++++#######");
 				int selectedPosition = wifiJList.getSelectedIndex();
 				System.out.println("select index： " + selectedPosition);
 
 				if (selectedPosition >= 0) {
-					System.out
-							.println("wifi name : "
-									+ listWifiDatas.get(selectedPosition)
-											.getSsid());
+					System.out.println("wifi name : "
+							+ listWifiDatas.get(selectedPosition).getSsid());
 					operation = true;
 					getNetWork(selectedPosition);
 				} else {
 					System.out.println("select index < 0");
 				}
 			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
 		});
+	}
+
+	/**
+	 * 隐藏或显示刷新按钮
+	 */
+	public void refreshMoveButon() {
+		if (wifiJList.getModel().getSize() > wifiJList.getVisibleRowCount()) {
+			bottomPanel.setVisible(true);
+		} else {
+			bottomPanel.setVisible(false);
+		}
 	}
 
 	/**
@@ -389,37 +405,166 @@ public class WifiPanel {
 	 */
 	private void initTopSwitchPanel(JPanel parentPanel) {
 
-		final JLabel wifiSwitchStatus = new JLabel("Wifi已开启",JLabel.CENTER);
+		final JLabel wifiSwitchStatus = new JLabel("Wifi已开启", JLabel.CENTER);
 		wifiSwitchStatus.setPreferredSize(new Dimension(1920, 70));
 		wifiSwitchStatus.setFont(new Font("楷体", Font.PLAIN, 25));
 		wifiSwitchStatus.setOpaque(true);
 		wifiSwitchStatus.setBackground(new Color(77, 111, 113));
 		wifiSwitchStatus.setForeground(Color.WHITE);
 		parentPanel.add(wifiSwitchStatus, BorderLayout.NORTH);
+
 	}
 
 	/**
-	 * 添加横线
+	 * 底部WIFI滚动按钮
 	 * 
-	 * @param fatherJpanel
-	 *            父布局
-	 * @param gridx
-	 *            X轴位置
-	 * @param gridy
-	 *            Y轴位置
-	 * @param ipady
-	 *            Y轴内撑大值（Android上的padding）
-	 * @param color
+	 * @param parentPanel
+	 *            父容器
 	 */
-	public void addLine(JPanel fatherJpanel, int gridx, int gridy, int ipady,
-			Color color) {
-		JPanel linePanel = new JPanel();
+	private void initBottomPanel(JPanel parentPanel) {
+		bottomPanel = new JPanel();
+		bottomPanel.setBackground(Color.red);
+		bottomPanel.setLayout(new GridBagLayout());
+		JButton upButton = new JButton("按住向上wifi列表滑动");
+		upButton.setFont(new Font("楷体", Font.PLAIN, 25));
+		upButton.setFocusable(false);
+		Icon upIcon = new ImageIcon(
+				WifiPanel.class.getResource("/image/up.png"));
+		upButton.setIcon(upIcon);
+
+		JButton downButton = new JButton("按住向下wifi列表滑动");
+		downButton.setFont(new Font("楷体", Font.PLAIN, 25));
+		downButton.setFocusable(false);
+		Icon downIcon = new ImageIcon(
+				WifiPanel.class.getResource("/image/down.png"));
+		downButton.setIcon(downIcon);
+		bottomPanel.setVisible(false);
+
+		bottomPanel.add(
+				upButton,
+				createGridBagConstraints2(GridBagConstraints.HORIZONTAL, 1, 1,
+						15, 0, 1, 1));
+		bottomPanel.add(
+				downButton,
+				createGridBagConstraints2(GridBagConstraints.HORIZONTAL, 2, 1,
+						15, 0, 1, 1));
+		parentPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+		downButton.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent event) {
+				isDownReleased = false;
+				operation = true;
+				movetoDown();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent event) {
+				isDownReleased = true;
+				operation = false;
+			}
+		});
+
+		upButton.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent event) {
+				isUpReleased = false;
+				operation = true;
+				movetoUp();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent event) {
+				isUpReleased = true;
+				operation = false;
+			}
+		});
+	}
+
+	/**
+	 * 列表向下滑动
+	 */
+	public void movetoDown() {
+
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					while (true) {
+						if (isDownReleased) {
+							break;
+						}
+						int lastVisibleIndex = wifiJList.getFirstVisibleIndex();
+						if (lastVisibleIndex < wifiJList.getModel().getSize()) {
+							Point point = wifiJList
+									.indexToLocation(lastVisibleIndex + 1);
+							System.out.println("point.y: " + point.y);
+							JScrollBar scrollBar = jp.getVerticalScrollBar();
+							scrollBar.setValue(point.y);
+							System.out.println(" down ... ");
+							Thread.sleep(10);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	/**
+	 * 列表向上滑动
+	 */
+	public void movetoUp() {
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					while (true) {
+						if (isUpReleased) {
+							break;
+						}
+						int firstVisibleIndex = wifiJList
+								.getFirstVisibleIndex();
+						if (firstVisibleIndex > 0) {
+							Point point = wifiJList
+									.indexToLocation(firstVisibleIndex - 1);
+							System.out.println("point.y: " + point.y);
+							JScrollBar scrollBar = jp.getVerticalScrollBar();
+							scrollBar.setValue(point.y);
+							System.out.println(" up ... ");
+							Thread.sleep(10);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	/**
+	 * 生成GridBagConstraints
+	 * 
+	 * @param fill
+	 * @param gridx
+	 * @param gridy
+	 * @param ipady
+	 * @param ipadx
+	 * @param weightx
+	 * @param weighty
+	 * @return
+	 */
+	public GridBagConstraints createGridBagConstraints2(int fill, int gridx,
+			int gridy, int ipady, int ipadx, int weightx, int weighty) {
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = fill;
 		c.gridx = gridx;
 		c.gridy = gridy;
 		c.ipady = ipady;
-		linePanel.setBackground(color);
-		fatherJpanel.add(linePanel, c);
+		c.ipadx = ipadx;
+		c.weightx = weightx;
+		c.weighty = weighty;
+		return c;
 	}
 }

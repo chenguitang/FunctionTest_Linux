@@ -50,6 +50,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super("CardLayout Test");
+		setUndecorated (true);
 		card = new CardLayout(5, 5); // 创建一个具有指定的水平和垂直间隙的新卡片布局
 		pane = new JPanel(card); // JPanel的布局管理将被设置成CardLayout
 		p = new JPanel(); // 构造放按钮的JPanel
@@ -189,13 +190,10 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		MainFrame mainFrame = new MainFrame();
-		mainFrame.setVisible(true);
-
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					// 监听关机按钮
 					PowerManager.getInstance().startPowerListener();
 

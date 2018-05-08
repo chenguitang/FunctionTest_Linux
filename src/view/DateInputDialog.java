@@ -35,7 +35,8 @@ public class DateInputDialog extends JDialog {
 	 */
 	public DateInputDialog(String title) {
 		this.title = title;
-
+		setDefaultLookAndFeelDecorated(false);
+		setUndecorated (true);
 		setBounds(700, 300, 450, 300);
 		Font f = new Font("¡• È", Font.BOLD, 25);
 		getContentPane().setLayout(new BorderLayout());

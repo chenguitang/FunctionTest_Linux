@@ -7,7 +7,7 @@ public class ModelUtils {
 	private static String model = null;
 
 	/**
-	 * 获取model
+	 * 获取model，型号
 	 * 
 	 * @return
 	 * @throws Throwable

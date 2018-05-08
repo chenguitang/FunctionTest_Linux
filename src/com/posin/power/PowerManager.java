@@ -59,11 +59,7 @@ public class PowerManager {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
-				PowerPage.getInstance().setEnabled(true); // 加载页面
 				listenerDialog(PowerPage.getInstance());
-				PowerPage.getInstance().setBounds(2000, 1100, 800, 500);
-				PowerPage.getInstance().setVisible(true);
 			}
 
 		});
@@ -111,8 +107,7 @@ public class PowerManager {
 		System.out.println("key home "
 				+ (mKeyStatus[1] ? "pressed" : "released"));
 		if (!mKeyStatus[1]) {
-			//关机页面
-			PowerPage.getInstance().setBounds(600, 250, 800,490);
+			//关机页面 
 			PowerPage.getInstance().setVisible(true);
 			// 工厂设置
 			if (clickPowerNumber == 0) {
@@ -143,7 +138,7 @@ public class PowerManager {
 	 * 打开关机弹框页面
 	 */
 	public void showShutdownView() {
-		PowerPage.getInstance().setBounds(600, 250, 800, 490);
+//		PowerPage.getInstance().setBounds(600, 250, 800, 490);
 		PowerPage.getInstance().setVisible(true);
 	}
 

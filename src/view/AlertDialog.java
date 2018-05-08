@@ -40,6 +40,8 @@ public class AlertDialog extends JDialog {
 	 */
 	public AlertDialog(String title, String message) {
 		setFont(new Font("Dialog", Font.PLAIN, 18));
+		setDefaultLookAndFeelDecorated(false);
+		setUndecorated (true);
 		setBounds(700, 300, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		Label topLine = new Label();

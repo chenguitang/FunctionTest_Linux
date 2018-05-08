@@ -33,6 +33,7 @@ import javax.swing.border.LineBorder;
 import view.AlertDialog;
 
 import com.posin.utils.DeviceDetect;
+import com.posin.utils.HwUtils;
 import com.posin.utils.MacUtils;
 import com.posin.utils.ModelUtils;
 import com.posin.utils.NetworkInfo;
@@ -57,14 +58,14 @@ public class RegistedMachine extends JFrame {
 	static final int SERVER_FTP_PORT = 9321;
 	static final int SERVER_REG_PORT = 1921;
 
-	private static RegistedMachine registedMachine=null;
-	public static synchronized  RegistedMachine getInstance() {
-		if (registedMachine==null) {
-			registedMachine=new RegistedMachine();
+	private static RegistedMachine registedMachine = null;
+
+	public static synchronized RegistedMachine getInstance() {
+		if (registedMachine == null) {
+			registedMachine = new RegistedMachine();
 		}
 		return registedMachine;
 	}
-	
 
 	/**
 	 * Create the frame.
@@ -72,6 +73,7 @@ public class RegistedMachine extends JFrame {
 	public RegistedMachine() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(250, 80, 1400, 900);
+		setUndecorated(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);
@@ -150,7 +152,7 @@ public class RegistedMachine extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				registedMachine.setVisible(false);				
+				registedMachine.setVisible(false);
 			}
 		});
 
@@ -188,17 +190,17 @@ public class RegistedMachine extends JFrame {
 				uploadInfo();
 			}
 		});
-		
-//		this.addWindowListener(new WindowAdapter() {
-//			@Override
-//			public void windowDeactivated(WindowEvent e) {
-//				setVisible(false);
-//			}
-//			@Override
-//			public void windowActivated(WindowEvent e) {
-//				setVisible(true);
-//			}
-//		});
+
+		// this.addWindowListener(new WindowAdapter() {
+		// @Override
+		// public void windowDeactivated(WindowEvent e) {
+		// setVisible(false);
+		// }
+		// @Override
+		// public void windowActivated(WindowEvent e) {
+		// setVisible(true);
+		// }
+		// });
 	}
 
 	/**
@@ -231,6 +233,7 @@ public class RegistedMachine extends JFrame {
 
 			sub.put("sn", sn);
 			sub.put("model", ModelUtils.getModel());
+			sub.put("hw", HwUtils.getHw());
 			sub.put("version", VersionUtils.getVersion());
 			sub.put("eth0", netInfo.getEth0_mac());
 			sub.put("wlan0", netInfo.getWlan0_mac());
@@ -240,7 +243,7 @@ public class RegistedMachine extends JFrame {
 			map.putAll(sub);
 
 			s = new Socket();
-			s.connect(new InetSocketAddress(SERVER_ADDR, SERVER_REG_PORT),5000);
+			s.connect(new InetSocketAddress(SERVER_ADDR, SERVER_REG_PORT), 5000);
 			s.setSoTimeout(5000);
 			OutputStream os = s.getOutputStream();
 
@@ -249,14 +252,13 @@ public class RegistedMachine extends JFrame {
 			serializer.serialize(map, wr);
 			wr.flush();
 			os.flush();
-			
+
 			alert("温馨提示", "上传成功");
-			
 
 		} catch (Throwable e) {
 			e.printStackTrace();
-			alert("温馨提示", ("出错了: "+e.getMessage()));
-		}finally {
+			alert("温馨提示", ("出错了: " + e.getMessage()));
+		} finally {
 			if (s != null) {
 				try {
 					s.close();
@@ -273,6 +275,7 @@ public class RegistedMachine extends JFrame {
 	public void refreshData() {
 		String sn = null;
 		String model = null;
+		String hw = null;
 		String version = null;
 		String eth0 = null;
 		String wlan0 = null;
@@ -282,18 +285,19 @@ public class RegistedMachine extends JFrame {
 			sn = formatStrInLine("SN=", SnUtils.getSN());
 			model = formatStrInLine("<br>", "Model=", ModelUtils.getModel(),
 					"<br/>");
-			version = formatStrInLine("Version=", VersionUtils.getVersion());
-			eth0 = formatStrInLine("<br>", "eth0=", netInfo.getEth0_mac(),
-					"<br/>");
-			wlan0 = formatStrInLine("wlan0=", netInfo.getWlan0_mac());
+			hw = formatStrInLine("Hw=", HwUtils.getHw());
+			version = formatStrInLine("<br>", "Version=",
+					VersionUtils.getVersion(), "<br/>");
+			eth0 = formatStrInLine("eth0=", netInfo.getEth0_mac());
+			wlan0 = formatStrInLine("<br>", "wlan0=", netInfo.getWlan0_mac());
 			String buildRegString = UsbUtils.buildRegString();
-			String uploadMessage = formatStr(sn, model, version, eth0, wlan0,
-					buildRegString);
+			String uploadMessage = formatStr(sn, model, hw, version, eth0,
+					wlan0, buildRegString);
 			// String uploadMessage = formatStr(sn, eth0, wlan0);
 
 			messageLabel.setText(uploadMessage);
 			textField.setText("");
-			
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -325,7 +329,7 @@ public class RegistedMachine extends JFrame {
 	public void alert(String title, String message) {
 		AlertDialog alertDialog = new AlertDialog(title, message);
 		alertDialog.setVisible(true);
-//		AlertDialog.showDialog(title, message);
+		// AlertDialog.showDialog(title, message);
 	}
 
 	/**

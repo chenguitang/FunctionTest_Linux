@@ -41,6 +41,9 @@ public class PowerPage extends JDialog {
 
 		// 边框颜色
 		// frameColor = new Color(0x3AF9F9);
+		setBounds(600, 250, 800, 490);
+		setDefaultLookAndFeelDecorated(false);
+		setUndecorated(true);
 		frameColor = Color.BLACK;
 		// 背景颜色
 		// backgroundColor = new Color(0xE3F7F7);
@@ -75,7 +78,7 @@ public class PowerPage extends JDialog {
 		getContentPane().setBackground(backgroundColor);
 
 		contentPanel.setOpaque(false);
-		
+
 		initShutdown();
 		initReboot();
 		initFunctionTest();
@@ -88,6 +91,7 @@ public class PowerPage extends JDialog {
 
 		JPanel shutdownPanel = new JPanel();
 		JLabel shutdownButton = new JLabel("关机");
+		shutdownButton.setPreferredSize(new Dimension(250,50));
 		shutdownButton.setBackground(Color.white);
 		shutdownPanel.setBackground(Color.white);
 		shutdownButton.setFont(f);
@@ -105,7 +109,8 @@ public class PowerPage extends JDialog {
 		shutdownPanel.add(
 				shutdownLabel,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
-						0, 1, 1));
+						0, 2, 1));
+		
 		shutdownPanel.add(
 				shutdownButton,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
@@ -143,7 +148,8 @@ public class PowerPage extends JDialog {
 						0, 650));
 		// 重启
 		JPanel rebootPanel = new JPanel();
-		JLabel rebootButton = new JLabel("重启");
+		JLabel rebootButton = new JLabel("重启",JLabel.LEFT);
+		rebootButton.setPreferredSize(new Dimension(250,50));
 		rebootButton.setBackground(Color.white);
 		rebootPanel.setBackground(Color.white);
 		rebootButton.setFont(f);
@@ -165,7 +171,7 @@ public class PowerPage extends JDialog {
 		rebootPanel.add(
 				rebootLabel,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
-						0, 1, 1));
+						0, 2, 1));
 		rebootPanel.add(
 				rebootButton,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
@@ -202,6 +208,7 @@ public class PowerPage extends JDialog {
 						0, 650));
 		JPanel openFcPanel = new JPanel();
 		JLabel openFcButton = new JLabel("打开功能测试");
+		openFcButton.setPreferredSize(new Dimension(350,50));
 		openFcButton.setBackground(Color.white);
 		openFcPanel.setBackground(Color.white);
 		openFcButton.setFont(f);
@@ -217,11 +224,10 @@ public class PowerPage extends JDialog {
 		openFcabel.setBackground(Color.white);
 		openFcabel.setIcon(rebootIcon);
 
-		// rebootPanel.add(new Label());
 		openFcPanel.add(
 				openFcabel,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
-						0, 1, 1));
+						0, 3, 1));
 		openFcPanel.add(
 				openFcButton,
 				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
@@ -237,7 +243,7 @@ public class PowerPage extends JDialog {
 				try {
 					ProcessUtils.getInstance().createSuProcess(
 							"/usr/bin/functiontest.sh");
-					
+
 					setVisible(false);
 					System.out.println("open fucntion test ... ");
 				} catch (Exception e) {
@@ -247,7 +253,6 @@ public class PowerPage extends JDialog {
 		});
 	}
 
-	
 	/**
 	 * 生成GridBagConstraints
 	 * 

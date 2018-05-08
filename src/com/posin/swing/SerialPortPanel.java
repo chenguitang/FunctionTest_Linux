@@ -86,7 +86,6 @@ public class SerialPortPanel {
 		serialPortPanel.setBackground(Color.WHITE);
 		// GridLayout gird = new GridLayout(6,0);
 		serialPortPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
 
 		// 中间容器，控制每行显示的内容
 		// 屏幕分割线
