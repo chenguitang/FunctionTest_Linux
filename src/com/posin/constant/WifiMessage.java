@@ -11,7 +11,25 @@ public class WifiMessage implements Comparable<WifiMessage>, Serializable {
 	private String ssid; // wifiÃû×Ö
 	private String status; // wifi×´Ì¬
 	private String ipAddresss; // wifiµØÖ·
+	
+	
 
+	public WifiMessage(String macAddress, String frequency, int signalLevel,
+			String flags, String ssid, String status, String ipAddresss) {
+		super();
+		this.macAddress = macAddress;
+		this.frequency = frequency;
+		this.signalLevel = signalLevel;
+		this.flags = flags;
+		this.ssid = ssid;
+		this.status = status;
+		this.ipAddresss = ipAddresss;
+	}
+
+	public WifiMessage() {
+		
+	}
+	
 	public String getMacAddress() {
 		return macAddress;
 	}

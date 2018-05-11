@@ -82,6 +82,7 @@ public class WifiPanel {
 
 	private boolean isDownReleased = false; // 下滑按钮是否被释放
 	private boolean isUpReleased = false; // 上滑按钮是否被释放
+	private boolean isMoveed = false;
 
 	private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
 
@@ -127,8 +128,11 @@ public class WifiPanel {
 						Thread.sleep(Appconfig.REFRESH_WIFI_TIME); // 休眠时间
 
 						if (!operation && wifiPanel.isShowing()) {
+							if (isMoveed) {
+								isMoveed = false;
+								continue;
+							}
 							initWifiList();
-
 							System.out
 									.println("++++ refresh wifi list +++++++");
 						} else {
@@ -207,9 +211,10 @@ public class WifiPanel {
 						listWifiDatas.get(i).setStatus("未连接");
 					}
 				}
+				
 				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
-				refreshMoveButon();
+				refreshMoveButon(wifiJList);
 			}
 		});
 	}
@@ -234,8 +239,9 @@ public class WifiPanel {
 
 		// 添加滚动条
 		jp = new JScrollPane(wifiJList);
-		jp.setPreferredSize(new Dimension(1920, 900));
+		jp.setPreferredSize(new Dimension(1920, 880));
 		System.out.println("850");
+		jp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		listWifiPane.add(jp, BorderLayout.NORTH);
 
 		// for (int i = 1; i <= 40; i++) {
@@ -278,8 +284,10 @@ public class WifiPanel {
 	/**
 	 * 隐藏或显示刷新按钮
 	 */
-	public void refreshMoveButon() {
-		if (wifiJList.getModel().getSize() > wifiJList.getVisibleRowCount()) {
+	public void refreshMoveButon(JList wifiJList) {
+		System.out.println("wifiJList.getModel().getSize()  : "
+				+ wifiJList.getModel().getSize());
+		if (wifiJList.getModel().getSize() > 11) {
 			bottomPanel.setVisible(true);
 		} else {
 			bottomPanel.setVisible(false);
@@ -423,7 +431,6 @@ public class WifiPanel {
 	 */
 	private void initBottomPanel(JPanel parentPanel) {
 		bottomPanel = new JPanel();
-		bottomPanel.setBackground(Color.red);
 		bottomPanel.setLayout(new GridBagLayout());
 		JButton upButton = new JButton("按住向上wifi列表滑动");
 		upButton.setFont(new Font("楷体", Font.PLAIN, 25));
@@ -456,6 +463,7 @@ public class WifiPanel {
 			public void mousePressed(MouseEvent event) {
 				isDownReleased = false;
 				operation = true;
+				isMoveed = true;
 				movetoDown();
 			}
 
@@ -472,6 +480,7 @@ public class WifiPanel {
 			public void mousePressed(MouseEvent event) {
 				isUpReleased = false;
 				operation = true;
+				isMoveed = true;
 				movetoUp();
 			}
 
@@ -491,20 +500,33 @@ public class WifiPanel {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
+
 					while (true) {
 						if (isDownReleased) {
 							break;
 						}
 						int lastVisibleIndex = wifiJList.getFirstVisibleIndex();
-						if (lastVisibleIndex < wifiJList.getModel().getSize()) {
+						if (wifiJList.getLastVisibleIndex() + 1 < wifiJList
+								.getModel().getSize()) {
 							Point point = wifiJList
 									.indexToLocation(lastVisibleIndex + 1);
-							System.out.println("point.y: " + point.y);
 							JScrollBar scrollBar = jp.getVerticalScrollBar();
 							scrollBar.setValue(point.y);
-							System.out.println(" down ... ");
-							Thread.sleep(10);
+							wifiJList.setSelectedIndex(lastVisibleIndex + 1);
+							Thread.sleep(100);
+						}else{
+							Thread.sleep(100);
 						}
+						// else {
+						// if (wifiJList.getSelectedIndex() < wifiJList
+						// .getModel().getSize()) {
+						// System.out.println("move ...... ");
+						// wifiJList.setSelectedIndex(wifiJList
+						// .getSelectedIndex() + 1);
+						// Thread.sleep(2000);
+						// System.out.println("sleep 2000");
+						// }
+						// }
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -529,11 +551,12 @@ public class WifiPanel {
 						if (firstVisibleIndex > 0) {
 							Point point = wifiJList
 									.indexToLocation(firstVisibleIndex - 1);
-							System.out.println("point.y: " + point.y);
 							JScrollBar scrollBar = jp.getVerticalScrollBar();
 							scrollBar.setValue(point.y);
-							System.out.println(" up ... ");
-							Thread.sleep(10);
+							wifiJList.setSelectedIndex(firstVisibleIndex - 1);
+							Thread.sleep(100);
+						} else {
+							wifiJList.setSelectedIndex(0);
 						}
 					}
 				} catch (Exception e) {
