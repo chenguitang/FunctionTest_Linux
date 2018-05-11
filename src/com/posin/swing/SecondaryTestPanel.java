@@ -4,6 +4,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsDevice;
@@ -29,8 +30,9 @@ import sun.org.mozilla.javascript.internal.ast.NewExpression;
 
 /**
  * 副屏测试
+ * 
  * @author Greetty
- *
+ * 
  */
 public class SecondaryTestPanel {
 
@@ -38,8 +40,10 @@ public class SecondaryTestPanel {
 	JButton showText = null;
 	JButton showImage = null;
 
+	private JFrame secFrame; // 副屏显示窗体
+
 	private static final SecondaryTestPanel SECONDARY_TEST_PANEL_INSTANCE = new SecondaryTestPanel();
-	
+
 	public static SecondaryTestPanel getInstance() {
 		return SECONDARY_TEST_PANEL_INSTANCE;
 	}
@@ -78,6 +82,7 @@ public class SecondaryTestPanel {
 		secTestPanel.add(buttonPanel, c);
 
 		listenerClick();
+		closeSecPage();
 
 	}
 
@@ -86,14 +91,14 @@ public class SecondaryTestPanel {
 	 */
 	private void listenerClick() {
 
-		//显示文本
+		// 显示文本
 		showText.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame jf = new JFrame();
 				jf.setSize(1920, 1080);
-//				jf.setDefaultCloseOperation(3);
+				// jf.setDefaultCloseOperation(3);
 				jf.setVisible(true);
 
 				final Font secTxtfont = new Font("隶书", Font.PLAIN, 42);
@@ -118,7 +123,7 @@ public class SecondaryTestPanel {
 			}
 		});
 
-		//显示图片
+		// 显示图片
 		showImage.addActionListener(new ActionListener() {
 
 			@Override
@@ -149,7 +154,9 @@ public class SecondaryTestPanel {
 	 * @param frame
 	 *            显示的布局
 	 */
-	public void showOnScreen2(int screen, JFrame frame) {
+	private void showOnScreen2(int screen, final JFrame frame) {
+
+		// 控制副屏显示当前页面
 		GraphicsEnvironment ge = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		GraphicsDevice[] gd = ge.getScreenDevices();
@@ -158,11 +165,34 @@ public class SecondaryTestPanel {
 			frame.setLocation(
 					gd[screen].getDefaultConfiguration().getBounds().x,
 					frame.getY());
+
 		} else if (gd.length > 0) {
 			frame.setLocation(gd[0].getDefaultConfiguration().getBounds().x,
 					frame.getY());
 		} else {
 			throw new RuntimeException("No Screens Found");
+		}
+
+		// 如果副屏有旧页面，关闭副屏显示的旧页面
+		if (secFrame != null) {
+			secFrame.setVisible(false);
+			secFrame.dispose();
+			System.out.println("close old secondary display frame ... ");
+		}
+		secFrame = frame;
+
+	}
+
+	/**
+	 * 关闭副屏测试页面
+	 */
+	public void closeSecPage() {
+		if (secFrame != null) {
+			secFrame.setVisible(false);
+			secFrame.dispose();
+			System.out.println("close secondary display frame ... ");
+		} else {
+			System.out.println("secondary display frame is null ... ");
 		}
 	}
 

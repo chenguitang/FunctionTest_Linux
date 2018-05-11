@@ -179,12 +179,10 @@ public class MainFrame extends JFrame {
 		b_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("================== exit =================");
-				// System.exit(0);
 				setVisible(false);
-				setEnabled(false);
-				setFocusable(false);
-				// setFocusableWindowState(false);
-				// dispose();
+				//关闭副屏显示页面
+				SecondaryTestPanel.getInstance().closeSecPage();
+				
 			}
 		});
 	}
