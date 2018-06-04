@@ -12,6 +12,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
@@ -28,6 +30,8 @@ import com.posin.power.PowerManager;
 import com.posin.power.RegistedMachine;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
+import com.posin.utils.StringUtils;
+import com.posin.utils.VersionUtils;
 
 /**
  * 主页面，控制页面切换
@@ -44,13 +48,13 @@ public class MainFrame extends JFrame {
 	private JPanel p = null; // 放按钮的JPanel
 	private CardLayout card = null; // CardLayout布局管理器
 	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null,
-			b_6 = null, b_7 = null; // 可直接翻转到JPanel组件的按钮
+			b_6 = null, b_7 = null, b_8 = null; // 可直接翻转到JPanel组件的按钮
 	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null,
-			p_6 = null; // 要切换的JPanel
+			p_6, p_7 = null; // 要切换的JPanel
 
 	public MainFrame() {
 		super("CardLayout Test");
-		setUndecorated (true);
+		setUndecorated(true);
 		card = new CardLayout(5, 5); // 创建一个具有指定的水平和垂直间隙的新卡片布局
 		pane = new JPanel(card); // JPanel的布局管理将被设置成CardLayout
 		p = new JPanel(); // 构造放按钮的JPanel
@@ -61,7 +65,8 @@ public class MainFrame extends JFrame {
 		b_4 = new JButton("wifi管理");
 		b_5 = new JButton("副屏测试");
 		b_6 = new JButton("日期与时间");
-		b_7 = new JButton("退出");
+		b_7 = new JButton("关于");
+		b_8 = new JButton("退出");
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.BOLD, 25);
@@ -72,6 +77,7 @@ public class MainFrame extends JFrame {
 		b_5.setFont(f);
 		b_6.setFont(f);
 		b_7.setFont(f);
+		b_8.setFont(f);
 
 		// 是否可聚焦
 		b_1.setFocusable(false);
@@ -81,6 +87,7 @@ public class MainFrame extends JFrame {
 		b_5.setFocusable(false);
 		b_6.setFocusable(false);
 		b_7.setFocusable(false);
+		b_8.setFocusable(false);
 
 		// 设置Button间距及Button大小
 		b_1.setMargin(new Insets(2, 2, 2, 2));
@@ -98,7 +105,9 @@ public class MainFrame extends JFrame {
 		b_6.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 		b_7.setMargin(new Insets(2, 2, 2, 2));
 		b_7.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
-
+		b_8.setMargin(new Insets(2, 2, 2, 2));
+		b_8.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
+		
 		p.add(b_1);
 		p.add(b_2);
 		p.add(b_3);
@@ -106,6 +115,10 @@ public class MainFrame extends JFrame {
 		p.add(b_5);
 		p.add(b_6);
 		p.add(b_7);
+		p.add(b_8);
+
+		
+
 
 		p_1 = CashDrawerPanel.getInstance().cashDrawerPanel;
 		p_2 = SerialPortPanel.getInstance().serialPortPanel;
@@ -113,13 +126,15 @@ public class MainFrame extends JFrame {
 		p_4 = WifiPanel.getInstance().wifiPanel;
 		p_5 = SecondaryTestPanel.getInstance().secTestPanel;
 		p_6 = DateTimeSettings.getInstance().dateSettingPanel;
-
+		p_7=AboutPanel.getInstance().aboutPanel;
+		
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
 		pane.add(p_4, "p4");
 		pane.add(p_5, "p5");
 		pane.add(p_6, "p6");
+		pane.add(p_7, "p7");
 
 		initListenerOnclick();
 
@@ -177,12 +192,19 @@ public class MainFrame extends JFrame {
 		});
 
 		b_7.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				card.show(pane, "p7");
+			}
+		});
+
+		b_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("================== exit =================");
 				setVisible(false);
-				//关闭副屏显示页面
+				// 关闭副屏显示页面
 				SecondaryTestPanel.getInstance().closeSecPage();
-				
+
 			}
 		});
 	}
