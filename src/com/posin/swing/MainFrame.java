@@ -117,9 +117,6 @@ public class MainFrame extends JFrame {
 		p.add(b_7);
 		p.add(b_8);
 
-		
-
-
 		p_1 = CashDrawerPanel.getInstance().cashDrawerPanel;
 		p_2 = SerialPortPanel.getInstance().serialPortPanel;
 		p_3 = HornPanel.getInstance().hornPanel;

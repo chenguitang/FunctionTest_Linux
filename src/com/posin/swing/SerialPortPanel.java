@@ -73,12 +73,14 @@ public class SerialPortPanel {
 	private boolean mRecvText = true;
 	private boolean mSendText = true;
 
-	private static final SerialPortPanel SERIALPORT_PANEL_INSTANCE=new SerialPortPanel();
-	
-	public static SerialPortPanel getInstance() {
-		return SERIALPORT_PANEL_INSTANCE;
+	private static class SerialHolder {
+		private static final SerialPortPanel SERIALPORT_PANEL_INSTANCE = new SerialPortPanel();
 	}
-	
+
+	public static SerialPortPanel getInstance() {
+		return SerialHolder.SERIALPORT_PANEL_INSTANCE;
+	}
+
 	private SerialPortPanel() {
 		serialPortPanel = new JPanel();
 		serialPortPanel.setSize(new Dimension(Appconfig.PANELCARDWIDTH,
@@ -116,7 +118,7 @@ public class SerialPortPanel {
 	private void initListenerInput() {
 
 		final SoftKeyBoardPopup keyPopup = new SoftKeyBoardPopup(sendDatainput);
-		
+
 		sendDatainput.addFocusListener(new FocusListener() {
 
 			@Override
@@ -365,8 +367,8 @@ public class SerialPortPanel {
 
 		try {
 			if (mSendText)
-				sendDatainput.setText(new String(ByteUtils
-						.hexStringToBytes(" ",txt)));
+				sendDatainput.setText(new String(ByteUtils.hexStringToBytes(
+						" ", txt)));
 			else
 				sendDatainput
 						.setText(ByteUtils.bytesToHexString(txt.getBytes()));
@@ -549,7 +551,7 @@ public class SerialPortPanel {
 			if (mSendText) {
 				data = sendData.getBytes();
 			} else {
-				data = ByteUtils.hexStringToBytes(" ",sendData);
+				data = ByteUtils.hexStringToBytes(" ", sendData);
 			}
 
 			if (data != null) {

@@ -33,10 +33,12 @@ public class CashDrawerPanel {
 	private JPanel mButtonJPanel = null; // 承载测试钱箱两个button的按钮
 	private JButton pin2Button = null, pin5Button = null; // 开钱箱按钮
 
-	private static final CashDrawerPanel CASH_DRAWER_PANEL_INSTANCE=new CashDrawerPanel();
+	private static class CashDrawerHolder{
+		private static final CashDrawerPanel CASH_DRAWER_PANEL_INSTANCE=new CashDrawerPanel();
+	}
 	
 	public static CashDrawerPanel getInstance() {
-		return CASH_DRAWER_PANEL_INSTANCE;
+		return CashDrawerHolder.CASH_DRAWER_PANEL_INSTANCE;
 	}
 	
 	private CashDrawerPanel() {

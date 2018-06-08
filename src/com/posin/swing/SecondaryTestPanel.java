@@ -42,10 +42,12 @@ public class SecondaryTestPanel {
 
 	private JFrame secFrame; // ∏±∆¡œ‘ æ¥∞ÃÂ
 
-	private static final SecondaryTestPanel SECONDARY_TEST_PANEL_INSTANCE = new SecondaryTestPanel();
+	private static class SecondaryTestHolder {
+		private static final SecondaryTestPanel SECONDARY_TEST_PANEL_INSTANCE = new SecondaryTestPanel();
+	}
 
 	public static SecondaryTestPanel getInstance() {
-		return SECONDARY_TEST_PANEL_INSTANCE;
+		return SecondaryTestHolder.SECONDARY_TEST_PANEL_INSTANCE;
 	}
 
 	private SecondaryTestPanel() {

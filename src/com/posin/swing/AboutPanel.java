@@ -38,10 +38,12 @@ public class AboutPanel {
 	private JLabel modelLabel = null;
 	private Font f;
 
-	private static final AboutPanel HORN_PANEL_INSTANCE = new AboutPanel();
+	private static class AboutHolder {
+		private static final AboutPanel HORN_PANEL_INSTANCE = new AboutPanel();
+	}
 
 	public static AboutPanel getInstance() {
-		return HORN_PANEL_INSTANCE;
+		return AboutHolder.HORN_PANEL_INSTANCE;
 	}
 
 	private AboutPanel() {
@@ -53,7 +55,7 @@ public class AboutPanel {
 		addLine(aboutPanel, 0, 0, -9, Color.GRAY);
 
 		iniModelUI();
-		
+
 		addLine(aboutPanel, 0, 2, -9, Color.GRAY);
 
 		iniVersionUI();

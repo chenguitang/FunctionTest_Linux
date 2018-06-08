@@ -26,19 +26,25 @@ public class StringUtils {
 	 */
 	public static String parseWifiName(String name) {
 		try {
-			if (name != null) {
-				if (name.length() > 2) {
-					if ((name.subSequence(0, 2)).equals("\\x")) {
-						String hexString = name.substring(2)
-								.replace("\\x", " ");
-						System.out.println("hexString: " + hexString);
-						byte[] bytes = ByteUtils.hexStringToBytes(" ",
-								hexString);
-						String mTxt = new String(bytes, "utf-8");
-						System.out.println("mtxt: " + mTxt);
-						return mTxt;
-					}
+			if (name == null) {
+				throw new Exception("name is null, please check your name ...");
+			}
+			if (name.contains("\\x")) {
+				String beginName = null;
+				String behindName = null;
+				int beginIndex = name.indexOf("\\x");
+				if (beginIndex > 0) {
+					beginName = name.substring(0, beginIndex);
+					behindName = name.substring(beginIndex);
+				} else {
+					behindName = name;
 				}
+				String hexString = behindName.substring(2).replace("\\x", " ");
+				System.out.println("hexString: " + hexString);
+				byte[] bytes = ByteUtils.hexStringToBytes(" ", hexString);
+				String mTxt = new String(bytes, "utf-8");
+				System.out.println("mtxt: " + mTxt);
+				return beginName == null ? mTxt : beginName + mTxt;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -33,6 +33,13 @@ public class ByteUtils {
 				int data = (Character.digit(t.charAt(0), 16) << 4)
 						| Character.digit(t.charAt(1), 16);
 				bb.put((byte) data);
+			} else if (t.length() >= 3) {  //hex×Ö·ûºóÃæ¸ú×Å×Ö·û´®
+				String hexT = t.substring(0, 2);
+				int data = (Character.digit(hexT.charAt(0), 16) << 4)
+						| Character.digit(hexT.charAt(1), 16);
+				bb.put((byte) data);
+				bb.put(t.substring(2).getBytes());
+
 			} else {
 				throw new Exception("error : unknow hex string format.");
 			}

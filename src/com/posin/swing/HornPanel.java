@@ -22,8 +22,9 @@ import javax.swing.JScrollPane;
 
 /**
  * ¿Æ∞»≤‚ ‘
+ * 
  * @author Greetty
- *
+ * 
  */
 public class HornPanel {
 
@@ -34,12 +35,14 @@ public class HornPanel {
 	public boolean isPlayer = false;
 	private AudioClip au;
 
-	private static final HornPanel HORN_PANEL_INSTANCE=new HornPanel();
-	
-	public static HornPanel getInstance() {
-		return HORN_PANEL_INSTANCE;
+	private static class HornHolder {
+		private static final HornPanel HORN_PANEL_INSTANCE = new HornPanel();
 	}
-	
+
+	public static HornPanel getInstance() {
+		return HornHolder.HORN_PANEL_INSTANCE;
+	}
+
 	private HornPanel() {
 		hornPanel = new JPanel();
 		hornPanel.setLayout(new GridBagLayout());

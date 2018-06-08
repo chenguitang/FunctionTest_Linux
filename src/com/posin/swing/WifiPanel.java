@@ -84,10 +84,11 @@ public class WifiPanel {
 	private boolean isUpReleased = false; // 上滑按钮是否被释放
 	private boolean isMoveed = false;
 
-	private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
-
+	private static class WifiHolder {
+		private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
+	}
 	public static WifiPanel getInstance() {
-		return WIFI_PANEL_INSTANCE;
+		return WifiHolder.WIFI_PANEL_INSTANCE;
 	}
 
 	private WifiPanel() {

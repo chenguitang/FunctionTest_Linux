@@ -46,11 +46,14 @@ public class DateTimeSettings {
 	private TimePicker timePicker = null;
 	private JButton syncDataButton = null;
 	private JPanel syncShowTimePanel = null;
+
 	// private boolean isAutoSyns;
-	private static final DateTimeSettings DATE_TIME_SETTINGS_INSTANCE = new DateTimeSettings();
+	private static class DateTimeHolder {
+		private static final DateTimeSettings DATE_TIME_SETTINGS_INSTANCE = new DateTimeSettings();
+	}
 
 	public static DateTimeSettings getInstance() {
-		return DATE_TIME_SETTINGS_INSTANCE;
+		return DateTimeHolder.DATE_TIME_SETTINGS_INSTANCE;
 	}
 
 	private DateTimeSettings() {
