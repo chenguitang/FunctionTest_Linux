@@ -381,7 +381,7 @@ public class WifiPanel {
 				Thread.sleep(20);
 			}
 			wifiUtils.connect(network, ssid, password, listWifiDatas.get(index)
-					.getFlags());
+					.getFlags(),listWifiDatas.get(index).isUtf8());
 			wifiUtils.setConnectListener(new ConnectListener() {
 
 				@Override

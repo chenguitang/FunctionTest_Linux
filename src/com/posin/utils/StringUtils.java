@@ -18,6 +18,63 @@ public class StringUtils {
 	}
 
 	/**
+	 * 判断wifi名字是否带有中文
+	 * 
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean isChineseName(String name) {
+		try {
+			if (name == null) {
+				throw new Exception("name is null, please check your name ...");
+			}
+			if (name.contains("\\x")) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * 中文wifi名字转化为byte数组
+	 * 
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] ChineseWifiNametoBye(String name) {
+		byte[] bytes = null;
+		try {
+			if (!isChineseName(name)) {
+				throw new Exception(
+						"Not Chinese characters , please check your name ...");
+			}
+
+			if (name.contains("\\x")) {
+				String beginName = null;
+				String behindName = null;
+				int beginIndex = name.indexOf("\\x");
+				if (beginIndex > 0) {
+					beginName = name.substring(0, beginIndex);
+					behindName = name.substring(beginIndex);
+				} else {
+					behindName = name;
+				}
+				String hexString = behindName.substring(2).replace("\\x", " ");
+				System.out.println("hexString: " + hexString);
+				bytes = ByteUtils.hexStringToBytes(" ", hexString);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bytes;
+	}
+
+	/**
 	 * 解析wifi名字
 	 * 
 	 * @param name
@@ -42,7 +99,15 @@ public class StringUtils {
 				String hexString = behindName.substring(2).replace("\\x", " ");
 				System.out.println("hexString: " + hexString);
 				byte[] bytes = ByteUtils.hexStringToBytes(" ", hexString);
-				String mTxt = new String(bytes, "utf-8");
+				String mTxt = "";
+				if (DecodeUtils.isUTF8(bytes)) {
+					System.out.println("wifi decode use utf-8 ...");
+					mTxt = new String(bytes, "UTF-8");
+				} else {
+					System.out.println("wifi decode use gbk ...");
+					mTxt = new String(bytes, "GBK");
+				}
+
 				System.out.println("mtxt: " + mTxt);
 				return beginName == null ? mTxt : beginName + mTxt;
 			}

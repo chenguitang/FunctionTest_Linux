@@ -289,8 +289,8 @@ public class SoftKeyBoardPopup extends JPopupMenu {
 						.toCharArray();
 				String string = (password == null ? "" : new String(password));
 				passwordField.setText(string + key);
-				System.out.println("新添加的字符：" + key);
-				System.out.println("添加后的密码：" + string + key);
+				System.out.println("Newly added characters: " + key);
+				System.out.println("Add the password: " + string + key);
 			}
 		}
 

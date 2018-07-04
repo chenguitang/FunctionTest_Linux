@@ -74,7 +74,38 @@ public class ProcessUtils {
 		// readInputStream(process.getInputStream(), callback);
 		MySuProcess mSu = new MySuProcess();
 		// }
-		return mSu.exec(process, cmd, callback, timeout);
+		return mSu.exec(process, cmd, "utf-8", callback, timeout);
+	}
+
+	/**
+	 * 带返回值process进制
+	 * 
+	 * @param process
+	 * @param cmd
+	 * @param callback
+	 * @param timeout
+	 * @return
+	 * @throws IOException
+	 */
+	public synchronized int suExecCallbackByCode(String cmd, String decode,
+			Callback callback, int timeout) throws IOException {
+		Process process = createSuProcess();
+		// if (mSu == null) {
+		new Thread(new InputRunnable(process.getInputStream(), callback))
+				.start();
+		// readInputStream(process.getInputStream(), callback);
+		MySuProcess mSu = new MySuProcess();
+		// }
+		System.out
+				.println("----------------------------------------------------------------------------");
+		System.out
+				.println("----------------------------------------------------------------------------");
+		System.out.println("set ssid code: " + decode);
+		System.out
+				.println("----------------------------------------------------------------------------");
+		System.out
+				.println("----------------------------------------------------------------------------");
+		return mSu.exec(process, cmd, decode, callback, timeout);
 	}
 
 	/**
@@ -85,11 +116,12 @@ public class ProcessUtils {
 	 */
 	public class MySuProcess {
 
-		public int exec(Process process, String cmd, Callback callback,
-				int timeout) throws IOException {
+		public int exec(Process process, String cmd, String decode,
+				Callback callback, int timeout) throws IOException {
 			System.out.println("exec cmd : " + cmd);
+			System.out.println("cmd output code : " + decode);
 			OutputStream os = process.getOutputStream();
-			os.write(cmd.getBytes("utf-8"));
+			os.write(cmd.getBytes(decode));
 
 			String endTip = "echo **CMD-RESULT**" + "\n";
 			// System.out.println("endTip :  " + endTip);
@@ -151,7 +183,7 @@ public class ProcessUtils {
 				BufferedReader bf = new BufferedReader(reader);
 				String line = null;
 				while ((line = bf.readLine()) != null) {
-//					System.out.println("InputRunnable read gbk: " + line);
+					// System.out.println("InputRunnable read gbk: " + line);
 					if (mCallback != null) {
 						mCallback.readLine(line);
 					}

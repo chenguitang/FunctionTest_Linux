@@ -12,6 +12,7 @@ import javax.swing.text.AbstractDocument.BranchElement;
 
 import com.posin.constant.WifiMessage;
 import com.posin.global.Appconfig;
+import com.posin.utils.DecodeUtils;
 import com.posin.utils.Proc;
 import com.posin.utils.ProcessUtils;
 import com.posin.utils.StringUtils;
@@ -138,7 +139,8 @@ public class WifiUtils {
 	 * @throws Exception
 	 */
 	public void connect(final String network, final String ssid,
-			final String password, final String encry) throws Exception {
+			final String password, final String encry, final boolean isUtf8)
+			throws Exception {
 
 		String setSsid = "wpa_cli -i wlan0 set_network " + network.trim()
 				+ " ssid \'\"" + ssid.trim() + "\"\'\n";
@@ -153,21 +155,22 @@ public class WifiUtils {
 		// System.out.println("setpasword: " + setpasword);
 		// System.out.println("connectwifi: " + connectwifi);
 
-		mProcessUtils.suExecCallback(setSsid, new Callback() {
-			@Override
-			public void readLine(String line) {
-				System.out.println("connect wifi result: " + line);
-				if (line.toUpperCase().equals("OK")) {
-					System.out.println("set ssid success");
-					setPassword(encry, network, password, connectwifi);
-				} else {
-					if (!line.trim().equals(Appconfig.CMD_FINISH)) {
-						mConnectListener.connectCallBack(false);
-						System.out.println("set ssid Line: " + line);
+		mProcessUtils.suExecCallbackByCode(setSsid, isUtf8 ? "UTF-8" : "GBK",
+				new Callback() {
+					@Override
+					public void readLine(String line) {
+						System.out.println("connect wifi result: " + line);
+						if (line.toUpperCase().equals("OK")) {
+							System.out.println("set ssid success");
+							setPassword(encry, network, password, connectwifi);
+						} else {
+							if (!line.trim().equals(Appconfig.CMD_FINISH)) {
+								mConnectListener.connectCallBack(false);
+								System.out.println("set ssid Line: " + line);
+							}
+						}
 					}
-				}
-			}
-		}, 10);
+				}, 10);
 	}
 
 	/**
@@ -274,9 +277,9 @@ public class WifiUtils {
 					}, 10);
 
 			// 复制文件到覆盖的文件中
-//			mProcessUtils
-//					.createSuProcess(" busybox  cp /etc/wpa_supplicant/wpa_supplicant-wlan0.conf "
-//							+ "/etc/wpa_supplicant.conf");
+			// mProcessUtils
+			// .createSuProcess(" busybox  cp /etc/wpa_supplicant/wpa_supplicant-wlan0.conf "
+			// + "/etc/wpa_supplicant.conf");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -295,7 +298,7 @@ public class WifiUtils {
 
 				@Override
 				public void readLine(String line) {
-//					System.out.println("check connect status: " + line);
+					// System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
 						wifiMessage.setSsid(line.substring("ssid=".length())
 								.trim());
@@ -363,6 +366,14 @@ public class WifiUtils {
 					wifiMessage.setFlags(messages[3]);
 					wifiMessage.setSsid(StringUtils.parseWifiName(messages[4]));
 					wifiMessage.setStatus("未连接");
+					if (StringUtils.isChineseName(messages[4])) {
+						byte[] chineseWifiNametoBye = StringUtils
+								.ChineseWifiNametoBye(messages[4]);
+						wifiMessage.setUtf8(DecodeUtils
+								.isUTF8(chineseWifiNametoBye));
+					} else {
+						wifiMessage.setUtf8(true);
+					}
 					listWifiMessages.add(wifiMessage);
 				}
 				wifiSum++;

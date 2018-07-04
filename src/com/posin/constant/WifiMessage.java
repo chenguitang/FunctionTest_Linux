@@ -11,11 +11,11 @@ public class WifiMessage implements Comparable<WifiMessage>, Serializable {
 	private String ssid; // wifi名字
 	private String status; // wifi状态
 	private String ipAddresss; // wifi地址
-	
-	
+	private boolean isUtf8; // 中文SSID是否为utf-8编码方式
 
 	public WifiMessage(String macAddress, String frequency, int signalLevel,
-			String flags, String ssid, String status, String ipAddresss) {
+			String flags, String ssid, String status, String ipAddresss,
+			boolean isUtf8) {
 		super();
 		this.macAddress = macAddress;
 		this.frequency = frequency;
@@ -24,12 +24,13 @@ public class WifiMessage implements Comparable<WifiMessage>, Serializable {
 		this.ssid = ssid;
 		this.status = status;
 		this.ipAddresss = ipAddresss;
+		this.isUtf8 = isUtf8;
 	}
 
 	public WifiMessage() {
-		
+
 	}
-	
+
 	public String getMacAddress() {
 		return macAddress;
 	}
@@ -86,11 +87,20 @@ public class WifiMessage implements Comparable<WifiMessage>, Serializable {
 		this.ipAddresss = ipAddresss;
 	}
 
+	public boolean isUtf8() {
+		return isUtf8;
+	}
+
+	public void setUtf8(boolean isUtf8) {
+		this.isUtf8 = isUtf8;
+	}
+
 	@Override
 	public String toString() {
 		return "WifiMessage [macAddress=" + macAddress + ", frequency="
 				+ frequency + ", signalLevel=" + signalLevel + ", flags="
-				+ flags + ", ssid=" + ssid + ", status=" + status + "]";
+				+ flags + ", ssid=" + ssid + ", status=" + status
+				+ ", ipAddresss=" + ipAddresss + ", isUtf8=" + isUtf8 + "]";
 	}
 
 	@Override
