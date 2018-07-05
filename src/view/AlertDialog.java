@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -42,6 +44,7 @@ public class AlertDialog extends JDialog {
 		setFont(new Font("Dialog", Font.PLAIN, 18));
 		setDefaultLookAndFeelDecorated(false);
 		setUndecorated (true);
+		setAlwaysOnTop(true);
 		setBounds(700, 300, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		Label topLine = new Label();
@@ -96,6 +99,22 @@ public class AlertDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				setEnabled(false);
+			}
+		});
+		
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				if (isShowing()) {
+					setVisible(false);
+				}
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowActivated");
 			}
 		});
 	}

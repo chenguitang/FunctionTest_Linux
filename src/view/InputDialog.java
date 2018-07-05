@@ -39,6 +39,7 @@ public class InputDialog extends JDialog {
 	public InputDialog(String title) {
 		this.title = title;
 		setUndecorated (true);
+		setAlwaysOnTop(true);
 		setBounds(700, 300, 450, 300);
 		Font f = new Font("¡• È", Font.BOLD, 25);
 		getContentPane().setLayout(new BorderLayout());
