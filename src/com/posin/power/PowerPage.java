@@ -44,6 +44,7 @@ public class PowerPage extends JDialog {
 		setBounds(600, 250, 800, 490);
 		setDefaultLookAndFeelDecorated(false);
 		setUndecorated(true);
+		setAlwaysOnTop(true);
 		frameColor = Color.BLACK;
 		// ±³¾°ÑÕÉ«
 		// backgroundColor = new Color(0xE3F7F7);

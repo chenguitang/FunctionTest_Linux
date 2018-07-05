@@ -99,6 +99,7 @@ public class SecondaryTestPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame jf = new JFrame();
+				jf.setUndecorated(true);
 				jf.setSize(1920, 1080);
 				// jf.setDefaultCloseOperation(3);
 				jf.setVisible(true);
@@ -131,6 +132,7 @@ public class SecondaryTestPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame jf = new JFrame();
+				jf.setUndecorated(true);
 				jf.setSize(1920, 1080);
 				jf.setDefaultCloseOperation(3);
 				jf.setVisible(true);

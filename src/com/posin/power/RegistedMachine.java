@@ -74,6 +74,7 @@ public class RegistedMachine extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(250, 80, 1400, 900);
 		setUndecorated(true);
+		setAlwaysOnTop(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);

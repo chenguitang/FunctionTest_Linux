@@ -55,6 +55,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("CardLayout Test");
 		setUndecorated(true);
+		setAlwaysOnTop(true);
 		card = new CardLayout(5, 5); // 创建一个具有指定的水平和垂直间隙的新卡片布局
 		pane = new JPanel(card); // JPanel的布局管理将被设置成CardLayout
 		p = new JPanel(); // 构造放按钮的JPanel
