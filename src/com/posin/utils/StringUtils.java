@@ -158,6 +158,10 @@ public class StringUtils {
 	public static boolean isAutoRefreshData() {
 		String buildMessage = StringUtils.getBuildMessage("/etc/date.prop",
 				"ro.autorefresh.date");
+		System.out.println("buildMessage====" + buildMessage + "======");
+		if (buildMessage == null || buildMessage.equals("")) {
+			return true;
+		}
 		return buildMessage.equals("yes") ? true : false;
 	}
 

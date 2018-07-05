@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JOptionPane;
+
 public class PowerManager {
 
 	private static final int KEY_TYPE_ABS = 1;
@@ -107,8 +109,13 @@ public class PowerManager {
 		System.out.println("key home "
 				+ (mKeyStatus[1] ? "pressed" : "released"));
 		if (!mKeyStatus[1]) {
-			//关机页面 
-			PowerPage.getInstance().setVisible(true);
+			// 关机页面
+			 PowerPage.getInstance().setVisible(true);
+			 
+			System.out.println("show shutdown page ...");
+//			RegistedMachine.getInstance().setVisible(true);
+			System.out.println("show shutdown page 111 ...");
+			// JOptionPane.showMessageDialog(null, "显示关机页面 ");
 			// 工厂设置
 			if (clickPowerNumber == 0) {
 				startTime = System.currentTimeMillis();
@@ -138,7 +145,7 @@ public class PowerManager {
 	 * 打开关机弹框页面
 	 */
 	public void showShutdownView() {
-//		PowerPage.getInstance().setBounds(600, 250, 800, 490);
+		// PowerPage.getInstance().setBounds(600, 250, 800, 490);
 		PowerPage.getInstance().setVisible(true);
 	}
 
