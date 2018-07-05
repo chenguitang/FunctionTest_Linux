@@ -11,7 +11,7 @@ public class PowerManager {
 	private static final int KEY_TYPE_ABS = 1;
 
 	private static final int KEY_BACK = 158;
-	private static final int KEY_HOME = 102;
+	private static final int KEY_HOME = 212;
 
 	private static long startTime = 0; // 开始按键时间
 	private static int clickPowerNumber = 0; // 按电源键次数
