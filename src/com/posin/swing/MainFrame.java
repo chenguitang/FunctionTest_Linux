@@ -15,6 +15,8 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -24,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.posin.constant.CommandConstant;
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
 import com.posin.power.PowerManager;
@@ -108,7 +111,7 @@ public class MainFrame extends JFrame {
 		b_7.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 		b_8.setMargin(new Insets(2, 2, 2, 2));
 		b_8.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
-		
+
 		p.add(b_1);
 		p.add(b_2);
 		p.add(b_3);
@@ -124,8 +127,8 @@ public class MainFrame extends JFrame {
 		p_4 = WifiPanel.getInstance().wifiPanel;
 		p_5 = SecondaryTestPanel.getInstance().secTestPanel;
 		p_6 = DateTimeSettings.getInstance().dateSettingPanel;
-		p_7=AboutPanel.getInstance().aboutPanel;
-		
+		p_7 = AboutPanel.getInstance().aboutPanel;
+
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
@@ -141,6 +144,18 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
 		// this.setVisible(true);
+		
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("windowActivated");
+			}
+		} );
 	}
 
 	/**
@@ -151,19 +166,21 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_1
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p1");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 		b_2.addActionListener(new ActionListener() {
 			// 直接翻转到p_2
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p2");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 		b_3.addActionListener(new ActionListener() {
 			// 直接翻转到p_3
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p3");
-
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 
@@ -171,6 +188,7 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_4
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p4");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 
@@ -178,7 +196,6 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_5
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p5");
-
 			}
 		});
 
@@ -186,6 +203,7 @@ public class MainFrame extends JFrame {
 			// 直接翻转到p_6
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p6");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 
@@ -193,6 +211,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p7");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 
@@ -208,7 +227,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

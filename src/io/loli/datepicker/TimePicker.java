@@ -1,5 +1,6 @@
 package io.loli.datepicker;
 
+
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -33,11 +34,15 @@ public class TimePicker extends AbstractPicker {
 		clickPanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (mPanelClickListener!=null) {
+					mPanelClickListener.clickListener();
+				}
+				
 				if (popup != null) {
-                    popup.hide();
-                    popup = null;
-                    return;
-                }
+					popup.hide();
+					popup = null;
+					return;
+				}
 				TimePanel timePanel = new TimePanel(TimePicker.this);
 				PopupFactory factory = PopupFactory.getSharedInstance();
 				timePanel.setPreferredSize(new Dimension(500, 250));
@@ -102,7 +107,7 @@ public class TimePicker extends AbstractPicker {
 	public static JLabel getDateField(JPanel panel, String format) {
 		JLabel field = new JLabel();
 		// field.setEditable(false);
-		timePicker(panel,field);
+		timePicker(panel, field);
 		return field;
 	}
 
@@ -149,13 +154,13 @@ public class TimePicker extends AbstractPicker {
 		}
 	}
 
-	private PopupCloseListener mPopupCloseListener;
-
-	public void setPopupCloseListener(PopupCloseListener popupCloseListener) {
-		this.mPopupCloseListener = popupCloseListener;
+	private TimePanelClickListener mPanelClickListener;
+	
+	public void setTimePanelClickListener(TimePanelClickListener panelClickListener) {
+		this.mPanelClickListener=panelClickListener;
 	}
-
-	public interface PopupCloseListener {
-		void popupClose();
+	
+	public interface TimePanelClickListener{
+		void clickListener();
 	}
 }

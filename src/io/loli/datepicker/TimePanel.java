@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -60,8 +62,8 @@ public class TimePanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 
-		mainPanel.setPreferredSize(new Dimension(600,180));
-		
+		mainPanel.setPreferredSize(new Dimension(600, 180));
+
 		mainPanel.add(hourPanel);
 		if (picker.getFormat().contains("m")) {
 			mainPanel.add(minPanel);
@@ -90,10 +92,10 @@ public class TimePanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				picker.set(getDate());
 				picker.close();
-				String timeCmd ="date -s "+ getDate().getHours() + ":"
+				String timeCmd = "date -s " + getDate().getHours() + ":"
 						+ getDate().getMinutes() + ":" + getDate().getSeconds();
 
-				System.out.println("timeCmd: "+timeCmd);
+				System.out.println("timeCmd: " + timeCmd);
 				System.out.println("---------date: " + getDate().toString());
 				try {
 					Runtime.getRuntime().exec(timeCmd);
@@ -101,11 +103,12 @@ public class TimePanel extends JPanel {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				
+
 			}
 		});
 
 		mainPanel.add(controlPanel);
+		
 
 	}
 
@@ -113,7 +116,8 @@ public class TimePanel extends JPanel {
 		final SimpleDateFormat format = new SimpleDateFormat(
 				getTopLabelFormat());
 		format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-		nowLabel.setText("选择时间为11: " + format.format(System.currentTimeMillis()));
+		nowLabel.setText("选择时间为: "
+				+ format.format(System.currentTimeMillis()));
 		// Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new
 		// Runnable() {
 		//
@@ -163,6 +167,7 @@ public class TimePanel extends JPanel {
 
 		public void add() {
 			int result = get() + 1;
+			System.out.println("add .... : " + result);
 			if (result > num - 1) {
 				result = 0;
 				if (parent != null)
@@ -199,13 +204,14 @@ public class TimePanel extends JPanel {
 					if (timer == null) {
 						timer = new Timer();
 					}
+					System.out.println("add ...............");
 					add();
-					timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							add();
-						}
-					}, 300, 50);
+					// timer.schedule(new TimerTask() {
+					// @Override
+					// public void run() {
+					// add();
+					// }
+					// }, 1000, 100);
 				}
 
 				@Override

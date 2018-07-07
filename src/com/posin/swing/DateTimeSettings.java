@@ -2,7 +2,9 @@ package com.posin.swing;
 
 import io.loli.datepicker.DateFilter;
 import io.loli.datepicker.DatePicker;
+import io.loli.datepicker.DatePicker.DatePanelClickListener;
 import io.loli.datepicker.TimePicker;
+import io.loli.datepicker.TimePicker.TimePanelClickListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,24 +14,22 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 import com.posin.utils.ProcessUtils;
+import com.posin.utils.ProcessUtils.Callback;
 import com.posin.utils.StringUtils;
-
-import view.InputDialog.OnClickListener;
 
 /**
  * 时间及日期
@@ -44,8 +44,12 @@ public class DateTimeSettings {
 	private JPanel timePanel; // 设置时间
 	private JPanel autoSyncDatePanel; // 自动同步时间
 	private TimePicker timePicker = null;
+	private DatePicker datePicker = null;
 	private JButton syncDataButton = null;
 	private JPanel syncShowTimePanel = null;
+	private ProcessUtils mProcessUtils = null;
+	public static Timer mTimer = new Timer();
+	private boolean SyncTimeSuccess = false; // 同步时间是否成功
 
 	// private boolean isAutoSyns;
 	private static class DateTimeHolder {
@@ -62,6 +66,7 @@ public class DateTimeSettings {
 		dateSettingPanel.setLayout(new GridBagLayout());
 		addLine(dateSettingPanel, 0, 0, -8, Color.GRAY);
 
+		mProcessUtils = new ProcessUtils();
 		boolean isAutoSyns = StringUtils.isAutoRefreshData();
 		if (isAutoSyns) {
 			System.out.println("******************* yes *********************");
@@ -77,6 +82,7 @@ public class DateTimeSettings {
 		initSyncShowTimePanelUI();
 		initEmptyPanelUI();
 		initAutoSyncDate(isAutoSyns, syncDataButton);
+		checkAutoSyncDateStatus(isAutoSyns);
 	}
 
 	/**
@@ -146,19 +152,18 @@ public class DateTimeSettings {
 		syncDataButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent event) {
-				System.out.println("--------------------------------");
-
-				System.out.println("--------------------------------");
+				closeAllDialog();
 				try {
 					boolean autoRefreshData = StringUtils.isAutoRefreshData();
 					initAutoSyncDate(!autoRefreshData, syncDataButton);
+					checkAutoSyncDateStatus(!autoRefreshData);
 					if (autoRefreshData) {
-						new ProcessUtils()
+						mProcessUtils
 								.createSuProcess(" echo ro.autorefresh.date=no > /etc/date.prop");
 						System.out
 								.println("systemctl disable systemd-timesyncd ");
 					} else {
-						new ProcessUtils()
+						mProcessUtils
 								.createSuProcess(" echo ro.autorefresh.date=yes > /etc/date.prop");
 						System.out
 								.println("systemctl enable systemd-timesyncd ");
@@ -184,10 +189,10 @@ public class DateTimeSettings {
 		try {
 			if (isAutoSyns) {
 
-				new ProcessUtils()
-						.createSuProcess("systemctl enable systemd-timesyncd");
-				new ProcessUtils()
-						.createSuProcess("systemctl start systemd-timesyncd");
+				mProcessUtils
+						.createSuProcess("systemctl enable systemd-timesyncd \n");
+				mProcessUtils
+						.createSuProcess("systemctl start systemd-timesyncd \n");
 
 				syncDataButton.setText("已开启自动同步时间，点击关闭自动同步");
 				syncDataButton.setBackground(new Color(125, 198, 191));
@@ -196,10 +201,10 @@ public class DateTimeSettings {
 				syncShowTimePanel.setVisible(true);
 			} else {
 
-				new ProcessUtils()
-						.createSuProcess("systemctl disable systemd-timesyncd");
-				new ProcessUtils()
-						.createSuProcess("systemctl stop systemd-timesyncd");
+				mProcessUtils
+						.createSuProcess("systemctl disable systemd-timesyncd \n");
+				mProcessUtils
+						.createSuProcess("systemctl stop systemd-timesyncd \n");
 
 				syncDataButton.setText("已关闭自动同步时间，点击开启自动同步");
 				syncDataButton.setBackground(new Color(192, 192, 192));
@@ -210,6 +215,82 @@ public class DateTimeSettings {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 判断是否同步完成
+	 * 
+	 * @param isAutoSyns
+	 */
+	MyTimerTask myTimerTask = null;
+
+	private void checkAutoSyncDateStatus(boolean isAutoSyns) {
+		System.out.println("======= isAutoSyns : " + isAutoSyns);
+
+		if (isAutoSyns) {
+			myTimerTask = new MyTimerTask();
+			mTimer.schedule(myTimerTask, 5000, 10000);
+		} else {
+			if (myTimerTask != null) {
+				myTimerTask.cancel();
+			}
+		}
+	}
+
+	/**
+	 * 循环检查是否同步成功时间
+	 * 
+	 * @author Greetty
+	 * 
+	 */
+	private class MyTimerTask extends TimerTask {
+
+		@Override
+		public void run() {
+			try {
+				System.out.println("check systemd timesyncd status ...");
+				SyncTimeSuccess = false;
+				mProcessUtils
+						.suExecCallback(
+								"timedatectl \nsystemctl status -l systemd-timesyncd \n",
+								new Callback() {
+
+									@Override
+									public void readLine(String line) {
+										try {
+											if (line.equals("NTP synchronized: yes")) {
+												MyTimerTask.this.cancel();
+												myTimerTask = null;
+												SyncTimeSuccess = true;
+											} else if (line
+													.contains("Synchronized to time server")
+													&& line.contains("systemd-timesyncd[")) {
+												System.out
+														.println("Synchronization time success ... ");
+												MyTimerTask.this.cancel();
+												myTimerTask = null;
+												SyncTimeSuccess = true;
+
+											} else if (line
+													.equals("**CMD-RESULT**")) {
+												if (!SyncTimeSuccess) {
+													System.out
+															.println("Resynchronization time ... ");
+													mProcessUtils
+															.createSuProcess("systemctl restart systemd-timesyncd  \n");
+												}
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+
+									}
+								}, 3000);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	/**
@@ -265,12 +346,42 @@ public class DateTimeSettings {
 
 				}, 1, 1, TimeUnit.SECONDS);
 
-		DatePicker.datePicker(datePanel, dateLabel, "yyyy-MM-dd",
+		datePicker = DatePicker.datePicker(datePanel, dateLabel, "yyyy-MM-dd",
 				new DateFilter() {
 					public boolean filter(Date date) {
 						return date.getDay() == 0 || date.getDay() == 6;
 					}
 				});
+
+		datePicker.setDatePanelClickListener(new DatePanelClickListener() {
+
+			@Override
+			public void clickListener() {
+				if (timePicker != null) {
+					if (timePicker.isShow()) {
+						timePicker.close();
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * 关闭所有弹框
+	 */
+	public void closeAllDialog() {
+		if (timePicker != null) {
+			if (timePicker.isShow()) {
+				timePicker.dismissPopup();
+			}
+		}
+
+		if (datePicker != null) {
+			if (datePicker.isShow()) {
+				datePicker.dismissPopup();
+			}
+		}
+
 	}
 
 	/**
@@ -310,7 +421,6 @@ public class DateTimeSettings {
 	 * @param timeShowLabel
 	 */
 	private void modifyTime(final JLabel timeLabel) {
-
 		final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 		final SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm:ss");
 		format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
@@ -325,6 +435,18 @@ public class DateTimeSettings {
 				}, 1, 1, TimeUnit.SECONDS);
 
 		timePicker = DatePicker.timePicker(timePanel, timeLabel, "HH:mm:ss");
+
+		timePicker.setTimePanelClickListener(new TimePanelClickListener() {
+
+			@Override
+			public void clickListener() {
+				if (datePicker != null) {
+					if (datePicker.isShow()) {
+						datePicker.close();
+					}
+				}
+			}
+		});
 	}
 
 	public void initEmptyPanelUI() {

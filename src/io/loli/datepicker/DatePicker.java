@@ -58,6 +58,10 @@ public class DatePicker extends AbstractPicker {
 		clickPanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (mPanelClickListener!=null) {
+					mPanelClickListener.clickListener();
+				}
+				
 				if (popup != null) {
 					popup.hide();
 					popup = null;
@@ -160,9 +164,9 @@ public class DatePicker extends AbstractPicker {
 	 * @param filter
 	 *            filter
 	 */
-	public static void datePicker(JPanel panel, JLabel field, String format,
+	public static DatePicker datePicker(JPanel panel, JLabel field, String format,
 			DateFilter filter) {
-		new DatePicker(panel, field, format, filter);
+		return new DatePicker(panel, field, format, filter);
 	}
 
 	/**
@@ -271,5 +275,38 @@ public class DatePicker extends AbstractPicker {
 			e1.printStackTrace();
 		}
 	}
+	
+	/**
+	 * ÊÇ·ñÏÔÊ¾Ñ¡Ôñ¿ò
+	 * 
+	 * @return boolean
+	 */
+	public boolean isShow() {
+		if (popup != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Òþ²ØÑ¡Ôñ¿ò
+	 */
+	public void dismissPopup() {
+		if (popup != null) {
+			popup.hide();
+		}
+	}
+	
+	private DatePanelClickListener mPanelClickListener;
+	
+	public void setDatePanelClickListener(DatePanelClickListener panelClickListener) {
+		this.mPanelClickListener=panelClickListener;
+	}
+	
+	public interface DatePanelClickListener{
+		void clickListener();
+	}
+
 
 }

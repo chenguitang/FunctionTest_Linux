@@ -6,6 +6,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JOptionPane;
 
+import com.posin.constant.CommandConstant;
+
 public class PowerManager {
 
 	private static final int KEY_TYPE_ABS = 1;
@@ -109,13 +111,13 @@ public class PowerManager {
 		System.out.println("key home "
 				+ (mKeyStatus[1] ? "pressed" : "released"));
 		if (!mKeyStatus[1]) {
+
+			// 开启窗口管理
+			// CommandConstant.openViewManager();
 			// 关机页面
-			 PowerPage.getInstance().setVisible(true);
-			 
+			PowerPage.getInstance().setVisible(true);
+
 			System.out.println("show shutdown page ...");
-//			RegistedMachine.getInstance().setVisible(true);
-			System.out.println("show shutdown page 111 ...");
-			// JOptionPane.showMessageDialog(null, "显示关机页面 ");
 			// 工厂设置
 			if (clickPowerNumber == 0) {
 				startTime = System.currentTimeMillis();
@@ -158,18 +160,19 @@ public class PowerManager {
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				System.out.println("windowDeactivated");
+				System.out.println("22222 PowerPage windowDeactivated");
 				clickPowerNumber = 0;
 				startTime = 0;
-				if (dialog.isShowing()) {
-					dialog.setVisible(false);
-				}
+				// if (dialog.isShowing()) {
+				dialog.setVisible(false);
+				// }
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("windowActivated");
+				System.out.println("22222 PowerPage windowActivated");
+
 			}
 		});
 	}

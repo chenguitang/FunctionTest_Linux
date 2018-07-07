@@ -44,6 +44,7 @@ public class ProcessUtils {
 
 		try {
 			os = new DataOutputStream(process.getOutputStream());
+			System.out.println("cmd: " + cmd);
 			os.write((cmd + "\n").getBytes("utf-8"));
 			os.write(("exit $?\n").getBytes("utf-8"));
 			os.flush();
@@ -127,6 +128,7 @@ public class ProcessUtils {
 			// System.out.println("endTip :  " + endTip);
 			os.write(endTip.getBytes("utf-8"));
 			// os.write("echo 111111111111111 \n".getBytes());
+			os.write(("exit $?\n").getBytes("utf-8"));
 			os.flush();
 			return 0;
 		}
@@ -187,6 +189,7 @@ public class ProcessUtils {
 					if (mCallback != null) {
 						mCallback.readLine(line);
 					}
+
 				}
 			} catch (Exception e) {
 				System.out.println("Error: " + e.getMessage());

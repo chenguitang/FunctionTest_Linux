@@ -16,6 +16,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -106,8 +109,21 @@ public class InputDialog extends JDialog {
 
 			inputPanel.add(inputPassword, c);
 			getContentPane().add(inputPanel, BorderLayout.CENTER);
-
 			initListenerKeyBoard();
+
+			this.addWindowListener(new WindowAdapter() {
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+//					setVisible(false);
+				}
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					System.out.println("windowActivated");
+				}
+			});
 		}
 	}
 

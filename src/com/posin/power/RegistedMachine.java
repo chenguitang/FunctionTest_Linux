@@ -32,6 +32,7 @@ import javax.swing.border.LineBorder;
 
 import view.AlertDialog;
 
+import com.posin.constant.CommandConstant;
 import com.posin.utils.DeviceDetect;
 import com.posin.utils.HwUtils;
 import com.posin.utils.MacUtils;
@@ -74,7 +75,7 @@ public class RegistedMachine extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(250, 80, 1400, 900);
 		setUndecorated(true);
-		setAlwaysOnTop(true);
+//		setAlwaysOnTop(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);
@@ -141,8 +142,23 @@ public class RegistedMachine extends JFrame {
 		uploadPanel.add(uploadButton, BorderLayout.WEST);
 		contentPane.add(uploadPanel);
 
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				System.out.println("RegistedMachine windowDeactivated");
+//				setVisible(false);
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("RegistedMachine windowActivated");
+			}
+		});
+
 		initEent();
 		initData();
+
 	}
 
 	/**
@@ -191,17 +207,6 @@ public class RegistedMachine extends JFrame {
 				uploadInfo();
 			}
 		});
-
-		// this.addWindowListener(new WindowAdapter() {
-		// @Override
-		// public void windowDeactivated(WindowEvent e) {
-		// setVisible(false);
-		// }
-		// @Override
-		// public void windowActivated(WindowEvent e) {
-		// setVisible(true);
-		// }
-		// });
 	}
 
 	/**
