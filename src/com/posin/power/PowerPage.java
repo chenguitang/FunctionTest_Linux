@@ -41,7 +41,7 @@ public class PowerPage extends JDialog {
 
 		// 边框颜色
 		// frameColor = new Color(0x3AF9F9);
-		setBounds(600, 250, 800, 490);
+		setBounds(600, 250, 800, 580);
 		setDefaultLookAndFeelDecorated(false);
 		setUndecorated(true);
 		requestFocusInWindow();
@@ -84,6 +84,7 @@ public class PowerPage extends JDialog {
 		initShutdown();
 		initReboot();
 		initFunctionTest();
+		intiExit();
 	}
 
 	/**
@@ -248,6 +249,62 @@ public class PowerPage extends JDialog {
 
 					setVisible(false);
 					System.out.println("open fucntion test ... ");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	
+	/**
+	 * 退出
+	 */
+	private void intiExit() {
+		// 间隙
+		Label label = new Label();
+		label.setBackground(backgroundColor);
+		contentPanel.add(
+				label,
+				createGridBagConstraints(GridBagConstraints.HORIZONTAL, 1, 5,
+						0, 650));
+		JPanel openFcPanel = new JPanel();
+		JLabel openFcButton = new JLabel("退出");
+		openFcButton.setPreferredSize(new Dimension(250,50));
+		openFcButton.setBackground(Color.white);
+		openFcPanel.setBackground(Color.white);
+		openFcButton.setFont(f);
+		openFcButton.setFocusable(false);
+		openFcPanel.setLayout(new GridBagLayout());
+
+		ImageIcon rebootIcon = new ImageIcon(
+				PowerPage.class.getResource("/image/back.png"));
+		JLabel openFcabel = new JLabel();
+		openFcabel.setBounds(500, 500, rebootIcon.getIconWidth(),
+				rebootIcon.getIconHeight());
+		openFcabel.setOpaque(true);
+		openFcabel.setBackground(Color.white);
+		openFcabel.setIcon(rebootIcon);
+
+		openFcPanel.add(
+				openFcabel,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 1, 1, 0,
+						0, 2, 1));
+		openFcPanel.add(
+				openFcButton,
+				createGridBagConstraints2(GridBagConstraints.VERTICAL, 2, 1, 0,
+						0, 6, 1));
+
+		contentPanel.add(
+				openFcPanel,
+				createGridBagConstraints(GridBagConstraints.HORIZONTAL, 1, 6,
+						50, 600));
+		openFcPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				try {
+					setVisible(false);
+					System.out.println("dismiss FunctionTest ...");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

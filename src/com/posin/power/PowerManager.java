@@ -78,9 +78,9 @@ public class PowerManager {
 		mKeyStatus[0] = (value != 0);
 		System.out.println("key back "
 				+ (mKeyStatus[0] ? "pressed" : "released"));
-		if (PowerPage.getInstance().isShowing()) {
-			PowerPage.getInstance().setVisible(false);
-		}
+//		if (PowerPage.getInstance().isShowing()) {
+//			PowerPage.getInstance().setVisible(false);
+//		}
 
 		System.out.println("mKeyStatus[0]: " + mKeyStatus[0]);
 		if (mKeyStatus[0]) {
@@ -93,10 +93,10 @@ public class PowerManager {
 					System.out.println("click back timeout");
 				}
 			} else {
-
-				if (RegistedMachine.getInstance().isShowing()) {
-					RegistedMachine.getInstance().setVisible(false);
-				}
+//
+//				if (RegistedMachine.getInstance().isShowing()) {
+//					RegistedMachine.getInstance().setVisible(false);
+//				}
 			}
 		}
 	}
@@ -160,19 +160,26 @@ public class PowerManager {
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				System.out.println("22222 PowerPage windowDeactivated");
+				System.out.println(" PowerPage windowDeactivated");
 				clickPowerNumber = 0;
 				startTime = 0;
 				// if (dialog.isShowing()) {
-				dialog.setVisible(false);
+//				dialog.setVisible(false);
 				// }
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("22222 PowerPage windowActivated");
+				System.out.println(" PowerPage windowActivated");
 
+			}
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				super.windowOpened(e);
+				System.out.println();
 			}
 		});
 	}
