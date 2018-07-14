@@ -151,7 +151,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * 是否自动更新时间
+	 * 是否自动更新时间，默认为自动更新
 	 * 
 	 * @return
 	 */
@@ -164,6 +164,22 @@ public class StringUtils {
 		}
 		return buildMessage.equals("yes") ? true : false;
 	}
+	
+	/**
+	 * 是否为内网,默认为外网
+	 * 
+	 * @return
+	 */
+	public static boolean isEthernetWithin() {
+		String buildMessage = StringUtils.getBuildMessage("/etc/ethernet.prop",
+				"ro.ethernet.within");
+		System.out.println("buildMessage====" + buildMessage + "======");
+		if (buildMessage == null || buildMessage.equals("")) {
+			return false;
+		}
+		return buildMessage.equals("yes") ? true : false;
+	}
+
 
 	/**
 	 * 拼接字符串

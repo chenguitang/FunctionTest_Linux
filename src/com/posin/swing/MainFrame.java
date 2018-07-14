@@ -31,6 +31,7 @@ import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
 import com.posin.power.PowerManager;
 import com.posin.power.RegistedMachine;
+import com.posin.setting.EthernetThread;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
 import com.posin.utils.StringUtils;
@@ -51,9 +52,9 @@ public class MainFrame extends JFrame {
 	private JPanel p = null; // 放按钮的JPanel
 	private CardLayout card = null; // CardLayout布局管理器
 	private JButton b_1 = null, b_2 = null, b_3 = null, b_4 = null, b_5 = null,
-			b_6 = null, b_7 = null, b_8 = null; // 可直接翻转到JPanel组件的按钮
+			b_6 = null, b_7 = null, b_8 = null, b_eth0 = null; // 可直接翻转到JPanel组件的按钮
 	private JPanel p_1 = null, p_2 = null, p_3 = null, p_4 = null, p_5 = null,
-			p_6, p_7 = null; // 要切换的JPanel
+			p_6, p_7 = null, p_eth0 = null; // 要切换的JPanel
 
 	public MainFrame() {
 		super("CardLayout Test");
@@ -71,6 +72,7 @@ public class MainFrame extends JFrame {
 		b_6 = new JButton("日期与时间");
 		b_7 = new JButton("关于");
 		b_8 = new JButton("退出");
+		b_eth0 = new JButton("以太网设置");
 
 		// 设置Button字体大小及样式等
 		Font f = new Font("隶书", Font.BOLD, 25);
@@ -82,6 +84,7 @@ public class MainFrame extends JFrame {
 		b_6.setFont(f);
 		b_7.setFont(f);
 		b_8.setFont(f);
+		b_eth0.setFont(f);
 
 		// 是否可聚焦
 		b_1.setFocusable(false);
@@ -92,6 +95,7 @@ public class MainFrame extends JFrame {
 		b_6.setFocusable(false);
 		b_7.setFocusable(false);
 		b_8.setFocusable(false);
+		b_eth0.setFocusable(false);
 
 		// 设置Button间距及Button大小
 		b_1.setMargin(new Insets(2, 2, 2, 2));
@@ -111,6 +115,8 @@ public class MainFrame extends JFrame {
 		b_7.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 		b_8.setMargin(new Insets(2, 2, 2, 2));
 		b_8.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
+		b_eth0.setMargin(new Insets(2, 2, 2, 2));
+		b_eth0.setPreferredSize(new Dimension(mButtonWidth, mButtonHeight));
 
 		p.add(b_1);
 		p.add(b_2);
@@ -118,6 +124,7 @@ public class MainFrame extends JFrame {
 		p.add(b_4);
 		p.add(b_5);
 		p.add(b_6);
+		p.add(b_eth0);
 		p.add(b_7);
 		p.add(b_8);
 
@@ -128,7 +135,9 @@ public class MainFrame extends JFrame {
 		p_5 = SecondaryTestPanel.getInstance().secTestPanel;
 		p_6 = DateTimeSettings.getInstance().dateSettingPanel;
 		p_7 = AboutPanel.getInstance().aboutPanel;
+		p_eth0 = EthernetSettingPanel.getInstance().ethernetPanel;
 
+		pane.add(p_eth0, "p_eth0");
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
@@ -144,7 +153,7 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Appconfig.PANELCARDWIDTH, Appconfig.PANELCARDHEIGHT);
 		// this.setVisible(true);
-		
+
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowDeactivated(WindowEvent e) {
@@ -155,7 +164,7 @@ public class MainFrame extends JFrame {
 				// TODO Auto-generated method stub
 				System.out.println("windowActivated");
 			}
-		} );
+		});
 	}
 
 	/**
@@ -224,15 +233,29 @@ public class MainFrame extends JFrame {
 
 			}
 		});
+
+		b_eth0.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				card.show(pane, "p_eth0");
+			}
+		});
 	}
 
 	public static void main(String[] args) {
+
+		MainFrame myMainFrame = new MainFrame();
+		myMainFrame.setVisible(true);
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					// 监听关机按钮
 					PowerManager.getInstance().startPowerListener();
+
+					// 开启以太网设置线程
+					new Thread(new EthernetThread()).start();
 
 					// 创建Socket服务器，监听socket指令
 					ServerSocketManager.getInstance().startSocketServer(

@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import sun.org.mozilla.javascript.internal.ast.NewExpression;
 
 import com.posin.global.Appconfig;
 import com.posin.utils.Proc;

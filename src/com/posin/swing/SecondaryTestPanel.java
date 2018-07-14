@@ -26,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import sun.org.mozilla.javascript.internal.ast.NewExpression;
 
 /**
  * ∏±∆¡≤‚ ‘

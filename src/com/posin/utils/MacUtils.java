@@ -21,7 +21,7 @@ public class MacUtils {
 				if (isValidString(line)) {
 					int pos = line.indexOf("HWaddr ");
 					if (pos >= 0) {
-						ni.setEth0_mac( line.substring(pos + 7).trim());
+						ni.setEth0_mac(line.substring(pos + 7).trim());
 						break;
 					}
 				}
@@ -36,7 +36,7 @@ public class MacUtils {
 				if (line.startsWith("          inet addr:")) {
 					String[] ss = line.substring(20).split(" ");
 					if (ss != null && ss.length > 0) {
-						ni.setEth0_ip( ss[0].trim());
+						ni.setEth0_ip(ss[0].trim());
 						break;
 					}
 				}
@@ -51,7 +51,7 @@ public class MacUtils {
 				if (isValidString(line)) {
 					int pos = line.indexOf("HWaddr ");
 					if (pos >= 0) {
-						ni.setWlan0_mac( line.substring(pos + 7).trim());
+						ni.setWlan0_mac(line.substring(pos + 7).trim());
 						break;
 					}
 				}
@@ -83,4 +83,5 @@ public class MacUtils {
 			return false;
 		return true;
 	}
+
 }
