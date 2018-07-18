@@ -9,7 +9,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -19,19 +18,15 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.posin.constant.EthernetConstant;
-import com.posin.ethernet.Eth0Utils;
+import com.posin.ethernet.EthernetData;
 import com.posin.ethernet.EthernetStateThread;
 import com.posin.ethernet.EthernetStateThread.EthernetStateListener;
-import com.posin.ethernet.EthernetThread;
-import com.posin.ethernet.EthernetThread.EthernetListener;
-import com.posin.ethernet.EthernetUtils;
-import com.posin.ethernet.ProcessEthernetUtils;
 import com.posin.utils.PropertiesUtils;
 import com.posin.view.EthernetInputDialog;
 import com.posin.view.EthernetInputDialog.ComfirmListener;
 
 public class EthernetSettingPanel implements ActionListener, ComfirmListener,
-		EthernetListener, EthernetStateListener {
+		EthernetStateListener {
 
 	// private static final String ETHERNET_CONFIGURE_PATH =
 	// "/etc/ethernet.prop";
@@ -85,7 +80,6 @@ public class EthernetSettingPanel implements ActionListener, ComfirmListener,
 		eth0CheckBox.addActionListener(this);
 		restartButton.addActionListener(this);
 		eth0SettingButton.addActionListener(this);
-		EthernetThread.getInstance().setEthernetListener(this);
 		EthernetStateThread.getInstance().setEthernetStateListener(this);
 	}
 
@@ -109,9 +103,9 @@ public class EthernetSettingPanel implements ActionListener, ComfirmListener,
 		}
 
 		try {
-			eth0MacAddress.setText(eth0MacAddressTip + Eth0Utils.getEth0Mac());
-			eth0Address.setText(eth0AddressTip + Eth0Utils.getIPAddress());
-			eth0MaskCode.setText(eth0MaskCodeTip + Eth0Utils.getMask());
+			eth0MacAddress.setText(eth0MacAddressTip + EthernetData.getEth0Mac());
+			eth0Address.setText(eth0AddressTip + EthernetData.getIPAddress());
+			eth0MaskCode.setText(eth0MaskCodeTip + EthernetData.getMask());
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -207,6 +201,125 @@ public class EthernetSettingPanel implements ActionListener, ComfirmListener,
 				createGBC(GridBagConstraints.HORIZONTAL, 0, 5, 0, 0, 0, 0));
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		switch (event.getActionCommand()) {
+		case eth0CheckBoxTxt:
+
+			if (eth0CheckBox.isSelected()) {
+				restartButton.setEnabled(true);
+				eth0SettingButton.setEnabled(true);
+
+				PropertiesUtils.updatePro(
+						EthernetConstant.ETHERNET_CONFIGURE_PATH,
+						EthernetConstant.ETHERNET_IS_WITHIN_KEY, "yes");
+				EthernetStateThread.getInstance().isUseThisManager(true);
+
+			} else {
+				restartButton.setEnabled(false);
+				eth0SettingButton.setEnabled(false);
+				PropertiesUtils.updatePro(
+						EthernetConstant.ETHERNET_CONFIGURE_PATH,
+						EthernetConstant.ETHERNET_IS_WITHIN_KEY, "no");
+				EthernetStateThread.getInstance().isUseThisManager(false);
+			}
+			break;
+
+		case restartButtonTxt:
+			try {
+				String ipAddress = PropertiesUtils.getPro(
+						EthernetConstant.ETHERNET_CONFIGURE_PATH,
+						EthernetConstant.ETHERNET_IP_ADDRESS);
+				if (ipAddress == null || ipAddress.equals("")) {
+					EthernetStateThread.getInstance().restartEth0(
+							"192.168.100.123");
+				} else {
+					EthernetStateThread.getInstance().restartEth0(ipAddress);
+				}
+
+				eth0StateLabel.setText(eth0StateTip + "未启用，网线未连接");
+				eth0Address.setText(eth0AddressTip + null);
+				eth0MaskCode.setText(eth0MaskCodeTip + null);
+				eth0MacAddress.setText(eth0MacAddressTip + null);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			break;
+		case eth0SettingButtonTxt:
+			EthernetInputDialog iPDialog = new EthernetInputDialog("以太网IP地址");
+			iPDialog.setVisible(true);
+			iPDialog.setEnabled(true);
+			iPDialog.setComfirmListener(this);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void comfirm(String ipAddress, String maskCode) {
+		// EthernetUtils ethernetUtils = new EthernetUtils();
+		try {
+			PropertiesUtils.updatePro(EthernetConstant.ETHERNET_CONFIGURE_PATH,
+					EthernetConstant.ETHERNET_IP_ADDRESS, ipAddress);
+
+			EthernetStateThread.getInstance().setIpAddress(ipAddress);
+			// EthernetThread.getInstance().setIpAddress(ipAddress);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 更新View
+	 */
+	private void updateSettingView(boolean is_use_Ethernet) {
+
+		eth0CheckBox.setSelected(is_use_Ethernet);
+
+		if (is_use_Ethernet) {
+			restartButton.setEnabled(true);
+			eth0SettingButton.setEnabled(true);
+		} else {
+			restartButton.setEnabled(false);
+			eth0SettingButton.setEnabled(false);
+		}
+	}
+
+	@Override
+	public void refreshEthernet(boolean isConnect, String mac,
+			String ipAddress, String bcast, String mask) {
+
+		String eth0Model = PropertiesUtils.getPro(
+				EthernetConstant.ETHERNET_CONFIGURE_PATH,
+				EthernetConstant.ETHERNET_IS_WITHIN_KEY);
+		boolean is_use_Ethernet = eth0Model.equals("yes");
+
+		if (is_use_Ethernet) {
+			if (isConnect) {
+				eth0StateLabel.setText(eth0StateTip + "已启用，网线已连接");
+			} else {
+				eth0StateLabel.setText(eth0StateTip + "已启用，网线未连接");
+			}
+		} else {
+			if (isConnect) {
+				eth0StateLabel.setText(eth0StateTip + "未启用,网线已连接");
+			} else {
+				eth0StateLabel.setText(eth0StateTip + "未启用，网线未连接");
+			}
+		}
+		eth0Address.setText(eth0AddressTip + ipAddress);
+		eth0MaskCode.setText(eth0MaskCodeTip + mask);
+		eth0MacAddress.setText(eth0MacAddressTip + mac);
+
+		updateSettingView(is_use_Ethernet);
+	}
+
+
 	/**
 	 * 添加横线
 	 * 
@@ -262,147 +375,6 @@ public class EthernetSettingPanel implements ActionListener, ComfirmListener,
 		c.weightx = weightx;
 		c.weighty = weighty;
 		return c;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		switch (event.getActionCommand()) {
-		case eth0CheckBoxTxt:
-
-			if (eth0CheckBox.isSelected()) {
-				restartButton.setEnabled(true);
-				eth0SettingButton.setEnabled(true);
-
-				PropertiesUtils.updatePro(
-						EthernetConstant.ETHERNET_CONFIGURE_PATH,
-						EthernetConstant.ETHERNET_IS_WITHIN_KEY, "yes");
-				EthernetStateThread.getInstance().isUseThisManager(true);
-
-			} else {
-				restartButton.setEnabled(false);
-				eth0SettingButton.setEnabled(false);
-				PropertiesUtils.updatePro(
-						EthernetConstant.ETHERNET_CONFIGURE_PATH,
-						EthernetConstant.ETHERNET_IS_WITHIN_KEY, "no");
-				EthernetStateThread.getInstance().isUseThisManager(false);
-			}
-			break;
-
-		case restartButtonTxt:
-			System.out.println("restart ...");
-
-			try {
-
-
-//				String ipAddress = PropertiesUtils.getPro(
-//						EthernetConstant.ETHERNET_CONFIGURE_PATH,
-//						EthernetConstant.ETHERNET_IP_ADDRESS);
-//				if (ipAddress==null || ipAddress.equals("") ) {
-//					EthernetStateThread.getInstance().restartEth0("192.168.100.123");
-//				}else{
-//					EthernetStateThread.getInstance().restartEth0(ipAddress);
-//				}
-				
-				eth0StateLabel.setText(eth0StateTip + "未启用，网线未连接");
-				eth0Address.setText(eth0AddressTip + null);
-				eth0MaskCode.setText(eth0MaskCodeTip + null);
-				eth0MacAddress.setText(eth0MacAddressTip + null);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			break;
-		case eth0SettingButtonTxt:
-			System.out.println("ethernet setting ... ");
-			EthernetInputDialog iPDialog = new EthernetInputDialog("以太网IP地址");
-			iPDialog.setVisible(true);
-			iPDialog.setEnabled(true);
-			iPDialog.setComfirmListener(this);
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void comfirm(String ipAddress, String maskCode) {
-		// EthernetUtils ethernetUtils = new EthernetUtils();
-		try {
-			PropertiesUtils.updatePro(EthernetConstant.ETHERNET_CONFIGURE_PATH,
-					EthernetConstant.ETHERNET_IP_ADDRESS, ipAddress);
-
-			EthernetStateThread.getInstance().setIpAddress(ipAddress);
-			// EthernetThread.getInstance().setIpAddress(ipAddress);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void refreshEthernet() {
-		// updateSettingView();
-	}
-
-	/**
-	 * 更新View
-	 */
-	private void updateSettingView(boolean is_use_Ethernet) {
-
-		// System.out.println("  ====  updateSettingView .");
-		// // 读取系统保存文件，判断并显示是否使用本程序管理以太网
-		// String eth0Model = PropertiesUtils.getPro(
-		// EthernetConstant.ETHERNET_CONFIGURE_PATH,
-		// EthernetConstant.ETHERNET_IS_WITHIN_KEY);
-		// boolean is_use_Ethernet = eth0Model.equals("yes");
-		eth0CheckBox.setSelected(is_use_Ethernet);
-
-		if (is_use_Ethernet) {
-			restartButton.setEnabled(true);
-			eth0SettingButton.setEnabled(true);
-		} else {
-			restartButton.setEnabled(false);
-			eth0SettingButton.setEnabled(false);
-		}
-
-		// try {
-		// eth0MacAddress.setText(eth0MacAddressTip + Eth0Utils.getEth0Mac());
-		// eth0Address.setText(eth0AddressTip + Eth0Utils.getIPAddress());
-		// eth0MaskCode.setText(eth0MaskCodeTip + Eth0Utils.getMask());
-		// } catch (Throwable e) {
-		// e.printStackTrace();
-		// }
-	}
-
-	@Override
-	public void refreshEthernet(boolean isConnect, String mac,
-			String ipAddress, String bcast, String mask) {
-
-		String eth0Model = PropertiesUtils.getPro(
-				EthernetConstant.ETHERNET_CONFIGURE_PATH,
-				EthernetConstant.ETHERNET_IS_WITHIN_KEY);
-		boolean is_use_Ethernet = eth0Model.equals("yes");
-
-		if (is_use_Ethernet) {
-			if (isConnect) {
-				eth0StateLabel.setText(eth0StateTip + "已启用，网线已连接");
-			} else {
-				eth0StateLabel.setText(eth0StateTip + "已启用，网线未连接");
-			}
-		} else {
-			if (isConnect) {
-				eth0StateLabel.setText(eth0StateTip + "未启用,网线已连接");
-			} else {
-				eth0StateLabel.setText(eth0StateTip + "未启用，网线未连接");
-			}
-		}
-		eth0Address.setText(eth0AddressTip + ipAddress);
-		eth0MaskCode.setText(eth0MaskCodeTip + mask);
-		eth0MacAddress.setText(eth0MacAddressTip + mac);
-
-		updateSettingView(is_use_Ethernet);
 	}
 
 }

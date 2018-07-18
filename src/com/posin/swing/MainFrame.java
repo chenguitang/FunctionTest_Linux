@@ -3,39 +3,25 @@ package com.posin.swing;
 //这段程序代码主要是为读者展示如何使用CardLayout布局管理器针对内容面板中的组件进行布局
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
-import com.posin.constant.CommandConstant;
-import com.posin.ethernet.EthernetThread;
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
 import com.posin.power.PowerManager;
 import com.posin.power.RegistedMachine;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
-import com.posin.utils.StringUtils;
-import com.posin.utils.VersionUtils;
 
 /**
  * 主页面，控制页面切换
@@ -139,7 +125,6 @@ public class MainFrame extends JFrame {
 		p_7 = AboutPanel.getInstance().aboutPanel;
 		p_eth0 = EthernetSettingPanel.getInstance().ethernetPanel;
 
-		pane.add(p_eth0, "p_eth0");
 		pane.add(p_1, "p1");
 		pane.add(p_2, "p2");
 		pane.add(p_3, "p3");
@@ -147,6 +132,7 @@ public class MainFrame extends JFrame {
 		pane.add(p_5, "p5");
 		pane.add(p_6, "p6");
 		pane.add(p_7, "p7");
+		pane.add(p_eth0, "p_eth0");
 
 		initListenerOnclick();
 
@@ -247,17 +233,11 @@ public class MainFrame extends JFrame {
 
 	public static void main(String[] args) {
 
-		MainFrame myMainFrame = new MainFrame();
-		myMainFrame.setVisible(true);
-
-
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					// 监听关机按钮
 					PowerManager.getInstance().startPowerListener();
-
-					
 
 					// 创建Socket服务器，监听socket指令
 					ServerSocketManager.getInstance().startSocketServer(

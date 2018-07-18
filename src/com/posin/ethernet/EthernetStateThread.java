@@ -1,7 +1,8 @@
 package com.posin.ethernet;
 
 import com.posin.constant.EthernetConstant;
-import com.posin.ethernet.ProcessEthernetUtils.Callback;
+import com.posin.utils.ProcessUtils;
+import com.posin.utils.ProcessUtils.Callback;
 import com.posin.utils.PropertiesUtils;
 
 public class EthernetStateThread implements Runnable {
@@ -28,6 +29,8 @@ public class EthernetStateThread implements Runnable {
 	private boolean isUseThis = true;
 
 	private static String newIPAddress = "";
+	
+	private ProcessUtils mProcessUtils;
 
 	private static class EthernetStateThreadHolder {
 		private static final EthernetStateThread ETHERNET_STATE_THREAD_HOLDER = new EthernetStateThread();
@@ -38,6 +41,7 @@ public class EthernetStateThread implements Runnable {
 	}
 
 	private EthernetStateThread() {
+		mProcessUtils=new ProcessUtils();
 	}
 
 	/**
@@ -131,8 +135,6 @@ public class EthernetStateThread implements Runnable {
 			String ipAddress = PropertiesUtils.getPro(
 					EthernetConstant.ETHERNET_CONFIGURE_PATH,
 					EthernetConstant.ETHERNET_IP_ADDRESS);
-			System.out.println("ipAddress: " + ipAddress);
-			System.out.println("***********************************");
 			if (ipAddress.equals("")) {
 				EthernetUtils.getInstance().setIpAddr(NET_NAME,
 						"192.168.100.123");
@@ -142,7 +144,6 @@ public class EthernetStateThread implements Runnable {
 		}
 
 		if (mRestart) {
-			System.out.println("ethernet restart . ");
 			mRestart = false;
 			EthernetUtils.getInstance().restartEthernet(NET_NAME);
 			if (newIPAddress != null && newIPAddress.trim() != "") {
@@ -169,12 +170,11 @@ public class EthernetStateThread implements Runnable {
 				Thread.sleep(1000);
 				EthernetUtils.getInstance()
 						.applyIpRoute(NET_NAME, newIPAddress);
-				System.out.println("set ip ..... ");
 			}
 		}
 
 		// ¼ì²é×´Ì¬
-		new ProcessEthernetUtils().suExecCallback("busybox ifconfig eth0 \n",
+		mProcessUtils.suExecCallback("busybox ifconfig eth0 \n",
 				new MyCallBack(), 2000);
 
 	}

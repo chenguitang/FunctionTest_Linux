@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.posin.utils.Proc;
 
-public class Eth0Utils {
+public class EthernetData {
 
 	/**
 	 * 获取以太网Mac地址
