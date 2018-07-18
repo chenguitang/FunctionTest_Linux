@@ -37,14 +37,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import view.InputDialog;
-import view.InputDialog.OnClickListener;
-
 import com.posin.Jlist.FriListCellRenderer;
 import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
 import com.posin.global.Appconfig;
 import com.posin.utils.StringUtils;
+import com.posin.view.InputDialog;
+import com.posin.view.InputDialog.OnClickListener;
 import com.posin.wifi.WifiUtils;
 import com.posin.wifi.WifiUtils.AddNetworkListener;
 import com.posin.wifi.WifiUtils.ConnectListener;
@@ -87,6 +86,7 @@ public class WifiPanel {
 	private static class WifiHolder {
 		private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
 	}
+
 	public static WifiPanel getInstance() {
 		return WifiHolder.WIFI_PANEL_INSTANCE;
 	}
@@ -212,7 +212,7 @@ public class WifiPanel {
 						listWifiDatas.get(i).setStatus("未连接");
 					}
 				}
-				
+
 				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
 				refreshMoveButon(wifiJList);
@@ -309,23 +309,19 @@ public class WifiPanel {
 		dialog.setOnComfirmclikListener(new OnClickListener() {
 
 			@Override
-			public void onClick(boolean isOk, ActionEvent event,
-					final String password) {
-				dialog.dispose();
-				operation = false;
-				wifiJList.setSelectedIndex(-1);
-				if (!isOk) {
+			public void onClick(boolean isOk, final String password) {
+				// dialog.setVisible(false);
+				// dialog.dispose();
+				if (password == null || password.trim().equals("")) {
+					operation = true;
+					JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
+					operation = false;
 					return;
 				} else {
-					if (password == null || password.trim().equals("")) {
-						operation = true;
-						JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
-						operation = false;
-						return;
-					} else {
-						findOrAddnetWork(password, position);
-					}
+					findOrAddnetWork(password, position);
 				}
+				operation = false;
+				wifiJList.setSelectedIndex(-1);
 			}
 		});
 
@@ -381,7 +377,7 @@ public class WifiPanel {
 				Thread.sleep(20);
 			}
 			wifiUtils.connect(network, ssid, password, listWifiDatas.get(index)
-					.getFlags(),listWifiDatas.get(index).isUtf8());
+					.getFlags(), listWifiDatas.get(index).isUtf8());
 			wifiUtils.setConnectListener(new ConnectListener() {
 
 				@Override
@@ -515,7 +511,7 @@ public class WifiPanel {
 							scrollBar.setValue(point.y);
 							wifiJList.setSelectedIndex(lastVisibleIndex + 1);
 							Thread.sleep(100);
-						}else{
+						} else {
 							Thread.sleep(100);
 						}
 						// else {

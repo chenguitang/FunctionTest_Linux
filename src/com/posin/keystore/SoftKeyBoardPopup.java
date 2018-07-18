@@ -274,6 +274,7 @@ public class SoftKeyBoardPopup extends JPopupMenu {
 			if (password != null && password.length > 0) {
 				char[] copyOf = Arrays.copyOf(password, password.length - 1);
 				passwordField.setText(new String(copyOf));
+//				passwordField.setCursor(new Cursor(copyOf.length));
 				System.out.println("已删除的字符：" + password[password.length - 1]);
 				System.out.println("删除后的的密码：" + new String(copyOf));
 			}
@@ -289,6 +290,7 @@ public class SoftKeyBoardPopup extends JPopupMenu {
 						.toCharArray();
 				String string = (password == null ? "" : new String(password));
 				passwordField.setText(string + key);
+//				passwordField.setCursor(new Cursor(password.length));
 				System.out.println("Newly added characters: " + key);
 				System.out.println("Add the password: " + string + key);
 			}

@@ -27,11 +27,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.posin.constant.CommandConstant;
+import com.posin.ethernet.EthernetThread;
 import com.posin.global.Appconfig;
 import com.posin.global.SocketConstant;
 import com.posin.power.PowerManager;
 import com.posin.power.RegistedMachine;
-import com.posin.setting.EthernetThread;
 import com.posin.socket.ServerSocketManager;
 import com.posin.socket.SockectCallback;
 import com.posin.utils.StringUtils;
@@ -45,6 +45,8 @@ import com.posin.utils.VersionUtils;
  */
 public class MainFrame extends JFrame {
 
+
+	private static final long serialVersionUID = 1L;
 	private int mButtonWidth = Appconfig.TOP_BUTTON_WIDTH;
 	private int mButtonHeight = Appconfig.TOP_BUTTON_HEIGHT;
 
@@ -248,14 +250,14 @@ public class MainFrame extends JFrame {
 		MainFrame myMainFrame = new MainFrame();
 		myMainFrame.setVisible(true);
 
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					// 监听关机按钮
 					PowerManager.getInstance().startPowerListener();
 
-					// 开启以太网设置线程
-					new Thread(new EthernetThread()).start();
+					
 
 					// 创建Socket服务器，监听socket指令
 					ServerSocketManager.getInstance().startSocketServer(

@@ -30,8 +30,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import view.AlertDialog;
-
 import com.posin.constant.CommandConstant;
 import com.posin.utils.DeviceDetect;
 import com.posin.utils.HwUtils;
@@ -41,6 +39,7 @@ import com.posin.utils.NetworkInfo;
 import com.posin.utils.SnUtils;
 import com.posin.utils.UsbUtils;
 import com.posin.utils.VersionUtils;
+import com.posin.view.AlertDialog;
 
 import flexjson.JSONSerializer;
 
@@ -75,7 +74,7 @@ public class RegistedMachine extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(250, 80, 1400, 900);
 		setUndecorated(true);
-//		setAlwaysOnTop(true);
+		setAlwaysOnTop(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);

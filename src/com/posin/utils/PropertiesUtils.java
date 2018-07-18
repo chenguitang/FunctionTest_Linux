@@ -101,11 +101,13 @@ public class PropertiesUtils {
 			fis.close();// ¹Ø±ÕÁ÷
 			System.out.println("search " + key + " values£º"
 					+ prop.getProperty(key));
-			return prop.getProperty(key);
+			String property = prop.getProperty(key);
+
+			return property == null ? "" : property;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "";
 		}
+		return "";
 	}
 
 }
