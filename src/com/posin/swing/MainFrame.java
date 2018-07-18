@@ -227,6 +227,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				card.show(pane, "p_eth0");
+				DateTimeSettings.getInstance().closeAllDialog();
 			}
 		});
 	}
