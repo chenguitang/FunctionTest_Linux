@@ -24,6 +24,7 @@ import com.posin.keystore.SoftKeyBoardPopup;
 
 public class DateInputDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
 	private String title;
 	private TextField inputPassword;
 

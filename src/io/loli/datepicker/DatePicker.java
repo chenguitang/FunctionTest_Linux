@@ -295,6 +295,7 @@ public class DatePicker extends AbstractPicker {
 	public void dismissPopup() {
 		if (popup != null) {
 			popup.hide();
+			popup=null;
 		}
 	}
 	

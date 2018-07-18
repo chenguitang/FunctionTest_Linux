@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -204,6 +206,22 @@ public class EthernetInputDialog extends JDialog implements ActionListener {
 						maskCodeTextField.getPreferredSize().height + 150);
 				keyPopup.getSoftKeyBoardPanel().reset();
 				keyPopup.repaint();
+			}
+		});
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				if (isShowing()) {
+					setVisible(false);
+					dispose();
+				}
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("EthernetInputDialog windowActivated");
 			}
 		});
 	}

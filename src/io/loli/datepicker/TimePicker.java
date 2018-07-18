@@ -31,6 +31,7 @@ public class TimePicker extends AbstractPicker {
 			setTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
 					cal.get(Calendar.SECOND));
 		}
+		
 		clickPanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -151,6 +152,7 @@ public class TimePicker extends AbstractPicker {
 	public void dismissPopup() {
 		if (popup != null) {
 			popup.hide();
+			popup=null;
 		}
 	}
 

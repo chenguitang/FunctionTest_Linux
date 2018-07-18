@@ -161,6 +161,22 @@ public class InputDialog extends JDialog {
 				}
 			}
 		});
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				if (isShowing()) {
+					setVisible(false);
+					dispose();
+				}
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("InputDialog windowActivated");
+			}
+		});
 	}
 
 	public void setOnComfirmclikListener(OnClickListener onClickListener) {

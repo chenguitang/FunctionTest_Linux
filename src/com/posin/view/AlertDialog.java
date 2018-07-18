@@ -116,13 +116,14 @@ public class AlertDialog extends JDialog {
 			public void windowDeactivated(WindowEvent e) {
 				if (isShowing()) {
 					setVisible(false);
+					dispose();
 				}
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("windowActivated");
+				System.out.println("alert windowActivated");
 			}
 		});
 	}

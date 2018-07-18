@@ -322,6 +322,7 @@ public class DateTimeSettings {
 		datePanel.add(dateShowLabel);
 
 		modifyDate(dateShowLabel);
+		
 	}
 
 	/**
@@ -353,13 +354,14 @@ public class DateTimeSettings {
 					}
 				});
 
+		
 		datePicker.setDatePanelClickListener(new DatePanelClickListener() {
 
 			@Override
 			public void clickListener() {
 				if (timePicker != null) {
 					if (timePicker.isShow()) {
-						timePicker.close();
+						timePicker.dismissPopup();
 					}
 				}
 			}
@@ -378,6 +380,7 @@ public class DateTimeSettings {
 
 		if (datePicker != null) {
 			if (datePicker.isShow()) {
+//				datePicker.dismissPopup();
 				datePicker.dismissPopup();
 			}
 		}
@@ -442,7 +445,7 @@ public class DateTimeSettings {
 			public void clickListener() {
 				if (datePicker != null) {
 					if (datePicker.isShow()) {
-						datePicker.close();
+						datePicker.dismissPopup();
 					}
 				}
 			}
