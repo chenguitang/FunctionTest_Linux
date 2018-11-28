@@ -226,7 +226,8 @@ public class WifiPanel {
 	 */
 	private void refreshWifiListUI(String ssId, String status) {
 		for (int i = 0; i < listWifiDatas.size(); i++) {
-			if (ssId.equals(listWifiDatas.get(i).getSsid())) {
+			if (StringUtils.parseWifiName(ssId).equals(
+					listWifiDatas.get(i).getSsid())) {
 				listWifiDatas.get(i).setStatus(status);
 			} else {
 				listWifiDatas.get(i).setStatus("Î´Á¬½Ó");

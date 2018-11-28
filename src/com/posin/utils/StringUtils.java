@@ -8,13 +8,27 @@ import java.util.Properties;
 public class StringUtils {
 
 	/**
-	 * 去掉多余的空格符号
+	 * 去掉多余的空格符号,
 	 * 
 	 * @param message
+	 *            要格式化的字符串
+	 * @param retain
+	 *            保留多少个空格
 	 * @return
 	 */
-	public static String delectEmpty(String message) {
-		return message.replaceAll("\\s{1,}", " ");
+	public static String delectEmpty(String message, int retain) {
+		return message.replaceAll(("\\s{" + retain + ",}"), " ");
+	}
+
+	/**
+	 * 判断
+	 * 
+	 * @param str
+	 *            要判断的字符串
+	 * @return
+	 */
+	public static boolean isEmpty(String str) {
+		return str == null || str.equals("");
 	}
 
 	/**
@@ -164,7 +178,7 @@ public class StringUtils {
 		}
 		return buildMessage.equals("yes") ? true : false;
 	}
-	
+
 	/**
 	 * 是否为内网,默认为外网
 	 * 
@@ -179,7 +193,6 @@ public class StringUtils {
 		}
 		return buildMessage.equals("yes") ? true : false;
 	}
-
 
 	/**
 	 * 拼接字符串

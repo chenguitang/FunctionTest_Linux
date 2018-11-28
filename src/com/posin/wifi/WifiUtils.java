@@ -381,25 +381,38 @@ public class WifiUtils {
 					isEnd = true;
 				}
 				if (wifiSum > 0 && !isEnd) {
-					String wifiData = StringUtils.delectEmpty(line);
+					// String wifiData = StringUtils.delectEmpty(line);
 					// System.out.println("wifiData: " + wifiData);
-					String[] messages = wifiData.split(" ");
+					// String[] messages = wifiData.split("   ");
 
-					System.out.println("messages: " + messages.length);
-					if (messages.length == 5) {
+					String bssid = line.substring(0, 17);
+					String frequency = line.substring(17, line.indexOf("-"))
+							.trim().replace(" ", "");
+					String level = line
+							.substring(line.indexOf("-") + 1, line.indexOf("["))
+							.trim().replace(" ", "");
+					String flags = line
+							.substring(line.indexOf("["), line.lastIndexOf("]"))
+							.trim().replace(" ", "");
+					String ssid = line.substring(line.lastIndexOf("]") + 1,
+							line.length()).trim();
+
+					if (!StringUtils.isEmpty(bssid)
+							&& !StringUtils.isEmpty(frequency)
+							&& !StringUtils.isEmpty(level)
+							&& !StringUtils.isEmpty(flags)
+							&& !StringUtils.isEmpty(ssid)) {
 						WifiMessage wifiMessage = new WifiMessage();
+						wifiMessage.setMacAddress(bssid);
+						wifiMessage.setFrequency(frequency);
+						wifiMessage.setSignalLevel(Integer.parseInt(level));
+						wifiMessage.setFlags(flags);
+						wifiMessage.setSsid(StringUtils.parseWifiName(ssid));
 
-						wifiMessage.setMacAddress(messages[0]);
-						wifiMessage.setFrequency(messages[1]);
-						wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
-								.substring(1)));
-						wifiMessage.setFlags(messages[3]);
-						wifiMessage.setSsid(StringUtils
-								.parseWifiName(messages[4]));
 						wifiMessage.setStatus("Î´Á¬½Ó");
-						if (StringUtils.isChineseName(messages[4])) {
+						if (StringUtils.isChineseName(ssid)) {
 							byte[] chineseWifiNametoBye = StringUtils
-									.ChineseWifiNametoBye(messages[4]);
+									.ChineseWifiNametoBye(ssid);
 							wifiMessage.setUtf8(DecodeUtils
 									.isUTF8(chineseWifiNametoBye));
 						} else {
