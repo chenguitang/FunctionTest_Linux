@@ -192,32 +192,49 @@ public class WifiPanel {
 		wifiUtils.setConnectStatusListener(new ConnnectStatusListener() {
 
 			@Override
-			public void connectStatus(boolean isConnect, WifiMessage wifiMessage) {
-				if (isConnect && wifiMessage != null) {
-					String ssid = wifiMessage.getSsid();
-					System.out.println("wifi name: ====" + ssid + "===");
-					for (int i = 0; i < listWifiDatas.size(); i++) {
-						if (listWifiDatas.get(i).getSsid()
-								.equals(StringUtils.parseWifiName(ssid))) {
-							System.out.println("-------------- has connect "
-									+ ssid + "--------------");
-							listWifiDatas.get(i).setStatus("已连接");
-						} else {
-							listWifiDatas.get(i).setStatus("未连接");
-						}
-					}
-				} else {
-					System.out.println("no wifi connect this devices");
-					for (int i = 0; i < listWifiDatas.size(); i++) {
-						listWifiDatas.get(i).setStatus("未连接");
-					}
-				}
+			public void connectSuccess(String ssId) {
 
+				refreshWifiListUI(ssId, "已连接");
+			}
+
+			@Override
+			public void onConnection(String ssId) {
+				refreshWifiListUI(ssId, "正在进行身份验证...");
+			}
+
+			@Override
+			public void connectFailure(String ssId) {
+
+				refreshWifiListUI(ssId, "身份验证出现问题");
+			}
+
+			@Override
+			public void connectRefresh() {
 				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
 				refreshMoveButon(wifiJList);
 			}
+
 		});
+	}
+
+	/**
+	 * 刷新WIFI列表的WIFI
+	 * 
+	 * @param ssId
+	 * @param status
+	 */
+	private void refreshWifiListUI(String ssId, String status) {
+		for (int i = 0; i < listWifiDatas.size(); i++) {
+			if (ssId.equals(listWifiDatas.get(i).getSsid())) {
+				listWifiDatas.get(i).setStatus(status);
+			} else {
+				listWifiDatas.get(i).setStatus("未连接");
+			}
+		}
+		Collections.sort(listWifiDatas);
+		wifiJList.setListData(listWifiDatas.toArray());
+		refreshMoveButon(wifiJList);
 	}
 
 	/**
@@ -309,7 +326,7 @@ public class WifiPanel {
 		dialog.setOnComfirmclikListener(new OnClickListener() {
 
 			@Override
-			public void onClick(boolean isOk, final String password) {
+			public void onClickOk(final String password) {
 				// dialog.setVisible(false);
 				// dialog.dispose();
 				if (password == null || password.trim().equals("")) {
@@ -317,11 +334,27 @@ public class WifiPanel {
 					JOptionPane.showMessageDialog(null, "密码不能为空，请输入密码");
 					operation = false;
 					return;
-				} else {
-					findOrAddnetWork(password, position);
+				} else if (password.length() < 8) {
+					operation = true;
+					JOptionPane.showMessageDialog(null, "密码长度必须大于或等于8");
+					operation = false;
 				}
+
+				findOrAddnetWork(password, position);
+
+				// 更新wifi状态
+				listWifiDatas.get(position).setStatus("正在进行身份验证...");
+				Collections.sort(listWifiDatas);
+				wifiJList.setListData(listWifiDatas.toArray());
+				refreshMoveButon(wifiJList);
+
 				operation = false;
-				wifiJList.setSelectedIndex(-1);
+
+			}
+
+			@Override
+			public void onCancel() {
+				operation = false;
 			}
 		});
 

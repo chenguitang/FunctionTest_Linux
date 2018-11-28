@@ -41,7 +41,7 @@ public class InputDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private SoftKeyBoardPopup keyPopup = null;
-	
+
 	private JButton okButton;
 
 	public static void main(String[] args) {
@@ -83,7 +83,7 @@ public class InputDialog extends JDialog {
 				setEnabled(false);
 				dispose();
 				if (mOnClickListener != null) {
-					mOnClickListener.onClick(true, inputPassword.getText()
+					mOnClickListener.onClickOk(inputPassword.getText()
 							.toString().trim());
 				}
 			}
@@ -100,6 +100,9 @@ public class InputDialog extends JDialog {
 				setVisible(false);
 				setEnabled(false);
 				dispose();
+				if (mOnClickListener != null) {
+					mOnClickListener.onCancel();
+				}
 			}
 		});
 
@@ -147,15 +150,15 @@ public class InputDialog extends JDialog {
 				System.out.println("onclick input passwork show keyboard");
 			}
 		});
-		
+
 		inputPassword.addTextListener(new TextListener() {
-			
+
 			@Override
 			public void textValueChanged(TextEvent e) {
 				if (rootPaneCheckingEnabled) {
-					if(inputPassword.getText().toString().trim().length()>0){
+					if (inputPassword.getText().toString().trim().length() > 7) {
 						okButton.setEnabled(true);
-					}else{
+					} else {
 						okButton.setEnabled(false);
 					}
 				}
@@ -184,7 +187,16 @@ public class InputDialog extends JDialog {
 	}
 
 	public interface OnClickListener {
-		void onClick(boolean isOk, String password);
+		/**
+		 * 确认
+		 * @param password 密码内容
+		 */
+		void onClickOk(String password);
+		
+		/**
+		 * 取消
+		 */
+		void onCancel();
 	}
 
 }

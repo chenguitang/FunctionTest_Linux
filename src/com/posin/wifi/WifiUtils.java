@@ -45,6 +45,7 @@ public class WifiUtils {
 	private ConnnectStatusListener mConnnectStatusListener;
 
 	private ProcessUtils mProcessUtils;
+	private String ssId = "";
 
 	public WifiUtils() {
 		mProcessUtils = new ProcessUtils();
@@ -291,36 +292,34 @@ public class WifiUtils {
 	 */
 	public void getStatus() {
 		try {
-			final WifiMessage wifiMessage = new WifiMessage();
-			System.out.println("======================================");
+
 			mProcessUtils.suExecCallback(cmd_get_status, new Callback() {
-				boolean isConnect = false;
 
 				@Override
 				public void readLine(String line) {
 					// System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
-						wifiMessage.setSsid(line.substring("ssid=".length())
-								.trim());
-					} else if (line.contains("key_mgmt=")) {
-						wifiMessage.setFlags(line.substring(
-								"key_mgmt=".length()).trim());
-					} else if (line.contains("ip_address=")) {
-						wifiMessage.setIpAddresss(line.substring(
-								"ip_address=".length()).trim());
-					} else if (line.contains("bssid=")) {
-						wifiMessage.setMacAddress(line.substring(
-								"bssid=".length()).trim());
+						ssId = line.substring("ssid=".length()).trim();
 					} else if (line.contains("wpa_state=COMPLETED")) {
-						isConnect = true;
-					} else if (line.trim().equals(Appconfig.CMD_FINISH)) {
-						System.out.println("listener isConnect: " + isConnect);
-						if (isConnect && mConnnectStatusListener != null) {
-							mConnnectStatusListener.connectStatus(true,
-									wifiMessage);
+						mConnnectStatusListener.connectSuccess(ssId);
+						System.out.println("wifi completed ...");
+					} else if (line.contains("wpa_state=4WAY_HANDSHAKE")) {
+						System.out.println("wifi 4way_handshake ...");
+						mConnnectStatusListener.onConnection(ssId);
+					} else if (line.contains("wpa_state=SCANNING")) {
+
+						if (ssId != null || ssId.equals("")) {
+							initSaveSsId();
+						}
+
+						if (ssId != null && !ssId.equals("")) {
+							System.out
+									.println("wifi scanning , connect failure ...");
+							mConnnectStatusListener.connectFailure(ssId);
 						} else {
-							mConnnectStatusListener.connectStatus(false,
-									wifiMessage);
+							System.out
+									.println("wifi scanning , connect refresh ...");
+							mConnnectStatusListener.connectRefresh();
 						}
 					}
 				}
@@ -329,6 +328,36 @@ public class WifiUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 读取保存的SsId
+	 */
+	private void initSaveSsId() {
+
+		ArrayList<String> wifiConfigList = new ArrayList<>();
+		try {
+			Proc.suExec("cat /etc/wpa_supplicant/wpa_supplicant-wlan0.conf ",
+					wifiConfigList, 2000);
+
+			for (int i = 0; i < wifiConfigList.size(); i++) {
+				if (wifiConfigList.get(i).trim().contains("ssid=")
+						&& i <= wifiConfigList.size() - 2
+						&& wifiConfigList.get(i + 2).trim().equals("}")) {
+
+					ssId = wifiConfigList.get(i).trim();
+					ssId = ssId.substring(ssId.indexOf("\"") + 1,
+							ssId.length() - 1);
+					System.out.println("read config ssid" + ssId);
+				}
+
+			}
+
+		} catch (IOException e) {
+			System.out.println("读取wifi配置文件出错了： " + e.toString());
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -365,7 +394,8 @@ public class WifiUtils {
 						wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
 								.substring(1)));
 						wifiMessage.setFlags(messages[3]);
-						wifiMessage.setSsid(StringUtils.parseWifiName(messages[4]));
+						wifiMessage.setSsid(StringUtils
+								.parseWifiName(messages[4]));
 						wifiMessage.setStatus("未连接");
 						if (StringUtils.isChineseName(messages[4])) {
 							byte[] chineseWifiNametoBye = StringUtils
@@ -426,7 +456,35 @@ public class WifiUtils {
 	}
 
 	public interface ConnnectStatusListener {
-		void connectStatus(boolean isConnect, WifiMessage wifiMessage);
+		/**
+		 * 连接成功
+		 * 
+		 * @param ssId
+		 *            WIFI名称
+		 */
+		void connectSuccess(String ssId);
+
+		/**
+		 * 正在连接
+		 * 
+		 * @param ssId
+		 *            WIFI名称
+		 */
+		void onConnection(String ssId);
+
+		/**
+		 * 连接失败
+		 * 
+		 * @param ssId
+		 *            WIFI名称
+		 */
+		void connectFailure(String ssId);
+
+		/**
+		 * 刷新UI列表
+		 */
+		void connectRefresh();
+		// void connectStatus(boolean isConnect, WifiMessage wifiMessage);
 	}
 
 	/**
