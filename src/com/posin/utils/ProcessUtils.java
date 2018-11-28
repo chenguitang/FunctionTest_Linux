@@ -125,9 +125,7 @@ public class ProcessUtils {
 			os.write(cmd.getBytes(decode));
 
 			String endTip = "echo **CMD-RESULT**" + "\n";
-			// System.out.println("endTip :  " + endTip);
 			os.write(endTip.getBytes("utf-8"));
-			// os.write("echo 111111111111111 \n".getBytes());
 			os.write(("exit $?\n").getBytes("utf-8"));
 			os.flush();
 			return 0;

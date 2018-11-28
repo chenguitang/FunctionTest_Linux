@@ -355,26 +355,28 @@ public class WifiUtils {
 					String wifiData = StringUtils.delectEmpty(line);
 					// System.out.println("wifiData: " + wifiData);
 					String[] messages = wifiData.split(" ");
-					// System.out.println("wifidata length: " +
-					// messages.length);
-					WifiMessage wifiMessage = new WifiMessage();
 
-					wifiMessage.setMacAddress(messages[0]);
-					wifiMessage.setFrequency(messages[1]);
-					wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
-							.substring(1)));
-					wifiMessage.setFlags(messages[3]);
-					wifiMessage.setSsid(StringUtils.parseWifiName(messages[4]));
-					wifiMessage.setStatus("未连接");
-					if (StringUtils.isChineseName(messages[4])) {
-						byte[] chineseWifiNametoBye = StringUtils
-								.ChineseWifiNametoBye(messages[4]);
-						wifiMessage.setUtf8(DecodeUtils
-								.isUTF8(chineseWifiNametoBye));
-					} else {
-						wifiMessage.setUtf8(true);
+					System.out.println("messages: " + messages.length);
+					if (messages.length == 5) {
+						WifiMessage wifiMessage = new WifiMessage();
+
+						wifiMessage.setMacAddress(messages[0]);
+						wifiMessage.setFrequency(messages[1]);
+						wifiMessage.setSignalLevel(Integer.parseInt(messages[2]
+								.substring(1)));
+						wifiMessage.setFlags(messages[3]);
+						wifiMessage.setSsid(StringUtils.parseWifiName(messages[4]));
+						wifiMessage.setStatus("未连接");
+						if (StringUtils.isChineseName(messages[4])) {
+							byte[] chineseWifiNametoBye = StringUtils
+									.ChineseWifiNametoBye(messages[4]);
+							wifiMessage.setUtf8(DecodeUtils
+									.isUTF8(chineseWifiNametoBye));
+						} else {
+							wifiMessage.setUtf8(true);
+						}
+						listWifiMessages.add(wifiMessage);
 					}
-					listWifiMessages.add(wifiMessage);
 				}
 				wifiSum++;
 			}
