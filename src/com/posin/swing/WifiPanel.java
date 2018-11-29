@@ -19,8 +19,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -42,6 +44,8 @@ import com.posin.Jlist.MyDefaultListModel;
 import com.posin.constant.WifiMessage;
 import com.posin.global.Appconfig;
 import com.posin.utils.StringUtils;
+import com.posin.view.AlertDialog;
+import com.posin.view.EnquiryDialog;
 import com.posin.view.InputDialog;
 import com.posin.view.InputDialog.OnClickListener;
 import com.posin.wifi.WifiUtils;
@@ -74,6 +78,7 @@ public class WifiPanel {
 	// private JList<JPanel> wifiJList = null;
 	private JList wifiJList = null;
 	private ArrayList<WifiMessage> listWifiDatas = null; // WIFI数据聚合
+	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 
 	private WifiUtils wifiUtils = null;
 	private MyDefaultListModel listModel = null;
@@ -82,6 +87,7 @@ public class WifiPanel {
 	private boolean isDownReleased = false; // 下滑按钮是否被释放
 	private boolean isUpReleased = false; // 上滑按钮是否被释放
 	private boolean isMoveed = false;
+	private String hasConnectSsid = ""; // 已连接的wifi在列表中位置
 
 	private static class WifiHolder {
 		private static final WifiPanel WIFI_PANEL_INSTANCE = new WifiPanel();
@@ -125,7 +131,6 @@ public class WifiPanel {
 			public void run() {
 				while (true) {
 					try {
-
 						Thread.sleep(Appconfig.REFRESH_WIFI_TIME); // 休眠时间
 
 						if (!operation && wifiPanel.isShowing()) {
@@ -154,13 +159,17 @@ public class WifiPanel {
 	private void initWifiList() {
 		try {
 			wifiUtils.findAllWifi();
+			System.out.println("===========================================");
+			System.out.println("initWifiList" + df.format(new Date()));
+			System.out.println("thread name:"
+					+ Thread.currentThread().getName());
+			System.out.println("===========================================");
 			wifiUtils.setAllWifiDataListener(new WifiDataChageListener() {
 
 				@Override
 				public void wifiDataChange(
 						ArrayList<WifiMessage> listWifiMessages) {
 					listWifiDatas.clear();
-					// System.out.println("+++++++++++++++++++++++++++");
 					for (int i = 0; i < listWifiMessages.size(); i++) {
 						// System.out.println("listWifiMessages data : "
 						// + listWifiMessages.get(i).toString() + "\n");
@@ -188,23 +197,42 @@ public class WifiPanel {
 	 * 检查连接状态
 	 */
 	public void checkConnectStatus() {
+
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("=================================================");
+		System.out.println("checkConnectStatus " + df.format(new Date()));
+		System.out.println("thread name:" + Thread.currentThread().getName());
+		System.out.println("=================================================");
+
+		if (operation) {
+			System.out.println("checkConnectStatus int operation ,return threak ...");
+			return;
+		}
+		
+		
 		wifiUtils.getStatus();
 		wifiUtils.setConnectStatusListener(new ConnnectStatusListener() {
 
 			@Override
 			public void connectSuccess(String ssId) {
 
+				hasConnectSsid = ssId;
 				refreshWifiListUI(ssId, "已连接");
 			}
 
 			@Override
 			public void onConnection(String ssId) {
+				hasConnectSsid = "";
 				refreshWifiListUI(ssId, "正在进行身份验证...");
 			}
 
 			@Override
 			public void connectFailure(String ssId) {
-
+				hasConnectSsid = "";
 				refreshWifiListUI(ssId, "身份验证出现问题");
 			}
 
@@ -213,6 +241,13 @@ public class WifiPanel {
 				Collections.sort(listWifiDatas);
 				wifiJList.setListData(listWifiDatas.toArray());
 				refreshMoveButon(wifiJList);
+
+			}
+
+			@Override
+			public void disconnect(String ssId) {
+				hasConnectSsid = "";
+				refreshWifiListUI(ssId, "未连接");
 			}
 
 		});
@@ -263,34 +298,10 @@ public class WifiPanel {
 		jp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		listWifiPane.add(jp, BorderLayout.NORTH);
 
-		// for (int i = 1; i <= 40; i++) {
-		// WifiMessage wifiMessage = new WifiMessage();
-		//
-		// wifiMessage.setFlags("123");
-		// wifiMessage.setFrequency("1354");
-		// wifiMessage.setIpAddresss("1325454");
-		// wifiMessage.setMacAddress("154787");
-		// wifiMessage.setSignalLevel(10);
-		// wifiMessage.setSsid("posin" + i);
-		// wifiMessage.setStatus("未连接");
-		// listWifiDatas.add(wifiMessage);
-		// }
-		// wifiJList.setListData(listWifiDatas.toArray());
-
 		wifiJList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int selectedPosition = wifiJList.getSelectedIndex();
-				System.out.println("select index： " + selectedPosition);
-
-				if (selectedPosition >= 0) {
-					System.out.println("wifi name : "
-							+ listWifiDatas.get(selectedPosition).getSsid());
-					operation = true;
-					getNetWork(selectedPosition);
-				} else {
-					System.out.println("select index < 0");
-				}
+				mouseClickWifiList();
 			}
 
 			@Override
@@ -298,6 +309,54 @@ public class WifiPanel {
 
 			}
 		});
+	}
+
+	/**
+	 * 点击WIFI列表
+	 */
+	private void mouseClickWifiList() {
+
+		int selectedPosition = wifiJList.getSelectedIndex();
+
+		System.out.println("select index： " + selectedPosition);
+		if (selectedPosition >= 0) {
+			System.out.println("wifi name : "
+					+ listWifiDatas.get(selectedPosition).getSsid());
+
+			if (StringUtils.parseWifiName(hasConnectSsid).equals(
+					listWifiDatas.get(selectedPosition).getSsid())) {
+				operation = true;
+				// 弹框提示是否断开连接
+				AlertDialog alertDialog = new AlertDialog("提示", "是否需要断开wifi");
+				alertDialog.setVisible(true);
+				EnquiryDialog enquiryDialog = new EnquiryDialog("提示",
+						"是否需要断开wifi") {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected void onConfirm() {
+						System.out.println("disconnect wifi .");
+						wifiUtils.disconnectWifi();
+						operation = false;
+						hasConnectSsid = "";
+						refreshWifiListUI(hasConnectSsid, "未连接");
+					}
+
+					@Override
+					protected void onCancel() {
+						operation = false;
+					}
+				};
+
+				enquiryDialog.setVisible(true);
+			} else {
+				operation = true;
+				getNetWork(selectedPosition);
+			}
+		} else {
+			System.out.println("select index < 0");
+		}
 	}
 
 	/**

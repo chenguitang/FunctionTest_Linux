@@ -37,6 +37,8 @@ public class WifiUtils {
 	// 获取wifi状态
 	private static String cmd_get_status = "wpa_cli -i wlan0 status\n";
 
+	private static String cmd_disconnect_wifi = "wpa_cli -i wlan0 disconnect\n";
+
 	private static boolean excue1 = true;
 
 	private static WifiDataChageListener mWifiDataChageListener;
@@ -297,7 +299,23 @@ public class WifiUtils {
 
 				@Override
 				public void readLine(String line) {
-					// System.out.println("check connect status: " + line);
+
+//					if (isDisconnect == -1) {
+//						ArrayList<String> listWifiConfig = new ArrayList<String>();
+//						try {
+//							Proc.suExec("cat /etc/wifiConfig.txt",
+//									listWifiConfig, 2000);
+//							if (listWifiConfig.size() > 0) {
+//								isDisconnect = Integer.parseInt(listWifiConfig
+//										.get(0));
+//							}
+//
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//					}
+
+					System.out.println("check connect status: " + line);
 					if (line.contains("ssid=")) {
 						ssId = line.substring("ssid=".length()).trim();
 					} else if (line.contains("wpa_state=COMPLETED")) {
@@ -306,12 +324,13 @@ public class WifiUtils {
 					} else if (line.contains("wpa_state=4WAY_HANDSHAKE")) {
 						System.out.println("wifi 4way_handshake ...");
 						mConnnectStatusListener.onConnection(ssId);
+					} else if (line.contains("wpa_state=DISCONNECTED")) {
+						initSaveSsId();
+						System.out.println("wifi disconnected ...");
+						mConnnectStatusListener.disconnect(ssId);
 					} else if (line.contains("wpa_state=SCANNING")) {
 
-						if (ssId != null || ssId.equals("")) {
-							initSaveSsId();
-						}
-
+						initSaveSsId();
 						if (ssId != null && !ssId.equals("")) {
 							System.out
 									.println("wifi scanning , connect failure ...");
@@ -331,33 +350,51 @@ public class WifiUtils {
 	}
 
 	/**
+	 * 断开当前WIFI
+	 */
+	public void disconnectWifi() {
+		try {
+			Proc.suExec(cmd_disconnect_wifi, null, 2000);
+			// 保存配置
+			Proc.suExec(" echo 1 > /etc/wifiConfig.txt", null, 1000);
+//			isDisconnect = 1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * 读取保存的SsId
 	 */
 	private void initSaveSsId() {
 
-		ArrayList<String> wifiConfigList = new ArrayList<>();
-		try {
-			Proc.suExec("cat /etc/wpa_supplicant/wpa_supplicant-wlan0.conf ",
-					wifiConfigList, 2000);
+		if (ssId == null || ssId.equals("")) {
 
-			for (int i = 0; i < wifiConfigList.size(); i++) {
-				if (wifiConfigList.get(i).trim().contains("ssid=")
-						&& i <= wifiConfigList.size() - 2
-						&& wifiConfigList.get(i + 2).trim().equals("}")) {
+			ArrayList<String> wifiConfigList = new ArrayList<>();
+			try {
+				Proc.suExec(
+						"cat /etc/wpa_supplicant/wpa_supplicant-wlan0.conf ",
+						wifiConfigList, 2000);
 
-					ssId = wifiConfigList.get(i).trim();
-					ssId = ssId.substring(ssId.indexOf("\"") + 1,
-							ssId.length() - 1);
-					System.out.println("read config ssid" + ssId);
+				for (int i = 0; i < wifiConfigList.size(); i++) {
+					if (wifiConfigList.get(i).trim().contains("ssid=")
+							&& i <= wifiConfigList.size() - 2
+							&& wifiConfigList.get(i + 2).trim().equals("}")) {
+
+						ssId = wifiConfigList.get(i).trim();
+						ssId = ssId.substring(ssId.indexOf("\"") + 1,
+								ssId.length() - 1);
+						System.out.println("read config ssid" + ssId);
+					}
+
 				}
 
+			} catch (IOException e) {
+				System.out.println("读取wifi配置文件出错了： " + e.toString());
+				e.printStackTrace();
 			}
-
-		} catch (IOException e) {
-			System.out.println("读取wifi配置文件出错了： " + e.toString());
-			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -492,6 +529,14 @@ public class WifiUtils {
 		 *            WIFI名称
 		 */
 		void connectFailure(String ssId);
+
+		/**
+		 * 已断开连接
+		 * 
+		 * @param ssId
+		 *            WIFI名称
+		 */
+		void disconnect(String ssId);
 
 		/**
 		 * 刷新UI列表
